@@ -1,7 +1,7 @@
 {
   "name": "@21stware/rpui",
-  "version": "0.1.0",
-  "description": "Readable Prototype UI: static UI prototype canvas and snapshot primitives implemented as Web Components.",
+  "version": "0.1.1",
+  "description": "Rapid Prototype UI: static UI prototype canvas and snapshot primitives implemented as Web Components.",
   "type": "module",
   "main": "dist/rpui.js",
   "module": "dist/rpui.js",
@@ -13,14 +13,15 @@
     },
     "./dist/rpui.js": "./dist/rpui.js",
     "./llms.txt": "./llms.txt",
-    "./skill.txt": "./skill.txt"
+    "./SKILL.md": "./SKILL.md"
   },
   "sideEffects": true,
   "files": [
     "dist",
     "llms.txt",
-    "skill.txt",
-    "README.md"
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "dev": "vite --open /preview/",
@@ -38,7 +39,7 @@
     "snapshot",
     "llm"
   ],
-  "license": "MIT",
+  "license": "UNLICENSED",
   "devDependencies": {
     "typescript": "^5.8.3",
     "vite": "^5.4.11"

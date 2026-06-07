@@ -30,9 +30,11 @@ rp-annotation rp-annotation, proto-annotation proto-annotation, rp-annotation pr
 .rp-annotation-marker { display:inline-grid; place-items:center; flex:0 0 auto; color:#fff; font-size:10px; font-weight:700; line-height:1; }
 .rp-annotation-marker.drop { width:22px; height:22px; background:var(--rp-primary); border-radius:50% 50% 50% 0; transform:rotate(-45deg); }
 .rp-annotation-marker.drop > span { transform:rotate(45deg); }
-.rp-annotation-marker.circle { width:13px; height:13px; background:var(--rp-purple); border-radius:50%; }
-.rp-annotation-marker.triangle { width:0; height:0; border-left:7px solid transparent; border-right:7px solid transparent; border-bottom:13px solid var(--rp-success); }
-.rp-annotation-body { display:block; width:fit-content; max-width:920px; }
+.rp-annotation-marker.circle { width:16px; height:16px; background:var(--rp-purple); border-radius:50%; }
+.rp-annotation-marker.triangle { width:18px; height:16px; background:var(--rp-success); clip-path:polygon(50% 0, 100% 100%, 0 100%); }
+.rp-annotation-marker.triangle > span { transform:translateY(2px); font-size:9px; }
+.rp-annotation-body { display:block; position:relative; width:fit-content; max-width:920px; }
+.rp-pin-slice { width:18px; height:18px; font-size:10px; box-shadow:0 1px 5px rgba(37,99,235,.3); }
 .rp-annotation-body > :not(rp-annotation):not(proto-annotation):not(rp-enum):not(proto-enum) { max-width:820px; }
 .rp-annotation-pane rp-annotation, .rp-annotation-pane proto-annotation { max-width:none; }
 .rp-annotation-pane .rp-annotation-body { max-width:none; }

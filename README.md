@@ -1,6 +1,6 @@
 # RPUI
 
-RPUI (Readable Prototype UI) is a static UI prototype canvas and snapshot primitive runtime implemented with native Web Components. It converts interaction states, permission variants, loading/empty/error states, and nested UI details into one readable static HTML document.
+RPUI (Rapid Prototype UI) is a static UI prototype canvas and snapshot primitive runtime implemented with native Web Components. It converts interaction states, permission variants, loading/empty/error states, and nested UI details into one static HTML document.
 
 A prototype imports one generated runtime file:
 

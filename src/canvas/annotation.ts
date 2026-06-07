@@ -2,9 +2,15 @@ import { injectStyle } from '../core/style';
 import { attr, escapeHtml } from '../core/dom';
 
 export class RpAnnotation extends HTMLElement {
+  private ro?: ResizeObserver;
+  private frame = 0;
+
   connectedCallback() {
     injectStyle();
-    if (this.dataset.rpReady) return;
+    if (this.dataset.rpReady) {
+      this.setupSlicePins();
+      return;
+    }
     this.dataset.rpReady = 'true';
     const existing = Array.from(this.childNodes);
     const depth = this.annotationDepth();
@@ -28,7 +34,10 @@ export class RpAnnotation extends HTMLElement {
     const marker = document.createElement('span');
     const kind = id ? 'drop' : depth <= 1 ? 'circle' : 'triangle';
     marker.className = `rp-annotation-marker ${kind}`;
-    marker.innerHTML = kind === 'drop' ? `<span>${escapeHtml(id)}</span>` : '';
+    // Show the local index (last segment of the section path) inside every marker,
+    // so a UI slice annotated one level deeper can be referenced unambiguously.
+    const localIndex = id || sectionPath.split('-').pop() || '';
+    marker.innerHTML = `<span>${escapeHtml(localIndex)}</span>`;
 
     const head = document.createElement('div');
     head.className = 'rp-annotation-head';
@@ -49,6 +58,45 @@ export class RpAnnotation extends HTMLElement {
     body.className = 'rp-annotation-body';
     existing.forEach(n => body.appendChild(n));
     this.append(head, body);
+
+    this.setupSlicePins();
+  }
+
+  disconnectedCallback() { this.ro?.disconnect(); if (this.frame) cancelAnimationFrame(this.frame); }
+
+  // A UI slice inside this annotation may carry data-pin markers on sub-regions.
+  // Render pins on those slices so their numbers connect to the deeper annotations
+  // that explain them — mirroring how rp-main-view pins top-level regions.
+  private setupSlicePins() {
+    const body = this.querySelector<HTMLElement>(':scope > .rp-annotation-body');
+    if (!body || !body.querySelector('[data-pin]')) return;
+    this.ro?.disconnect();
+    this.scheduleSlicePins(body);
+    this.ro = new ResizeObserver(() => this.scheduleSlicePins(body));
+    this.ro.observe(this);
+  }
+
+  private scheduleSlicePins(body: HTMLElement) {
+    if (this.frame) return;
+    this.frame = requestAnimationFrame(() => { this.frame = 0; this.renderSlicePins(body); });
+  }
+
+  private renderSlicePins(body: HTMLElement) {
+    body.querySelectorAll(':scope > .rp-pin').forEach(p => p.remove());
+    const bodyRect = body.getBoundingClientRect();
+    body.querySelectorAll<HTMLElement>('[data-pin]').forEach(target => {
+      // Only own data-pin elements whose nearest annotation ancestor is this one.
+      if (target.closest('rp-annotation, proto-annotation') !== this) return;
+      const pinId = target.dataset.pin;
+      if (!pinId) return;
+      const r = target.getBoundingClientRect();
+      const pin = document.createElement('span');
+      pin.className = 'rp-pin rp-pin-slice';
+      pin.style.left = `${r.left - bodyRect.left}px`;
+      pin.style.top = `${r.top - bodyRect.top}px`;
+      pin.innerHTML = `<span>${escapeHtml(pinId)}</span>`;
+      body.appendChild(pin);
+    });
   }
 
   annotationDepth() {

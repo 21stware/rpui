@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-RPUI (Readable Prototype UI) is a native Web Components runtime for static UI prototypes. It combines a prototype annotation canvas with snapshot primitives so interaction states, permission variants, hidden UI, loading/empty/error states, and validation branches can be displayed in one static document.
+RPUI (Rapid Prototype UI) is a native Web Components runtime for static UI prototypes. It combines a prototype annotation canvas with snapshot primitives so interaction states, permission variants, hidden UI, loading/empty/error states, and validation branches can be displayed in one static document.
 
 A prototype imports the generated runtime once:
 
