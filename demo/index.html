@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>项目任务管理 — RPUI Demo</title>
+  <script type="module" src="../dist/rpui.js"></script>
+</head>
+<body>
+  <rp-page
+    title="项目任务管理"
+    route="/projects/:id/tasks"
+    description="SaaS 项目管理平台的任务看板页，展示任务列表、多维筛选、成员分配、状态流转和权限差异。主快照为项目管理员视角、有筛选展开、批量选中、抽屉打开、甘特图 Tab 未选状态。">
+
+    <rp-main-view device="web" scale="0.62">
+      <rp-viewport device="web">
+        <rp-navbar height="64" data-pin="1">
+          <rp-logo label="PM+"></rp-logo>
+          <rp-breadcrumb items="工作台,研发部,Q2 后台重构,任务列表"></rp-breadcrumb>
+          <rp-search state="filled" value="API" has-clear-button></rp-search>
+          <rp-button label="新建任务" variant="primary" icon="plus"></rp-button>
+          <rp-badge count="12" max="99"></rp-badge>
+          <rp-avatar size="32" initials="LY"></rp-avatar>
+        </rp-navbar>
+
+        <rp-layout columns="240px minmax(0,1fr)">
+          <rp-sidebar width="240" data-pin="2">
+            <rp-list>
+              <rp-list-item label="全部项目" icon="layout-dashboard"></rp-list-item>
+              <rp-list-item label="我负责的" icon="user" state="selected" badge="3"></rp-list-item>
+              <rp-list-item label="我参与的" icon="users" badge="12"></rp-list-item>
+              <rp-list-item label="已完成" icon="check"></rp-list-item>
+              <rp-list-item label="归档项目" icon="archive"></rp-list-item>
+            </rp-list>
+          </rp-sidebar>
+
+          <rp-panel padding="20" elevation="1">
+            <rp-layout rows="auto auto auto auto auto" gap="16">
+
+              <rp-layout columns="1fr max-content max-content" gap="12" data-pin="3">
+                <rp-tabs active="任务列表">
+                  <rp-tab label="任务列表" badge="38"></rp-tab>
+                  <rp-tab label="甘特图"></rp-tab>
+                  <rp-tab label="看板"></rp-tab>
+                  <rp-tab label="报告"></rp-tab>
+                </rp-tabs>
+                <rp-button label="导出" variant="secondary" icon="file"></rp-button>
+                <rp-button label="项目设置" variant="ghost" icon="settings"></rp-button>
+              </rp-layout>
+
+              <rp-layout columns="repeat(4, 1fr)" gap="12" data-pin="4">
+                <rp-stat-card label="总任务数" value="38" trend="up" change="+5 本周"></rp-stat-card>
+                <rp-stat-card label="进行中" value="14" trend="flat" change="4 人参与"></rp-stat-card>
+                <rp-stat-card label="已逾期" value="3" trend="down" change="需立即处理"></rp-stat-card>
+                <rp-stat-card label="本周完成" value="9" trend="up" change="+2 vs 上周"></rp-stat-card>
+              </rp-layout>
+
+              <rp-panel padding="14" elevation="0" data-pin="5">
+                <rp-layout rows="auto auto auto" gap="12">
+                  <rp-layout columns="minmax(0,1fr) repeat(5, max-content)" gap="10">
+                    <rp-search state="filled" value="API" has-clear-button placeholder="搜索任务、负责人"></rp-search>
+                    <rp-select state="collapsed" value="进行中" options="全部状态,待开始,进行中,已完成,已逾期"></rp-select>
+                    <rp-select state="collapsed" value="全部优先级" options="全部优先级,P0 紧急,P1 高,P2 中,P3 低"></rp-select>
+                    <rp-date-picker state="filled" value="2026-06-01"></rp-date-picker>
+                    <rp-avatar size="28" initials="LY"></rp-avatar>
+                    <rp-button label="清除" variant="link"></rp-button>
+                  </rp-layout>
+                  <rp-bulk-action-bar count="5" actions="转移,设置优先级,批量完成,删除"></rp-bulk-action-bar>
+                  <rp-table rows="7" columns="任务名称,负责人,优先级,截止日期,状态" has-checkbox has-action></rp-table>
+                  <rp-pagination total="38" current="1" page-size="10"></rp-pagination>
+                </rp-layout>
+              </rp-panel>
+
+              <rp-layout columns="minmax(0,1fr) 380px" gap="18" data-pin="6">
+                <rp-panel padding="16" elevation="1">
+                  <rp-layout rows="auto auto" gap="14">
+                    <rp-tabs active="成员">
+                      <rp-tab label="成员" badge="8"></rp-tab>
+                      <rp-tab label="里程碑" badge="3"></rp-tab>
+                      <rp-tab label="关联文档"></rp-tab>
+                    </rp-tabs>
+                    <rp-layout columns="repeat(4, minmax(0,1fr))" gap="10">
+                      <rp-card title="李英" subtitle="前端工程师">
+                        <rp-tag label="9 任务" color="orange"></rp-tag>
+                      </rp-card>
+                      <rp-card title="张明" subtitle="后端工程师">
+                        <rp-tag label="12 任务" color="orange"></rp-tag>
+                      </rp-card>
+                      <rp-card title="王芳" subtitle="产品经理">
+                        <rp-tag label="3 任务" color="green"></rp-tag>
+                      </rp-card>
+                      <rp-card title="刘冬" subtitle="QA 工程师">
+                        <rp-tag label="2 任务" color="green"></rp-tag>
+                      </rp-card>
+                    </rp-layout>
+                  </rp-layout>
+                </rp-panel>
+
+                <rp-drawer title="任务详情" width="380">
+                  <rp-form>
+                    <rp-form-item label="任务名称" required><rp-input state="filled" value="修复分页接口 500 错误"></rp-input></rp-form-item>
+                    <rp-form-item label="负责人"><rp-select state="collapsed" value="张明" options="李英,张明,王芳,刘冬"></rp-select></rp-form-item>
+                    <rp-form-item label="优先级"><rp-select state="collapsed" value="P0 紧急" options="P0 紧急,P1 高,P2 中,P3 低"></rp-select></rp-form-item>
+                    <rp-form-item label="截止日期"><rp-date-picker state="filled" value="2026-06-15"></rp-date-picker></rp-form-item>
+                    <rp-form-item label="任务描述"><rp-textarea state="filled" rows="4" value="分页接口在数据量超过 1000 条时偶发 500，需排查 SQL 慢查询和连接池设置。"></rp-textarea></rp-form-item>
+                    <rp-form-item label="关联 Sprint"><rp-select state="collapsed" value="Sprint 12" options="Sprint 11,Sprint 12,Sprint 13"></rp-select></rp-form-item>
+                    <rp-alert type="warning" title="逾期风险" message="截止日期还有 3 天，当前进度 40%。"></rp-alert>
+                    <rp-button-group>
+                      <rp-button label="取消"></rp-button>
+                      <rp-button label="保存" variant="primary"></rp-button>
+                    </rp-button-group>
+                  </rp-form>
+                </rp-drawer>
+              </rp-layout>
+
+              <rp-layout columns="repeat(4, max-content)" gap="16" data-pin="7">
+                <rp-empty label="暂无匹配任务" description="调整筛选条件后重试" has-action></rp-empty>
+                <rp-loading rows="5"></rp-loading>
+                <rp-modal title="删除任务确认" has-footer>
+                  <rp-alert type="error" title="此操作不可恢复" message="选中的 5 条任务将被永久删除，关联数据一并清除。"></rp-alert>
+                </rp-modal>
+                <rp-layout rows="auto auto" gap="10">
+                  <rp-alert type="success" title="批量操作成功" message="已完成 5 条任务"></rp-alert>
+                  <rp-toast type="error" title="网络异常" message="操作失败，请重试"></rp-toast>
+                </rp-layout>
+              </rp-layout>
+
+            </rp-layout>
+          </rp-panel>
+        </rp-layout>
+      </rp-viewport>
+    </rp-main-view>
+
+    <rp-annotation id="1" label="顶部导航">
+      项目路径通过面包屑展示层级，全局搜索 state=filled 表示已输入关键词。管理员可见「新建任务」；只读成员不可见。
+      <rp-enum>
+        <rp-enum-item label="管理员" description="可新建任务、设置项目和导出数据。">
+          <rp-navbar><rp-logo label="PM+"></rp-logo><rp-button label="新建任务" variant="primary" icon="plus"></rp-button><rp-badge count="12"></rp-badge><rp-avatar initials="LY"></rp-avatar></rp-navbar>
+        </rp-enum-item>
+        <rp-enum-item label="只读成员" description="无新建权限，不显示主操作按钮。">
+          <rp-navbar><rp-logo label="PM+"></rp-logo><rp-badge count="3"></rp-badge><rp-avatar initials="WF"></rp-avatar></rp-navbar>
+        </rp-enum-item>
+      </rp-enum>
+    </rp-annotation>
+
+    <rp-annotation id="2" label="左侧项目导航">
+      固定宽度 240px，当前选中「我负责的」，高亮蓝色背景。角标显示未处理任务数。
+      <rp-annotation label="角标规则">
+        角标只显示未完成任务数量，完成状态不计入。
+        <rp-enum>
+          <rp-enum-item label="有未完成任务"><rp-list-item label="我负责的" icon="user" badge="3" state="selected"></rp-list-item></rp-enum-item>
+          <rp-enum-item label="全部完成"><rp-list-item label="我负责的" icon="user" state="selected"></rp-list-item></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="3" label="视图切换与操作">
+      Tab 支持任务列表、甘特图、看板和报告四个视图，主快照默认展示「任务列表」。切换 Tab 不跳转路由，仅切换内容区。
+      <rp-enum>
+        <rp-enum-item label="任务列表 Tab">
+          <rp-tabs active="任务列表"><rp-tab label="任务列表" badge="38"></rp-tab><rp-tab label="甘特图"></rp-tab><rp-tab label="看板"></rp-tab></rp-tabs>
+        </rp-enum-item>
+        <rp-enum-item label="甘特图 Tab">
+          <rp-tabs active="甘特图"><rp-tab label="任务列表" badge="38"></rp-tab><rp-tab label="甘特图"></rp-tab><rp-tab label="看板"></rp-tab></rp-tabs>
+        </rp-enum-item>
+      </rp-enum>
+    </rp-annotation>
+
+    <rp-annotation id="4" label="统计卡片">
+      四个核心指标卡片：总任务、进行中、已逾期（red trend）、本周完成。逾期数 > 0 时变红色提醒。
+    </rp-annotation>
+
+    <rp-annotation id="5" label="筛选、批量操作与任务表格">
+      筛选区包含全文搜索、状态、优先级、截止日期、成员头像快速筛选；批量选中后出现批量操作栏。
+      <rp-annotation label="筛选状态">
+        <rp-enum>
+          <rp-enum-item label="无筛选" description="默认状态，搜索框为空，所有选项恢复默认。"><rp-search placeholder="搜索任务"></rp-search></rp-enum-item>
+          <rp-enum-item label="已输入关键词" description="搜索框 filled 态，带清除按钮。"><rp-search state="filled" value="API" has-clear-button></rp-search></rp-enum-item>
+          <rp-enum-item label="无匹配结果" description="结果列表为空时替换表格区域。"><rp-empty label="暂无匹配任务" description="调整筛选条件" has-action></rp-empty></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="表格行状态">
+        <rp-enum>
+          <rp-enum-item label="正常行"><rp-table rows="2" columns="任务,负责人,状态" has-checkbox></rp-table></rp-enum-item>
+          <rp-enum-item label="逾期行（高亮）"><rp-table-row state="highlighted"></rp-table-row></rp-enum-item>
+          <rp-enum-item label="已选择行"><rp-table-row state="selected"></rp-table-row></rp-enum-item>
+          <rp-enum-item label="已完成行（置灰）"><rp-table-row state="disabled"></rp-table-row></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="6" label="成员看板与任务详情抽屉">
+      成员卡片展示每人负责的任务数量；点击任意成员或任务行会打开右侧详情抽屉，抽屉中展示编辑表单和逾期风险提示。
+      <rp-enum>
+        <rp-enum-item label="保存成功"><rp-alert type="success" title="任务已更新"></rp-alert></rp-enum-item>
+        <rp-enum-item label="表单验证错误" description="必填项为空时在字段下方展示。"><rp-form-item label="任务名称" required error="任务名称不能为空"><rp-input state="error" placeholder="请输入任务名称"></rp-input></rp-form-item></rp-enum-item>
+      </rp-enum>
+    </rp-annotation>
+
+    <rp-annotation id="7" label="异步与危险操作">
+      加载态、空状态、删除确认弹窗和操作结果 Toast 都需要在原型中静态展开。
+      <rp-enum>
+        <rp-enum-item label="表格加载中" description="页面切换或刷新时展示骨架屏。"><rp-loading rows="5"></rp-loading></rp-enum-item>
+        <rp-enum-item label="删除确认弹窗"><rp-modal title="删除任务确认" has-footer><rp-alert type="error" title="此操作不可恢复"></rp-alert></rp-modal></rp-enum-item>
+        <rp-enum-item label="成功 Toast"><rp-toast type="success" title="已完成 5 条任务"></rp-toast></rp-enum-item>
+        <rp-enum-item label="失败 Toast"><rp-toast type="error" title="网络异常，请重试"></rp-toast></rp-enum-item>
+      </rp-enum>
+    </rp-annotation>
+  </rp-page>
+</body>
+</html>

@@ -1,0 +1,195 @@
+# RPUI Web Components Reference for LLMs
+
+RPUI means Readable Prototype UI. It is a static prototype specification and rendering runtime implemented with native Web Components.
+
+A generated prototype imports one file only:
+
+```html
+<script type="module" src="./dist/rpui.js"></script>
+```
+
+`dist/rpui.js` registers all custom elements and injects runtime CSS plus Lucide-style inline SVG icons. Do not import external CSS, image CDNs, icon CDNs, or UI frameworks.
+
+## Core model
+
+RPUI has two layers:
+
+1. Canvas layer: page shell, main snapshot view, numbered pins, annotations, nested annotations, and state enums.
+2. Snapshot Primitive layer: static UI building blocks for product UI snapshots and annotation slices.
+
+Use `rp-*` tags for new work. Compatibility aliases are available:
+
+- `proto-*` aliases exist for canvas tags.
+- `snap-*` aliases exist for snapshot primitive tags.
+
+## Canvas tags
+
+```html
+<rp-page title="页面标题" route="/route" description="页面说明">
+  <rp-main-view device="web" scale="0.65">
+    <rp-viewport device="web">
+      <!-- fixed-width, auto-height main snapshot built with rp-* primitives -->
+    </rp-viewport>
+  </rp-main-view>
+
+  <rp-annotation id="1" label="区域说明">...</rp-annotation>
+</rp-page>
+```
+
+Tags:
+
+- `<rp-page title="..." route="..." description="...">` — root document canvas. It keeps the title/main snapshot on the left and moves top-level annotations to the right-side scroll pane.
+- `<rp-main-view device="web|ipad|mobile" width="..." height="auto|900" scale="0.65">` — scaled main snapshot frame. Device presets are fixed width with auto height unless a numeric `height` is provided.
+- `<rp-viewport device="web|ipad|mobile" width="..." height="auto|900">` — snapshot viewport. Use the same `device` as the main view for clarity.
+- `<rp-annotation id="1" label="...">` — top-level annotation linked to `data-pin="1"`; rendered in the right annotation pane.
+- `<rp-annotation label="...">` — nested annotation; no `id` required.
+- `<rp-enum>` — horizontal state/variant container.
+- `<rp-enum-item label="..." description="...">` — one explicit state/variant card with optional short description.
+
+## Pin rule
+
+Inside `<rp-main-view>`, add `data-pin="N"` to meaningful regions. Number pins from 1 without gaps.
+
+Every `data-pin="N"` must have a matching top-level annotation:
+
+```html
+<rp-navbar data-pin="1">...</rp-navbar>
+<rp-annotation id="1" label="顶部导航">...</rp-annotation>
+```
+
+RPUI renders water-drop pins automatically. Never write pin DOM manually.
+
+## Layout and state rules
+
+- RPUI is static. Do not create interactions.
+- Do not use `onclick`, hover behavior, runtime focus, timers, API calls, or framework state.
+- Do not use external images; use `<rp-image-placeholder>`.
+- Do not use `position:absolute` or `position:fixed` in snapshot content. RPUI owns pin positioning.
+- Do not use raw `div`, `button`, `input`, or `table` to represent product UI. Use `rp-*` primitives.
+- Basic text and simple inline HTML are allowed inside annotations.
+- Top-level annotations render automatically in the right-side annotation pane. Do not manually create annotation pane wrappers.
+- The title/route/description and main snapshot stay visible on the left while the annotation pane scrolls independently on both axes.
+- Keep annotations compact and document-flow oriented. Do not stretch annotation content to full width.
+- Choose a device preset for new prototypes: `web` (1440px), `ipad` (834px), or `mobile` (390px). Presets use fixed width and auto height unless a numeric height is provided.
+- In the main snapshot, keep selects/dropdowns/popovers collapsed unless the page's primary representative state truly requires the overlay to be visible. Prefer showing expanded select/dropdown contents in annotation enums so they do not obscure the main layout.
+- Use `<rp-enum>` for state families, permission variants, hidden interaction results, and validation branches. Use `rp-enum-item description="..."` for a short clarification of a state.
+
+## Snapshot primitives
+
+### Containers
+
+- `<rp-viewport device="web|ipad|mobile" width="1440" height="auto|900">` — fixed-width snapshot viewport; presets default to auto height.
+- `<rp-layout columns="260px 1fr" rows="auto" gap="16">` — CSS grid container.
+- `<rp-panel padding="24" elevation="1|2">` — white panel/card shell.
+- `<rp-card title="..." subtitle="..." has-image has-footer>` — content card.
+- `<rp-modal width="480" title="..." has-footer>` — static opened modal.
+- `<rp-drawer side="left|right" width="360" title="...">` — static opened drawer.
+- `<rp-dropdown width="300" title="...">` — static opened dropdown.
+- `<rp-popover width="300" title="...">` — static opened popover.
+- `<rp-tooltip text="..." position="top|bottom|left|right">` — visible tooltip bubble.
+
+### Navigation
+
+- `<rp-navbar height="64">` — top navigation container.
+- `<rp-sidebar width="260" collapsed>` — side navigation container.
+- `<rp-logo size="82" label="LOGO">` — logo placeholder.
+- `<rp-list items="4" state="first-selected">` — generated list when no children are provided.
+- `<rp-list-item label="..." icon="inbox" badge="12" state="default|selected|disabled">`.
+- `<rp-tabs active="0">` with `<rp-tab label="全部" badge="12">`; `active` can be index or label.
+- `<rp-breadcrumb items="首页,设置,用户管理">`.
+- `<rp-pagination total="128" current="2" page-size="20">`.
+- `<rp-steps steps="填写信息,确认,完成" active="1">`.
+
+### Data and content display
+
+- `<rp-table rows="6" columns="发件人,消息预览,时间,状态" has-checkbox has-action>` — generated static table.
+- `<rp-table-row state="default|selected|unread|highlighted|disabled">` — standalone row slice.
+- `<rp-bulk-action-bar count="3" actions="标为已读,归档,删除">`.
+- `<rp-empty label="暂无数据" description="..." has-action>`.
+- `<rp-loading rows="4" kind="skeleton|spinner">` (`style="spinner"` also works for compatibility).
+- `<rp-image-placeholder width="160" height="100" label="Image">`.
+- `<rp-avatar size="32" initials="OC">`.
+- `<rp-badge count="120" max="99">`.
+- `<rp-tag label="已启用" color="green|orange|red" closable>`.
+- `<rp-stat-card label="活跃用户" value="12,480" trend="up|down|flat" change="+12%">`.
+
+### Forms and controls
+
+All form states are explicit through attributes; there is no runtime focus or input behavior.
+
+- `<rp-search state="default|focus|filled|error|disabled" placeholder="..." value="..." has-clear-button>`.
+- `<rp-input state="default|focus|filled|error|disabled" label="..." placeholder="..." value="..." has-clear-button error-message="...">`.
+- `<rp-textarea state="default|focus|filled|error|disabled" rows="3" placeholder="..." value="...">`.
+- `<rp-select state="collapsed|expanded|disabled" label="..." value="..." options="A,B,C">`.
+- `<rp-date-picker state="default|focus|filled|error|disabled" value="2026-06-07">`.
+- `<rp-checkbox state="unchecked|checked|indeterminate|disabled" label="...">`.
+- `<rp-radio state="unchecked|checked|disabled" label="...">`.
+- `<rp-toggle state="on|off|disabled" label="...">`.
+- `<rp-button label="..." variant="primary|secondary|ghost|danger|link" state="default|disabled|loading" icon="plus" size="sm|md|lg">`.
+- `<rp-button-group>...</rp-button-group>`.
+- `<rp-form layout="vertical|horizontal">`.
+- `<rp-form-item label="..." required error="...">...</rp-form-item>`.
+- `<rp-upload state="empty|has-file|uploading" file="document.pdf" progress="60">`.
+
+### Feedback
+
+- `<rp-alert type="info|success|warning|error" title="..." message="..." closable>`.
+- `<rp-toast type="info|success|warning|error" title="..." message="..." closable>`.
+- `<rp-progress value="40" kind="bar|circle" status="success|error">`.
+
+## Icon rule
+
+Use Lucide icon names through the `icon` attribute when available:
+
+```html
+<rp-button label="新建" icon="plus" variant="primary"></rp-button>
+<rp-list-item label="已归档" icon="archive"></rp-list-item>
+```
+
+The runtime renders inline SVG. Do not import lucide or any icon CDN.
+
+## State coverage checklist
+
+For each page, consider whether these states apply:
+
+- loaded with normal data
+- empty data
+- loading/skeleton/spinner
+- error/retry
+- search default/focus/filled/no-result
+- filter collapsed/expanded
+- row default/selected/unread/highlighted/disabled
+- bulk selection off/on
+- pagination first/middle/last/no more pages
+- permission variants: readonly/admin/owner/external collaborator
+- destructive confirmation
+- validation default/filled/error/disabled
+
+## Recommended complete HTML shape
+
+```html
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <script type="module" src="./dist/rpui.js"></script>
+</head>
+<body>
+  <rp-page title="页面标题" route="/route" description="页面说明">
+    <rp-main-view device="web" scale="0.65">
+      <rp-viewport device="web">
+        <!-- main snapshot built only with rp-* primitives -->
+      </rp-viewport>
+    </rp-main-view>
+
+    <rp-annotation id="1" label="区域说明">
+      简短说明此区域的职责。
+      <rp-enum>
+        <rp-enum-item label="默认" description="正常可用的数据态。"><rp-empty label="示例"></rp-empty></rp-enum-item>
+        <rp-enum-item label="加载" description="首次进入或刷新时展示。"><rp-loading rows="3"></rp-loading></rp-enum-item>
+      </rp-enum>
+    </rp-annotation>
+  </rp-page>
+</body>
+</html>
+```

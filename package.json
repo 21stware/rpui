@@ -1,0 +1,46 @@
+{
+  "name": "@21stware/rpui",
+  "version": "0.1.0",
+  "description": "Readable Prototype UI: static UI prototype canvas and snapshot primitives implemented as Web Components.",
+  "type": "module",
+  "main": "dist/rpui.js",
+  "module": "dist/rpui.js",
+  "types": "dist/rpui.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/rpui.d.ts",
+      "default": "./dist/rpui.js"
+    },
+    "./dist/rpui.js": "./dist/rpui.js",
+    "./llms.txt": "./llms.txt",
+    "./skill.txt": "./skill.txt"
+  },
+  "sideEffects": true,
+  "files": [
+    "dist",
+    "llms.txt",
+    "skill.txt",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite --open /preview/",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build:js": "vite build",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build": "npm run clean && npm run typecheck && npm run build:js && npm run build:types",
+    "release": "npm run build",
+    "clean": "rm -rf dist && mkdir -p dist"
+  },
+  "keywords": [
+    "web-components",
+    "prototype",
+    "ui",
+    "snapshot",
+    "llm"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^5.4.11"
+  }
+}

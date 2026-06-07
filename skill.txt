@@ -1,0 +1,143 @@
+# RPUI Prototype Implementation Skill
+
+Use this skill when converting product requirements, screenshots, existing UI code, or design notes into a static RPUI prototype.
+
+## Goal
+
+Create one readable, static, self-contained HTML prototype that fully exposes a product page's UI structure, interaction states, permissions, loading states, empty states, error states, validation states, and edge cases.
+
+RPUI does not simulate interaction. It lays out interaction results spatially so reviewers can understand the complete state space without clicking anything. Treat it like baking time-based UI behavior into a document-flow canvas.
+
+## Required inputs
+
+Prefer these inputs, in priority order:
+
+1. Product requirement or user story.
+2. Screenshot or design draft.
+3. Existing code with conditional rendering.
+4. Permission matrix or role notes.
+5. Known loading, empty, error, validation, and edge cases.
+
+If some inputs are missing, infer common SaaS/product UI states and make assumptions explicit in annotations.
+
+## Output contract
+
+Output a complete HTML file that imports exactly one RPUI runtime file:
+
+```html
+<script type="module" src="./dist/rpui.js"></script>
+```
+
+The document must contain:
+
+1. one `<rp-page>` root with `title`, `route`, and `description`,
+2. exactly one `<rp-main-view>` containing the main page snapshot,
+3. snapshot content built with `rp-*` primitives,
+4. numbered `data-pin="N"` anchors on meaningful main-view regions,
+5. matching top-level `<rp-annotation id="N" label="...">` blocks,
+6. `<rp-enum>` and `<rp-enum-item>` blocks for conditional states and variants.
+
+## Implementation steps
+
+1. Identify the page route, page title, and one-sentence description.
+2. Choose a device preset: `web` for desktop/admin pages, `ipad` for tablet layouts, or `mobile` for phone layouts. Prefer fixed-width, auto-height prototypes.
+3. Choose the most complex representative main snapshot: loaded data, selected rows, expanded drawers/modals when they are central to the page, active validation, and role-specific controls when relevant.
+4. Build the main snapshot inside `<rp-main-view device="web|ipad|mobile">` using only `rp-*` snapshot primitives, usually inside an `<rp-viewport device="web|ipad|mobile">`.
+5. Add `data-pin="N"` to every meaningful UI region. Number pins from 1 without gaps.
+6. For every `data-pin="N"`, create one top-level `<rp-annotation id="N" label="...">`. The runtime places top-level annotations in the right-side annotation pane.
+7. Keep annotation text concise and specific. Avoid large prose blocks and card-like padding wrappers.
+8. Use nested `<rp-annotation>` only when a rule belongs to a smaller sub-region.
+9. Put repeated/conditional state families in `<rp-enum>`.
+10. Use `<rp-enum-item label="..." description="...">` for every state: default, focus, filled, selected, disabled, empty, loading, error, permission-specific, and data-size variants. `description` is optional and should be short.
+11. Validate that no interactive JavaScript, event attributes, external images, external CSS, or CDN icons are used.
+
+## Authoring rules
+
+- Use `rp-*` tags for new work. `proto-*` and `snap-*` are compatibility aliases only.
+- Use `<rp-page>`, not arbitrary root containers.
+- Use `<rp-main-view>` once per prototype page.
+- Use `rp-*` tags for both the main snapshot and UI slices inside annotations.
+- Do not use direct `div`, `button`, `input`, `table`, or similar product UI HTML. Use RPUI primitives instead. Basic text and simple inline annotation markup are allowed.
+- Do not write CSS or JavaScript in the prototype unless implementing or extending RPUI itself.
+- Do not use `position:absolute` or `position:fixed` in snapshot content. RPUI owns pin positioning.
+- Do not hide important content behind interactions. Expand it into the annotation area with `<rp-enum>`.
+- Do not stretch annotation blocks to full width. The runtime provides a right-side annotation pane; keep annotation content compact inside it.
+- Keep select/dropdown/popover overlays collapsed in the main snapshot unless visibility is essential to the representative state. Put expanded overlay contents in annotation enums or local slices so the main layout remains readable.
+- Use `rp-enum-item description="..."` for short state notes, not long prose.
+- Prefer `device="web"`, `device="ipad"`, or `device="mobile"` over hand-tuned width/height values. Use explicit numeric `height` only when a fixed-height clipped viewport is intentional.
+
+## State coverage checklist
+
+For every page, check whether these states apply:
+
+- Loaded with normal data.
+- Empty data.
+- Loading or skeleton/spinner.
+- Error or retry.
+- Search default, focus, filled, no result.
+- Filter collapsed and expanded.
+- Row default, selected, unread, highlighted, disabled.
+- Bulk selection off and on.
+- Pagination first, middle, last, no more pages.
+- Permission variants such as readonly, admin, owner, external collaborator.
+- Destructive action confirmation.
+- Validation default, filled, error, disabled.
+- Overlay states such as dropdown, popover, modal, drawer, tooltip.
+- Upload empty, has-file, uploading.
+
+## Primitive selection guide
+
+Use the smallest primitive that communicates the requirement:
+
+- page shell: `rp-page`, `rp-main-view`, `rp-viewport`
+- layout: `rp-layout`, `rp-panel`, `rp-card`
+- navigation: `rp-navbar`, `rp-sidebar`, `rp-tabs`, `rp-breadcrumb`, `rp-pagination`, `rp-steps`
+- data: `rp-table`, `rp-table-row`, `rp-list`, `rp-list-item`, `rp-stat-card`, `rp-tag`, `rp-badge`, `rp-avatar`
+- forms: `rp-input`, `rp-search`, `rp-textarea`, `rp-select`, `rp-date-picker`, `rp-checkbox`, `rp-radio`, `rp-toggle`, `rp-form`, `rp-form-item`, `rp-upload`, `rp-button`
+- states: `rp-empty`, `rp-loading`, `rp-alert`, `rp-toast`, `rp-progress`
+- overlays: `rp-dropdown`, `rp-popover`, `rp-tooltip`, `rp-modal`, `rp-drawer`
+
+Refer to `llms.txt` for the complete component attributes.
+
+## Minimal template
+
+```html
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <script type="module" src="./dist/rpui.js"></script>
+</head>
+<body>
+  <rp-page title="页面标题" route="/route" description="页面说明">
+    <rp-main-view device="web" scale="0.65">
+      <rp-viewport device="web">
+        <!-- main snapshot -->
+      </rp-viewport>
+    </rp-main-view>
+
+    <rp-annotation id="1" label="区域说明">
+      简短说明此区域的职责。
+      <rp-enum>
+        <rp-enum-item label="默认" description="正常可用的数据态。"><rp-empty label="示例"></rp-empty></rp-enum-item>
+        <rp-enum-item label="加载中" description="首次进入或刷新时展示。"><rp-loading rows="3"></rp-loading></rp-enum-item>
+        <rp-enum-item label="错误" description="服务端或网络异常时展示。"><rp-alert type="error" title="加载失败" message="请重试"></rp-alert></rp-enum-item>
+      </rp-enum>
+    </rp-annotation>
+  </rp-page>
+</body>
+</html>
+```
+
+## Quality bar
+
+A good RPUI prototype can be reviewed by engineering, product, design, and QA without running the real application. QA should be able to derive test cases from annotations. Engineering should be able to derive conditional rendering requirements from enum items. Design should be able to see whether hidden states were missed.
+
+Before finishing, check:
+
+- pin numbers are continuous and all have matching annotations,
+- the main snapshot shows the most complex useful state,
+- hidden interaction results are expanded into enums,
+- role/permission differences are visible,
+- annotations are compact and document-flow oriented,
+- no forbidden direct product UI HTML, scripts, event handlers, or external resources are present.
