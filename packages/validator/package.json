@@ -1,0 +1,29 @@
+{
+  "name": "rpml-validator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "RPML document validator — structural + semantic checks",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "rpml": "src/cli.ts"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun --format esm && tsc -p tsconfig.types.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "cli": "bun src/cli.ts"
+  },
+  "dependencies": {
+    "rpml-parser": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

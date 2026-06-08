@@ -1,0 +1,112 @@
+<rp-page
+  title="商品列表"
+  route="/products"
+  description="电商后台商品列表页，主快照为有筛选条件、有选中行、搜索框已填写状态。">
+
+  <rp-main-view device="web" scale="0.62">
+    <rp-viewport device="web">
+      <rp-navbar height="56" data-pin="1">
+        <rp-logo label="ShopAdmin"></rp-logo>
+        <rp-breadcrumb items="控制台,商品管理,商品列表"></rp-breadcrumb>
+        <rp-button label="新增商品" variant="primary" icon="plus" />
+      </rp-navbar>
+
+      <rp-layout columns="200px 1fr">
+        <rp-sidebar width="200" data-pin="2">
+          <rp-list>
+            <rp-list-item label="全部商品" icon="package" state="selected" badge="342" />
+            <rp-list-item label="已上架" icon="check-circle" badge="280" />
+            <rp-list-item label="已下架" icon="x-circle" badge="62" />
+            <rp-list-item label="草稿" icon="file-text" badge="15" />
+            <rp-list-item label="缺货" icon="alert-triangle" badge="8" />
+          </rp-list>
+        </rp-sidebar>
+
+        <rp-panel padding="20" elevation="1">
+          <rp-layout rows="auto auto auto" gap="16">
+
+            <rp-layout columns="1fr repeat(4, max-content)" gap="10" data-pin="3">
+              <rp-search state="filled" value="无线耳机" has-clear-button placeholder="搜索商品名、SKU" />
+              <rp-select state="filled" value="全部分类" options="全部分类,数码,家电,服饰,食品,图书" />
+              <rp-select state="filled" value="已上架" options="全部状态,已上架,已下架,草稿" />
+              <rp-date-picker state="filled" value="2026-01-01" />
+              <rp-button label="重置" variant="ghost" />
+            </rp-layout>
+
+            <rp-bulk-action-bar count="3" actions="批量上架,批量下架,批量删除,导出选中" data-pin="4" />
+
+            <rp-table rows="8" columns="商品名称,SKU,分类,价格,库存,状态,操作" has-checkbox has-action data-pin="5" />
+
+            <rp-pagination total="342" current="1" page-size="20" />
+
+          </rp-layout>
+        </rp-panel>
+      </rp-layout>
+    </rp-viewport>
+  </rp-main-view>
+
+  <rp-annotation id="1" label="导航栏">
+    固定顶栏。"新增商品"按钮仅对拥有 product:write 权限的角色显示。
+  </rp-annotation>
+
+  <rp-annotation id="2" label="左侧分类导航">
+    分类选项对应服务端的状态枚举，badge 数字实时计数，每次列表刷新后更新。
+    <rp-annotation label="缺货角标">
+      缺货 = 库存 ≤ 0 的商品数量。库存更新后后端异步计算，有最多 60s 延迟。
+    </rp-annotation>
+  </rp-annotation>
+
+  <rp-annotation id="3" label="筛选栏">
+    筛选条件在 URL query 中持久化（`?category=数码&amp;status=上架&amp;q=无线耳机`），刷新后恢复。
+    多个筛选条件同时生效时取交集。"重置"清空所有筛选并重置 URL。
+
+    <rp-annotation label="搜索框行为">
+      <rp-enum>
+        <rp-enum-item label="默认" description="显示 placeholder，无条件" />
+        <rp-enum-item label="filled（主快照态）" description="有搜索词，显示清空按钮，触发模糊匹配" />
+        <rp-enum-item label="无结果" description="结果为 0 时列表区显示空状态，筛选栏保持不变" />
+      </rp-enum>
+    </rp-annotation>
+  </rp-annotation>
+
+  <rp-annotation id="4" label="批量操作栏">
+    勾选至少一条时显示，否则隐藏（不占位）。count 显示已选数量。
+
+    <rp-annotation label="批量删除流程">
+      点击"批量删除"弹出 rp-modal 确认，列出商品数量。确认后：
+      1. 已上架商品不可删除，系统自动过滤并在完成后提示跳过数量。
+      2. 请求为分批串行，每批 50 条。
+      3. 任一批失败时中断，toast 显示已成功/失败数量，可重试剩余。
+    </rp-annotation>
+
+    <rp-annotation label="权限差异">
+      <rp-enum>
+        <rp-enum-item label="product:write" description="全部操作可用" />
+        <rp-enum-item label="product:read" description="批量操作栏不显示；勾选框渲染但禁用" />
+      </rp-enum>
+    </rp-annotation>
+  </rp-annotation>
+
+  <rp-annotation id="5" label="商品列表表格">
+    <rp-annotation label="行状态">
+      <rp-enum>
+        <rp-enum-item label="正常" description="白底" />
+        <rp-enum-item label="已选中" description="浅蓝底色，复选框勾选" />
+        <rp-enum-item label="缺货" description="库存列红色警示标签" />
+        <rp-enum-item label="已下架" description="整行字体变灰，状态列灰色标签" />
+        <rp-enum-item label="草稿" description="虚线边框标识，状态列橙色标签" />
+      </rp-enum>
+    </rp-annotation>
+
+    <rp-annotation label="列表异步状态">
+      <rp-enum>
+        <rp-enum-item label="loading" description="骨架屏替代行内容，筛选栏禁用" />
+        <rp-enum-item label="loaded（主快照态）" description="正常渲染" />
+        <rp-enum-item label="empty（无筛选）" description="提示'还没有商品，去新增'" />
+        <rp-enum-item label="empty（有筛选）" description="提示'没有符合条件的商品'，显示清除筛选按钮" />
+        <rp-enum-item label="error" description="toast + 重试按钮，上次成功数据保留展示" />
+      </rp-enum>
+    </rp-annotation>
+  </rp-annotation>
+
+</rp-page>

@@ -1,0 +1,290 @@
+<rp-page
+    title="工单服务台"
+    route="/desk/tickets"
+    description="企业 IT 服务台的工单管理主页。高复杂度黄金范例：把带权限分层、SLA 计时、批量流转、多状态机的复杂页面，拆解到可直接驱动研发与 QA 的实施级原型。主快照取「主管视角 + 已选中 3 行 + 列表常态」这一信息密度最高的静息态；所有浮层（抽屉、弹窗、下拉、Toast）都不画在主快照里，而是在对应触发元素的注释中说明触发条件并渲染。">
+
+    <rp-main-view device="web" scale="0.62">
+      <rp-viewport device="web">
+        <rp-navbar height="60" data-pin="1">
+          <rp-logo label="HelpDesk"></rp-logo>
+          <rp-breadcrumb items="服务台,工单管理,全部工单"></rp-breadcrumb>
+          <rp-search state="filled" value="登录失败" has-clear-button placeholder="搜索工单号、标题、客户"></rp-search>
+          <rp-button label="新建工单" variant="primary" icon="plus"></rp-button>
+          <rp-badge count="23" max="99"></rp-badge>
+          <rp-avatar size="30" initials="SH"></rp-avatar>
+        </rp-navbar>
+
+        <rp-layout columns="220px minmax(0,1fr)">
+          <rp-sidebar width="220" data-pin="2">
+            <rp-list>
+              <rp-list-item label="我的待办" icon="inbox" badge="7"></rp-list-item>
+              <rp-list-item label="全部工单" icon="layout-dashboard" badge="156" state="selected"></rp-list-item>
+              <rp-list-item label="待我审批" icon="shield" badge="4"></rp-list-item>
+              <rp-list-item label="已超时" icon="circle-alert" badge="12"></rp-list-item>
+              <rp-list-item label="已归档" icon="archive"></rp-list-item>
+              <rp-list-item label="服务目录" icon="settings"></rp-list-item>
+            </rp-list>
+          </rp-sidebar>
+
+          <rp-panel padding="18" elevation="1">
+            <rp-layout rows="auto auto auto auto" gap="14">
+
+              <rp-layout columns="1fr max-content" gap="12" data-pin="3">
+                <rp-tabs active="全部">
+                  <rp-tab label="全部" badge="156"></rp-tab>
+                  <rp-tab label="待处理" badge="48"></rp-tab>
+                  <rp-tab label="处理中" badge="61"></rp-tab>
+                  <rp-tab label="待客户确认" badge="15"></rp-tab>
+                  <rp-tab label="已解决" badge="32"></rp-tab>
+                </rp-tabs>
+                <rp-button-group>
+                  <rp-button label="看板视图" variant="ghost" icon="layout-dashboard"></rp-button>
+                  <rp-button label="导出" variant="secondary" icon="file"></rp-button>
+                </rp-button-group>
+              </rp-layout>
+
+              <rp-layout columns="repeat(4, 1fr)" gap="12" data-pin="4">
+                <rp-stat-card label="今日新增" value="48" trend="up" change="+8 vs 昨日"></rp-stat-card>
+                <rp-stat-card label="SLA 达标率" value="92%" trend="down" change="-3% 本周"></rp-stat-card>
+                <rp-stat-card label="即将超时" value="12" trend="flat" change="2 小时内"></rp-stat-card>
+                <rp-stat-card label="平均响应" value="1.8h" trend="up" change="优于目标"></rp-stat-card>
+              </rp-layout>
+
+              <rp-panel padding="12" elevation="0" data-pin="5">
+                <rp-layout rows="auto auto" gap="12">
+                  <rp-layout columns="repeat(4, max-content) 1fr" gap="10">
+                    <rp-select state="collapsed" value="优先级：全部" options="全部,P1 紧急,P2 高,P3 中,P4 低"></rp-select>
+                    <rp-select state="collapsed" value="处理人：全部" options="全部,我,张工,李工,未分配"></rp-select>
+                    <rp-date-picker state="filled" value="2026-06-01 ~ 06-07"></rp-date-picker>
+                    <rp-toggle state="on" label="仅看我负责"></rp-toggle>
+                    <rp-button label="高级筛选" variant="link" icon="settings"></rp-button>
+                  </rp-layout>
+                  <rp-bulk-action-bar count="3" actions="批量分配,变更优先级,合并工单,批量关闭"></rp-bulk-action-bar>
+                </rp-layout>
+              </rp-panel>
+
+              <rp-layout rows="auto auto" gap="12" data-pin="6">
+                <rp-table rows="8" columns="工单号,标题,客户,优先级,处理人,SLA,状态" has-checkbox has-action></rp-table>
+                <rp-pagination total="156" current="1" page-size="20"></rp-pagination>
+              </rp-layout>
+
+            </rp-layout>
+          </rp-panel>
+        </rp-layout>
+      </rp-viewport>
+    </rp-main-view>
+
+    <rp-annotation id="1" label="全局导航栏">
+      固定吸顶。包含品牌、面包屑、全局搜索、新建入口、通知、当前用户。搜索作用域为「工单号 / 标题 / 客户名」三字段联合模糊匹配，回车触发。
+      <rp-annotation label="搜索行为">
+        触发条件：输入 ≥ 2 字符且回车，或点击搜索图标，防抖 300ms。结果以下拉浮层呈现（点击搜索框触发），不替换主列表，选中项跳转详情。
+        <rp-enum>
+          <rp-enum-item label="默认" description="未输入，placeholder 提示可搜字段。"><rp-search placeholder="搜索工单号、标题、客户"></rp-search></rp-enum-item>
+          <rp-enum-item label="有输入" description="filled 态，出现清除按钮。"><rp-search state="filled" value="登录失败" has-clear-button></rp-search></rp-enum-item>
+          <rp-enum-item label="结果下拉（聚焦时弹出）" description="前 5 条匹配 + 查看全部，浮层不常驻。"><rp-dropdown><rp-list><rp-list-item label="#TK-20593 VPN 登录失败" icon="file"></rp-list-item><rp-list-item label="#TK-20471 邮箱登录失败" icon="file"></rp-list-item></rp-list></rp-dropdown></rp-enum-item>
+          <rp-enum-item label="无结果" description="提示更换关键词，不清空输入。"><rp-dropdown><rp-empty label="无匹配工单" description="试试工单号或客户名"></rp-empty></rp-dropdown></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="新建入口与通知">
+        「新建工单」点击打开新建工单浮层（坐席/主管可见，只读审计隐藏）。通知角标汇总「分配给我 + @我 + SLA 升级」未读数，>99 显示 99+，点击打开通知抽屉。
+        <rp-enum>
+          <rp-enum-item label="新建按钮（坐席/主管）"><rp-button label="新建工单" variant="primary" icon="plus"></rp-button></rp-enum-item>
+          <rp-enum-item label="点击后：新建浮层" description="触发：点击「新建工单」。"><rp-modal title="新建工单" has-footer><rp-form><rp-form-item label="标题" required><rp-input placeholder="一句话描述问题"></rp-input></rp-form-item><rp-form-item label="优先级"><rp-select state="collapsed" value="P3 中" options="P1 紧急,P2 高,P3 中,P4 低"></rp-select></rp-form-item></rp-form></rp-modal></rp-enum-item>
+          <rp-enum-item label="只读审计" description="新建按钮不渲染。"><rp-badge count="23"></rp-badge></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="2" label="左侧工单分类导航">
+      固定 220px。分类项角标为该视图下「未读/待处理」实时计数，非总数。当前选中「全部工单」。
+      <rp-annotation label="角标计数口径">
+        <rp-enum>
+          <rp-enum-item label="我的待办" description="= 分配给当前用户且状态≠已解决。"><rp-list-item label="我的待办" icon="inbox" badge="7"></rp-list-item></rp-enum-item>
+          <rp-enum-item label="已超时" description="= SLA 截止已过且未解决，红色语义。"><rp-list-item label="已超时" icon="circle-alert" badge="12"></rp-list-item></rp-enum-item>
+          <rp-enum-item label="无计数" description="角标为 0 时不渲染。"><rp-list-item label="已归档" icon="archive"></rp-list-item></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="权限可见性">
+        「待我审批」仅审批人可见；「服务目录」仅管理员可见。普通坐席看不到这两项。
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="3" label="状态 Tab 与视图切换">
+      Tab 按工单状态机切分，角标为各状态实时数量，切换仅过滤当前列表不跳路由。右侧为看板/导出入口。
+      <rp-annotation label="状态机定义">
+        流转：待处理 → 处理中 → 待客户确认 →（确认）已解决 /（驳回）回到处理中。「全部」聚合所有未归档状态。
+        <rp-enum>
+          <rp-enum-item label="待处理" description="新建/重开，未分配或未开始。"><rp-tag label="待处理" color="orange"></rp-tag></rp-enum-item>
+          <rp-enum-item label="处理中" description="已分配并开始，SLA 计时中。"><rp-tag label="处理中" color="green"></rp-tag></rp-enum-item>
+          <rp-enum-item label="待客户确认" description="坐席标记解决，等待验收，48h 无响应自动关闭。"><rp-tag label="待确认"></rp-tag></rp-enum-item>
+          <rp-enum-item label="已解决" description="确认或自动关闭，进入归档倒计时。"><rp-tag label="已解决" color="green"></rp-tag></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="导出">
+        触发：点击「导出」，导出当前筛选结果 CSV，单次上限 5000 行，超限提示分批。只读审计可导出不可批量操作。
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="4" label="SLA 指标看板">
+      四个关键运营指标，实时聚合（30s 刷新）。趋势箭头对比上一周期，颜色语义独立于箭头方向——「即将超时」高值是负面信号。
+      <rp-annotation label="指标口径与告警阈值">
+        <rp-enum>
+          <rp-enum-item label="今日新增" description="当日 00:00 起创建数，含已关闭。"><rp-stat-card label="今日新增" value="48" trend="up" change="+8 vs 昨日"></rp-stat-card></rp-enum-item>
+          <rp-enum-item label="SLA 达标率" description="(按时响应 / 总数)，<90% 标红预警。"><rp-stat-card label="SLA 达标率" value="92%" trend="down" change="-3% 本周"></rp-stat-card></rp-enum-item>
+          <rp-enum-item label="即将超时" description="2h 内到期未解决，点击下钻到过滤列表。"><rp-stat-card label="即将超时" value="12" trend="flat" change="2 小时内"></rp-stat-card></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="加载与异常">
+        <rp-enum>
+          <rp-enum-item label="加载中" description="首次进入显示骨架，不阻塞列表。"><rp-loading rows="2"></rp-loading></rp-enum-item>
+          <rp-enum-item label="聚合失败" description="接口超时显示占位与重试。"><rp-alert type="error" title="指标加载失败" message="点击重试"></rp-alert></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="5" label="筛选与批量操作区">
+      多维筛选 + 批量操作栏。筛选项 AND 关系，变更即时生效。批量栏仅在勾选 ≥1 行时出现。
+      <rp-annotation label="筛选维度">
+        优先级、处理人为下拉单选；时间为范围选择；「仅看我负责」为快捷开关。主快照中下拉保持收起，展开态在此枚举（下拉浮层非常驻）。
+        <rp-enum>
+          <rp-enum-item label="收起态"><rp-select state="collapsed" value="优先级：全部" options="全部,P1 紧急,P2 高,P3 中,P4 低"></rp-select></rp-enum-item>
+          <rp-enum-item label="展开浮层（点击触发）" description="单选，选中即过滤。"><rp-select state="expanded" value="P1 紧急" options="全部,P1 紧急,P2 高,P3 中,P4 低"></rp-select></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="高级筛选">
+        触发：点击「高级筛选」，打开浮层补充条件（来源渠道、标签、自定义字段）。
+        <rp-enum>
+          <rp-enum-item label="点击后：高级筛选浮层"><rp-popover title="高级筛选"><rp-form layout="vertical"><rp-form-item label="来源渠道"><rp-select state="collapsed" value="全部" options="全部,邮件,电话,门户,IM"></rp-select></rp-form-item><rp-form-item label="标签"><rp-input placeholder="输入标签回车"></rp-input></rp-form-item></rp-form></rp-popover></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="批量操作栏">
+        触发：勾选 ≥1 行后出现，显示已选数与可执行动作。动作受权限与状态约束：跨状态工单不可「合并」。各动作再点击会触发对应确认浮层（见区域 7）。
+        <rp-enum>
+          <rp-enum-item label="未选择" description="批量栏隐藏。"><rp-table rows="2" columns="工单号,状态" has-checkbox></rp-table></rp-enum-item>
+          <rp-enum-item label="已选同状态" description="全部动作可用。"><rp-bulk-action-bar count="3" actions="批量分配,变更优先级,合并工单,批量关闭"></rp-bulk-action-bar></rp-enum-item>
+          <rp-enum-item label="已选跨状态" description="「合并」置灰，hover 提示原因。"><rp-bulk-action-bar count="5" actions="批量分配,变更优先级,批量关闭"></rp-bulk-action-bar></rp-enum-item>
+          <rp-enum-item label="无批量权限" description="只读角色勾选也不出现操作栏。"><rp-empty label="无批量操作权限"></rp-empty></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="6" label="工单列表与详情抽屉">
+      表格为页面主体。SLA 列按剩余时间染色。行尾操作列、行点击均为浮层触发点——详情抽屉不画在主快照里。
+      <rp-annotation label="表格行状态">
+        行的视觉状态由「读取状态 + SLA + 选中」三维叠加决定。
+        <rp-annotation label="单维状态">
+          <rp-enum>
+            <rp-enum-item label="已读默认"><rp-table-row state="default"></rp-table-row></rp-enum-item>
+            <rp-enum-item label="未读加粗" description="新分配或有新回复，蓝底加粗。"><rp-table-row state="unread"></rp-table-row></rp-enum-item>
+            <rp-enum-item label="选中" description="勾选行，蓝色描边，进入批量集合。"><rp-table-row state="selected"></rp-table-row></rp-enum-item>
+            <rp-enum-item label="超时高亮" description="SLA 已过期，整行黄底。"><rp-table-row state="highlighted"></rp-table-row></rp-enum-item>
+            <rp-enum-item label="已关闭置灰" description="不可再批量操作，半透明。"><rp-table-row state="disabled"></rp-table-row></rp-enum-item>
+          </rp-enum>
+        </rp-annotation>
+        <rp-annotation label="SLA 倒计时列">
+          剩余 >2h 正常色；≤2h 橙色；已超时红色并显示「超 Xh」。
+        </rp-annotation>
+      </rp-annotation>
+      <rp-annotation label="详情抽屉（行点击触发）">
+        触发：点击任意行或行尾「查看」，从右滑入 400px 抽屉，不遮挡选中行。抽屉切片上的 SLA 字段与底部操作组带 pin，分别对应下方两条子注释。
+        <rp-enum>
+          <rp-enum-item label="点击后：详情抽屉">
+            <rp-drawer title="工单 #TK-20593 详情" width="400">
+              <rp-layout rows="auto auto auto auto auto" gap="12">
+                <rp-steps steps="已提交,处理中,待确认,已解决" active="1"></rp-steps>
+                <rp-form>
+                  <rp-form-item label="优先级" required><rp-select state="collapsed" value="P1 紧急" options="P1 紧急,P2 高,P3 中,P4 低"></rp-select></rp-form-item>
+                  <rp-form-item label="处理人" required><rp-select state="collapsed" value="张工" options="未分配,我,张工,李工"></rp-select></rp-form-item>
+                  <rp-form-item label="SLA 截止" data-pin="1"><rp-input state="filled" value="今天 16:00（剩 1h42m）" error-message="即将超时"></rp-input></rp-form-item>
+                </rp-form>
+                <rp-alert type="warning" title="SLA 风险" message="P1 工单 1h 内未响应将升级。"></rp-alert>
+                <rp-list>
+                  <rp-list-item label="张工 · 已分配给我 · 14:08" icon="user"></rp-list-item>
+                  <rp-list-item label="系统 · SLA 计时开始 · 14:05" icon="bell"></rp-list-item>
+                </rp-list>
+                <rp-button-group data-pin="2">
+                  <rp-button label="转交"></rp-button>
+                  <rp-button label="升级" variant="danger"></rp-button>
+                  <rp-button label="标记解决" variant="primary"></rp-button>
+                </rp-button-group>
+              </rp-layout>
+            </rp-drawer>
+          </rp-enum-item>
+        </rp-enum>
+        <rp-annotation label="SLA 截止字段">
+          对应抽屉切片上的 pin 1。剩余 ≤2h 显示橙色并标注「即将超时」，已过期红色。修改截止时间需审批人权限。
+        </rp-annotation>
+        <rp-annotation label="操作按钮组（状态门槛）">
+          对应抽屉切片上的 pin 2。按钮可用性随工单状态变化。
+          <rp-enum>
+            <rp-enum-item label="处理中" description="可转交/升级/标记解决。"><rp-button-group><rp-button label="转交"></rp-button><rp-button label="升级" variant="danger"></rp-button><rp-button label="标记解决" variant="primary"></rp-button></rp-button-group></rp-enum-item>
+            <rp-enum-item label="待客户确认" description="只能催办或撤回，不能再次解决。"><rp-button-group><rp-button label="撤回解决"></rp-button><rp-button label="催办客户" variant="primary"></rp-button></rp-button-group></rp-enum-item>
+            <rp-enum-item label="已解决只读" description="仅可重开。"><rp-button label="重新打开" variant="secondary"></rp-button></rp-enum-item>
+          </rp-enum>
+          <rp-annotation label="标记解决校验">
+            点击「标记解决」需填写解决方案，未填报错。
+            <rp-enum>
+              <rp-enum-item label="未填方案" description="必填校验，红框 + 错误文案。"><rp-form-item label="解决方案" required error="请填写解决方案后再提交"><rp-textarea state="error" placeholder="描述根因与处理步骤"></rp-textarea></rp-form-item></rp-enum-item>
+              <rp-enum-item label="已填合规"><rp-form-item label="解决方案" required><rp-textarea state="filled" value="重新签发 VPN 证书并指导客户重连，已验证可登录。"></rp-textarea></rp-form-item></rp-enum-item>
+            </rp-enum>
+          </rp-annotation>
+        </rp-annotation>
+
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="7" label="批量动作的确认浮层与结果反馈">
+      区域 5 批量栏里的每个动作点击后，都先弹二次确认浮层，执行后给 Toast 反馈。这些浮层/Toast 不画进主快照，统一在此说明触发与渲染。
+      <rp-annotation label="危险操作二次确认">
+        触发：点击批量栏中对应动作。确认框列出影响范围与可逆性。
+        <rp-enum>
+          <rp-enum-item label="批量关闭" description="可逆，说明 7 天可重开。"><rp-modal title="批量关闭确认" has-footer><rp-alert type="warning" title="将关闭 3 条工单" message="客户 7 天内可重新打开。"></rp-alert></rp-modal></rp-enum-item>
+          <rp-enum-item label="合并工单" description="不可逆，需选主工单。"><rp-modal title="合并工单" has-footer><rp-alert type="error" title="合并不可撤销" message="3 条将并入主工单 #TK-20593，历史保留。"></rp-alert></rp-modal></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="操作结果 Toast">
+        触发：确认后执行完成，顶部 Toast 反馈，3s 自动消失。
+        <rp-enum>
+          <rp-enum-item label="成功" description="列表刷新。"><rp-toast type="success" title="已分配 3 条工单给张工"></rp-toast></rp-enum-item>
+          <rp-enum-item label="部分失败" description="说明成功/失败数，提供查看明细。"><rp-toast type="warning" title="2 条成功，1 条因状态冲突跳过"></rp-toast></rp-enum-item>
+          <rp-enum-item label="失败" description="保留选中态便于重试。"><rp-toast type="error" title="合并失败：工单状态冲突"></rp-toast></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="列表级异步态">
+        触发：切换 Tab/筛选或加载失败时替换表格区。
+        <rp-enum>
+          <rp-enum-item label="加载中" description="表格区骨架，工具栏与分页保持。"><rp-loading rows="6"></rp-loading></rp-enum-item>
+          <rp-enum-item label="空结果" description="提供「清除筛选」主操作。"><rp-empty label="没有符合条件的工单" description="调整筛选或清除条件" has-action></rp-empty></rp-enum-item>
+          <rp-enum-item label="加载失败" description="整表替换为错误态 + 重试。"><rp-alert type="error" title="工单加载失败" message="请检查网络后重试"></rp-alert></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+    </rp-annotation>
+
+    <rp-annotation id="8" label="权限角色矩阵">
+      本页跨 4 类角色，能力差异需显式说明，供研发实现 RBAC、QA 设计权限用例。这是跨区域的横切关注点，不绑定单一 pin。
+      <rp-enum>
+        <rp-enum-item label="坐席" description="处理分配给自己的工单，可新建/转交/解决；不可批量关闭他人工单。"><rp-card title="坐席 Agent" subtitle="一线处理"><rp-tag label="读写本人" color="green"></rp-tag></rp-card></rp-enum-item>
+        <rp-enum-item label="主管" description="本范例主视角。可批量操作、跨人分配、变更优先级、查看全量 SLA。"><rp-card title="主管 Supervisor" subtitle="团队管理"><rp-tag label="全量读写" color="orange"></rp-tag></rp-card></rp-enum-item>
+        <rp-enum-item label="审批人" description="额外可见「待我审批」，审批升级/高额变更。"><rp-card title="审批人 Approver" subtitle="流程审批"><rp-tag label="审批权" color="orange"></rp-tag></rp-card></rp-enum-item>
+        <rp-enum-item label="只读审计" description="可看可导出，所有写操作与批量栏隐藏。"><rp-card title="审计 Auditor" subtitle="合规查阅"><rp-tag label="只读" color="red"></rp-tag></rp-card></rp-enum-item>
+      </rp-enum>
+    </rp-annotation>
+
+    <rp-annotation id="9" label="边界与数据规模">
+      完备原型必须覆盖极值与边界。横切关注点，不绑定单一 pin。
+      <rp-annotation label="数据规模">
+        <rp-enum>
+          <rp-enum-item label="超长标题" description="单行截断 + 省略号，hover 显示全文。"><rp-table-row state="default"></rp-table-row></rp-enum-item>
+          <rp-enum-item label="海量结果" description=">5000 条提示精化筛选。"><rp-pagination total="5280" current="1" page-size="20"></rp-pagination></rp-enum-item>
+          <rp-enum-item label="角标溢出" description="未读 >99 显示 99+。"><rp-badge count="128" max="99"></rp-badge></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+      <rp-annotation label="SLA 边界时刻">
+        <rp-enum>
+          <rp-enum-item label="临界 0 分钟" description="倒计时为 0 归入「已超时」，染红。"><rp-tag label="超 0m" color="red"></rp-tag></rp-enum-item>
+          <rp-enum-item label="暂停态" description="转待客户确认时 SLA 暂停，显示「已暂停」。"><rp-tag label="SLA 暂停"></rp-tag></rp-enum-item>
+        </rp-enum>
+      </rp-annotation>
+    </rp-annotation>
+
+  </rp-page>

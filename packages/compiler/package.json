@@ -1,0 +1,21 @@
+{
+  "name": "rpml-compiler",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Compile a directory of .rpml files into one self-contained HTML with sidebar navigation",
+  "type": "module",
+  "bin": {
+    "rpml-compile": "src/cli.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "cli": "bun src/cli.ts"
+  },
+  "dependencies": {
+    "rpml-parser": "workspace:*",
+    "rpml-validator": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

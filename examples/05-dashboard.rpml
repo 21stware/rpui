@@ -1,0 +1,116 @@
+<rp-page
+  title="运营数据看板"
+  route="/dashboard"
+  description="SaaS 运营数据看板，主快照为管理员视角、日期范围筛选「本月」、有告警指标的加载完成态。">
+
+  <rp-main-view device="web" scale="0.6">
+    <rp-viewport device="web">
+      <rp-navbar height="56" data-pin="1">
+        <rp-logo label="OpsHub"></rp-logo>
+        <rp-breadcrumb items="控制台,运营看板"></rp-breadcrumb>
+        <rp-select state="filled" value="本月" options="今日,本周,本月,上月,自定义" />
+        <rp-date-picker state="filled" value="2026-06-01" />
+        <rp-button label="导出报告" variant="secondary" icon="download" />
+        <rp-avatar size="32" initials="OB"></rp-avatar>
+      </rp-navbar>
+
+      <rp-panel padding="24" elevation="0">
+        <rp-layout rows="auto auto auto auto" gap="20">
+
+          <rp-layout columns="repeat(4,1fr)" gap="16" data-pin="2">
+            <rp-stat-card label="月活用户" value="12,840" trend="up" change="+8.3% vs 上月" />
+            <rp-stat-card label="新注册" value="1,204" trend="up" change="+15% vs 上月" />
+            <rp-stat-card label="月收入（元）" value="¥384,200" trend="up" change="+4.1% vs 上月" />
+            <rp-stat-card label="错误率" value="2.4%" trend="down" change="⚠ 超阈值 2%" />
+          </rp-layout>
+
+          <rp-layout columns="2fr 1fr" gap="16" data-pin="3">
+            <rp-card title="用户趋势（30天）" padding="16">
+              <rp-empty title="趋势图" description="图表区域（实现层渲染折线图）" />
+            </rp-card>
+            <rp-card title="渠道来源分布" padding="16">
+              <rp-empty title="饼图区域" description="实现层渲染饼图" />
+            </rp-card>
+          </rp-layout>
+
+          <rp-card title="告警事件" padding="16" data-pin="4">
+            <rp-table rows="5" columns="时间,级别,事件描述,影响范围,状态" has-action />
+          </rp-card>
+
+          <rp-layout columns="1fr 1fr" gap="16" data-pin="5">
+            <rp-card title="Top 10 活跃工作区" padding="16">
+              <rp-table rows="10" columns="工作区,成员数,本月请求量,套餐" />
+            </rp-card>
+            <rp-card title="功能使用分布" padding="16">
+              <rp-table rows="8" columns="功能模块,使用次数,环比变化" />
+            </rp-card>
+          </rp-layout>
+
+        </rp-layout>
+      </rp-panel>
+    </rp-viewport>
+  </rp-main-view>
+
+  <rp-annotation id="1" label="顶部导航与筛选">
+    日期范围选择器控制全页所有指标的时间窗口。切换后全页数据刷新。
+    "自定义"选项展开日历区间选择器（rp-date-picker 双日期模式）。
+    导出报告按钮生成 PDF，包含当前筛选范围的所有指标，后端异步生成后发邮件。
+
+    <rp-annotation label="权限差异">
+      <rp-enum>
+        <rp-enum-item label="超级管理员" description="可见全部工作区汇总数据" />
+        <rp-enum-item label="工作区管理员" description="只可见自己工作区的数据，跨工作区汇总隐藏" />
+        <rp-enum-item label="只读分析角色" description="所有数据可见，导出按钮隐藏" />
+      </rp-enum>
+    </rp-annotation>
+  </rp-annotation>
+
+  <rp-annotation id="2" label="核心指标卡片">
+    每张卡片独立请求，允许局部 loading/error，不因单张卡片失败而阻塞整页。
+
+    <rp-annotation label="卡片状态">
+      <rp-enum>
+        <rp-enum-item label="loading" description="骨架屏替代数值区" />
+        <rp-enum-item label="loaded 正常" description="显示数值 + trend 箭头 + change 对比文字" />
+        <rp-enum-item label="告警" description="错误率超阈值时，卡片边框红色，change 文字显示 ⚠ 图标（主快照态）" />
+        <rp-enum-item label="error" description="数值区显示 '—'，卡片右上角重试图标" />
+      </rp-enum>
+    </rp-annotation>
+
+    <rp-annotation label="错误率阈值规则">
+      阈值由系统配置（默认 2%）。超过阈值时：
+      1. 卡片进入告警态。
+      2. 顶部出现全局 rp-alert（red，不自动关闭）。
+      3. 告警事件表自动筛选到"错误率"类别。
+    </rp-annotation>
+  </rp-annotation>
+
+  <rp-annotation id="3" label="趋势图与分布图">
+    图表区域由实现层渲染（如 ECharts），RPML 用 rp-empty 标记占位区域和尺寸。
+    图表数据与卡片数据共用同一接口批量请求（GET /api/dashboard?range=month）。
+
+    <rp-annotation label="图表异步状态">
+      <rp-enum>
+        <rp-enum-item label="loading" description="灰色骨架矩形" />
+        <rp-enum-item label="loaded" description="折线图/饼图渲染" />
+        <rp-enum-item label="empty（无数据）" description="显示'该时间段暂无数据'" />
+        <rp-enum-item label="error" description="图表区域显示重试按钮" />
+      </rp-enum>
+    </rp-annotation>
+  </rp-annotation>
+
+  <rp-annotation id="4" label="告警事件表">
+    告警事件实时推送（WebSocket），新事件自动插入表顶部并闪烁高亮 3s。
+    级别列：Critical（红）、Warning（橙）、Info（蓝）。
+
+    <rp-annotation label="告警行操作">
+      操作列：「确认」将状态改为 acknowledged（需 ops:write 权限）；「静默」在配置时间内不再弹出该类告警。
+    </rp-annotation>
+  </rp-annotation>
+
+  <rp-annotation id="5" label="Top 活跃工作区 & 功能分布">
+    仅超级管理员可见完整数据；工作区管理员仅看到自己工作区所在行（其余行隐藏）。
+    排序固定为本周期请求量降序，不支持前端重排序。
+  </rp-annotation>
+
+</rp-page>

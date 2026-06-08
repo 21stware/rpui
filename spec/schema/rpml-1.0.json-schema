@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RpmlNode",
+  "definitions": {
+    "RpmlNode": {
+      "type": "object",
+      "required": ["tag"],
+      "properties": {
+        "tag":      { "type": "string" },
+        "attrs":    { "type": "object", "additionalProperties": { "type": "string" } },
+        "children": { "type": "array", "items": { "$ref": "#/definitions/RpmlNode" } },
+        "text":     { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "RpPage": {
+      "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
+      "properties": {
+        "tag": { "type": "string", "const": "rp-page" },
+        "attrs": {
+          "type": "object",
+          "required": ["title"],
+          "properties": {
+            "title":       { "type": "string" },
+            "route":       { "type": "string" },
+            "description": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "#/definitions/RpMainView" },
+              { "$ref": "#/definitions/RpAnnotationTop" }
+            ]
+          }
+        }
+      }
+    },
+
+    "RpMainView": {
+      "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
+      "properties": {
+        "tag": { "type": "string", "const": "rp-main-view" },
+        "attrs": {
+          "type": "object",
+          "properties": {
+            "device": { "type": "string", "enum": ["web", "ipad", "mobile"] },
+            "scale":  { "type": "string" },
+            "width":  { "type": "string" },
+            "height": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/RpmlNode" }
+        }
+      }
+    },
+
+    "RpAnnotationTop": {
+      "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
+      "properties": {
+        "tag": { "type": "string", "const": "rp-annotation" },
+        "attrs": {
+          "type": "object",
+          "required": ["id"],
+          "properties": {
+            "id":    { "type": "string", "pattern": "^[1-9][0-9]*$" },
+            "label": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "#/definitions/RpAnnotationNested" },
+              { "$ref": "#/definitions/RpEnum" },
+              { "$ref": "#/definitions/RpmlNode" }
+            ]
+          }
+        },
+        "text": { "type": "string" }
+      }
+    },
+
+    "RpAnnotationNested": {
+      "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
+      "properties": {
+        "tag": { "type": "string", "const": "rp-annotation" },
+        "attrs": {
+          "type": "object",
+          "properties": {
+            "label": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "$ref": "#/definitions/RpAnnotationNested" },
+              { "$ref": "#/definitions/RpEnum" },
+              { "$ref": "#/definitions/RpmlNode" }
+            ]
+          }
+        },
+        "text": { "type": "string" }
+      }
+    },
+
+    "RpEnum": {
+      "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
+      "properties": {
+        "tag": { "type": "string", "const": "rp-enum" },
+        "attrs": { "type": "object", "additionalProperties": false },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/RpEnumItem" }
+        }
+      }
+    },
+
+    "RpEnumItem": {
+      "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
+      "properties": {
+        "tag": { "type": "string", "const": "rp-enum-item" },
+        "attrs": {
+          "type": "object",
+          "required": ["label"],
+          "properties": {
+            "label":       { "type": "string" },
+            "description": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/RpmlNode" }
+        },
+        "text": { "type": "string" }
+      }
+    }
+  },
+
+  "$ref": "#/definitions/RpPage"
+}

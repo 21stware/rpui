@@ -1,0 +1,33 @@
+{
+  "name": "@bracken/rpui",
+  "version": "0.2.1",
+  "description": "RPUI: static UI prototype renderer (RPML Web Components runtime)",
+  "type": "module",
+  "main": "dist/rpui.js",
+  "module": "dist/rpui.js",
+  "types": "dist/rpui.d.ts",
+  "exports": {
+    ".": { "types": "./dist/rpui.d.ts", "default": "./dist/rpui.js" },
+    "./dist/rpui.js": "./dist/rpui.js",
+    "./llms.txt": "../../llms.txt",
+    "./SKILL.md": "../../SKILL.md"
+  },
+  "sideEffects": true,
+  "files": ["dist"],
+  "scripts": {
+    "dev": "vite --open /preview/ --config vite.config.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build:js": "vite build --config vite.config.ts && vite build --config vite.gallery.config.ts",
+    "build:types": "tsc -p tsconfig.types.json",
+    "build": "bun run clean && bun run typecheck && bun run build:js && bun run build:types",
+    "clean": "rm -rf dist && mkdir -p dist",
+    "release": "bun run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^5.4.11"
+  },
+  "dependencies": {
+    "rpml-parser": "workspace:*"
+  }
+}

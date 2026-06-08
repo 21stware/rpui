@@ -14,37 +14,72 @@ A prototype imports the generated runtime once:
 
 The runtime registers custom elements as a side effect and injects its global stylesheet and inline SVG icons. The model-facing component reference is `llms.txt`, and the repeatable prototype authoring workflow is `SKILL.md`.
 
+## Monorepo structure
+
+This is a **Bun workspace monorepo**. All source code lives under `packages/`.
+
+```
+packages/renderer-web/   — Web Components runtime (@bracken/rpui, was rpui src/)
+packages/parser/         — .rpml text → AST → DOM (rpml-parser, private)
+packages/validator/      — structural + semantic validation + CLI (rpml-validator, private)
+packages/compiler/       — compile a dir of .rpml → one self-contained HTML (rpml-compiler, private)
+packages/vscode-extension/ — VS Code extension (rpml-vscode-extension, WIP, private)
+spec/                    — RPML language specification
+examples/                — .rpml example files (01–09; viewer loads via ?rpml=)
+agent/                   — agent guides, prompts, context packs
+tools/                   — dev scripts (validate-examples.sh, check-spec-coverage.ts)
+demo/viewer.html         — RPML viewer (single-file or folder-drop gallery)
+preview/                 — dev component browser (served by vite dev server)
+dist/                    — root dist/ (synced from packages/renderer-web/dist/ at build)
+```
+
 ## Development commands
 
 ```bash
-npm install        # install dependencies
-npm run dev        # open the source-mode component preview at /preview/
-npm run typecheck  # run TypeScript type checking without emitting files
-npm run build      # type-check, bundle dist/rpui.js, and emit declarations
-npm run release    # currently aliases npm run build
-npm run clean      # remove and recreate dist/
+bun install                                    # install all workspace deps
+bun run dev                                    # open component preview at /preview/
+bun run --cwd packages/renderer-web typecheck  # TypeScript type-check
+bun run build                                  # build rpui.js + rpml-loader.js + gallery.js
+bun run validate <file.rpml>                   # validate one .rpml
+bash tools/validate-examples.sh                # validate all examples/*.rpml
+bun run compile <dir> -o out.html              # compile a dir of .rpml → one HTML
 ```
 
-Use `npm run dev` during component development. It serves `preview/index.html`, which imports `/src/rpui.ts` directly through Vite.
-
-After building, open `demo/index.html` (complex web dashboard) or `demo/showcase.html` (mobile app) in a browser. `demo/golden.html` is the high-complexity reference prototype. The demo files import `../dist/rpui.js`, so they validate the built release artifact. For browsing the full component catalog during development, use `npm run dev` (source-mode preview at `/preview/`).
-
-There are currently no test or lint scripts in `package.json`. To type-check/build after a change, use `npm run typecheck` and `npm run build`.
+Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages/renderer-web/src/rpui.ts` via Vite (root is repo root). `demo/viewer.html` imports `../dist/rpml-loader.js` + `../dist/gallery.js` — run the build first.
 
 ## TypeScript/build setup
 
-- `package.json` is ESM (`"type": "module"`).
-- `src/rpui.ts` is the public side-effect entry/aggregator. Do not hand-edit generated files in `dist/`.
-- `tsconfig.json` type-checks `src/**/*.ts` with `strict: true` and `noEmit: true`.
-- `vite.config.ts` bundles the modular source into a single ESM runtime at `dist/rpui.js`.
-- `tsconfig.types.json` emits declaration files into `dist/`.
-- Build output includes `dist/rpui.js`, `dist/rpui.d.ts`, source maps, and declarations for internal modules.
-- The package exposes `dist/rpui.js` through `main`, `module`, and `exports`.
-- The package is side-effectful: importing it registers all custom elements.
+- Root `package.json` is a Bun workspace root (private, no src).
+- `packages/renderer-web/` contains all component source. Two Vite configs:
+  - `vite.config.ts` → `rpui.js` (runtime) + `rpml-loader.js` (imports rpui.js as shared chunk).
+  - `vite.gallery.config.ts` → `gallery.js`, a fully self-contained bundle (runtime + parser + gallery chrome, no shared chunks) so the compiler can inline it as one `<script>`.
+- `packages/renderer-web/src/rpui.ts` is the public side-effect entry. Do not hand-edit `dist/`.
+- After building, sync root `dist/` manually: `cp packages/renderer-web/dist/*.js dist/` (CI does this automatically).
+- `rpml-parser` / `rpml-validator` export from `dist/` with `.d.ts`; `renderer-web` depends on `rpml-parser` (workspace:*) so Bun symlinks it for tsc/vite resolution.
+
+## RPML file format
+
+`.rpml` files are **HTML-like markup** (parsed as HTML, not strict XML — boolean attrs and bare `&` allowed; self-closing leaves are normalized by `expandSelfClosing`). Root element `<rp-page>`, **no HTML wrapper**. Load at runtime with:
+
+```html
+<script type="module" src="dist/rpml-loader.js"></script>
+<rpml-app src="./my-page.rpml"></rpml-app>
+```
+
+Or via URL param: `demo/viewer.html?rpml=../examples/04-ticket-desk.rpml`
+
+## Viewer & compiler
+
+- `demo/viewer.html`: drag a single `.rpml` to render it; drag a **folder** to build a sidebar gallery (nav tree from file paths, hash routing `#<path>`, `index.rpml` as default home, no localStorage). Also supports `?rpml=` and a file picker.
+- `bun run compile <dir> -o out.html`: recursively reads `.rpml`, validates (errors abort, warnings print), inlines all sources as `globalThis.__RPML_DOCS__` plus `gallery.js` into one self-contained HTML that works from `file://`. `index.rpml` is the default home.
+- Shared logic lives in `packages/renderer-web/src/gallery.ts` (`mountGallery(docs, host)`); both the viewer and compiler consume it — single source of truth.
+
+
+Validate with: `bun packages/validator/src/cli.ts <file.rpml>`
 
 ## Runtime architecture
 
-Runtime source is split into internal modules and bundled into one browser file. `src/rpui.ts` is the public side-effect entry/aggregator; implementation lives in:
+Runtime source lives in `packages/renderer-web/src/`, bundled into one browser file. `rpui.ts` is the public side-effect entry; implementation lives in:
 
 - `src/core/` — inline icons, runtime CSS injection, DOM/attribute helpers, device sizing helpers.
 - `src/canvas/` — `RpPage`, `RpMainView`, `RpAnnotation`, `RpEnum`, and `RpEnumItem`.
@@ -95,10 +130,7 @@ For state coverage, consider loaded, empty, loading, error/retry, search default
 
 ## Demo/reference files
 
-- `README.md` gives the project summary, build/demo instructions, and release artifact notes.
-- `demo/index.html` — complex web dashboard (task management): pins, nested annotations, overlay-trigger pattern.
-- `demo/showcase.html` — mobile app prototype (`device="mobile"`).
-- `demo/golden.html` — high-complexity reference (9 top-level annotations, 3–5 levels deep, implementation-level annotation bodies); study before authoring complex prototypes.
-- `preview/index.html` — development-only component catalog grouped by family (input/display/navigation/feedback/enterprise/iOS/macOS); imports `/src/rpui.ts` and is served by `npm run dev` at `/preview/`. Not part of the published `demo/` smoke tests.
+- `demo/viewer.html` — RPML viewer: load any `.rpml` via `?rpml=../examples/04-ticket-desk.rpml`, drag-and-drop, or file picker.
+- `examples/` — all 9 prototype examples as `.rpml` files (01–09); see `examples/README.md`.
 - `llms.txt` is the component/tag reference for generated prototypes.
 - `SKILL.md` documents the prototype implementation workflow, recursive decomposition method, overlay-trigger pattern, and quality bar.

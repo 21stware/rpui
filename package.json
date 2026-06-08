@@ -1,47 +1,17 @@
 {
-  "name": "@21stware/rpui",
-  "version": "0.2.1",
-  "description": "Rapid Prototype UI: static UI prototype canvas and snapshot primitives implemented as Web Components.",
-  "type": "module",
-  "main": "dist/rpui.js",
-  "module": "dist/rpui.js",
-  "types": "dist/rpui.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/rpui.d.ts",
-      "default": "./dist/rpui.js"
-    },
-    "./dist/rpui.js": "./dist/rpui.js",
-    "./llms.txt": "./llms.txt",
-    "./SKILL.md": "./SKILL.md"
-  },
-  "sideEffects": true,
-  "files": [
-    "dist",
-    "llms.txt",
-    "SKILL.md",
-    "README.md",
-    "LICENSE"
-  ],
+  "name": "rpml-monorepo",
+  "private": true,
+  "workspaces": ["packages/*"],
   "scripts": {
-    "dev": "vite --open /preview/",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "build:js": "vite build",
-    "build:types": "tsc -p tsconfig.types.json",
-    "build": "npm run clean && npm run typecheck && npm run build:js && npm run build:types",
-    "release": "npm run build",
-    "clean": "rm -rf dist && mkdir -p dist"
+    "dev": "bun run --cwd packages/renderer-web dev",
+    "build": "bun run --cwd packages/renderer-web build",
+    "build:all": "bun run --cwd packages/renderer-web build && bun run --cwd packages/parser build && bun run --cwd packages/validator build",
+    "typecheck": "bun run --cwd packages/renderer-web typecheck",
+    "validate": "bun run --cwd packages/validator cli",
+    "compile": "bun packages/compiler/src/cli.ts"
   },
-  "keywords": [
-    "web-components",
-    "prototype",
-    "ui",
-    "snapshot",
-    "llm"
-  ],
-  "license": "UNLICENSED",
   "devDependencies": {
-    "typescript": "^5.8.3",
-    "vite": "^5.4.11"
+    "@types/node": "^25.9.2",
+    "typescript": "^5.8.3"
   }
 }

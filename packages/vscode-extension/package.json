@@ -1,0 +1,10 @@
+{
+  "name": "rpml-vscode-extension",
+  "version": "0.1.0",
+  "description": "VS Code extension for RPML (.rpml syntax highlight, preview, diagnostics) — WIP",
+  "type": "commonjs",
+  "private": true,
+  "scripts": {
+    "build": "echo 'vscode-extension: not yet implemented'"
+  }
+}

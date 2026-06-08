@@ -1,0 +1,15 @@
+<rp-page title="最小示例" route="/minimal" description="一个最小合法的 RPML 文件，包含一个区域和一条注释。">
+
+  <rp-main-view device="web" scale="0.8">
+    <rp-viewport device="web">
+      <rp-navbar height="56" data-pin="1">
+        <rp-logo label="App"></rp-logo>
+      </rp-navbar>
+    </rp-viewport>
+  </rp-main-view>
+
+  <rp-annotation id="1" label="顶部导航">
+    固定顶栏，高度 56px，包含 Logo。
+  </rp-annotation>
+
+</rp-page>
