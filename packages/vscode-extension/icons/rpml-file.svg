@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- 文件主体 -->
+  <path d="M24 8h48l32 32v80H24V8z" fill="#292929" />
+  <!-- 折角 -->
+  <path d="M72 8v32h32L72 8z" fill="#848484" />
+  <!-- RP 文本 -->
+  <text x="64" y="94" 
+        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+        font-size="46" 
+        font-weight="900" 
+        fill="#FFFFFF" 
+        text-anchor="middle" 
+        letter-spacing="-2">RP</text>
+</svg>

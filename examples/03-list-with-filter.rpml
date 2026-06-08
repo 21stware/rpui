@@ -6,7 +6,7 @@
   <view device="web" scale="0.62">
     <viewport device="web">
       <navigator height="56" data-pin="1">
-        <logo label="ShopAdmin"></logo>
+        <logo label="Admin"></logo>
         <breadcrumb items="控制台,商品管理,商品列表"></breadcrumb>
         <button label="新增商品" variant="primary" icon="plus" />
       </navigator>

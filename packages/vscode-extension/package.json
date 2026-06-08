@@ -1,10 +1,95 @@
 {
   "name": "rpml-vscode-extension",
+  "displayName": "RPML",
   "version": "0.1.0",
-  "description": "VS Code extension for RPML (.rpml syntax highlight, preview, diagnostics) — WIP",
+  "description": "RPML (.rpml) language support: syntax highlighting, tag/attribute completion, validation, and live preview.",
   "type": "commonjs",
   "private": true,
+  "publisher": "bracken",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/21stware/rpui.git",
+    "directory": "packages/vscode-extension"
+  },
+  "engines": { "vscode": "^1.84.0" },
+  "categories": ["Programming Languages", "Snippets", "Visualization"],
+  "main": "./dist/extension.js",
+  "activationEvents": ["onLanguage:rpml"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "rpml",
+        "aliases": ["RPML", "rpml"],
+        "extensions": [".rpml"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/rpml-file.s.svg",
+          "dark": "./icons/rpml-file.s.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rpml",
+        "scopeName": "text.html.rpml",
+        "path": "./syntax/rpml.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "rpml.openPreview",
+        "title": "RPML: Open Preview",
+        "icon": "$(open-preview)"
+      },
+      {
+        "command": "rpml.openPreviewToSide",
+        "title": "RPML: Open Preview to the Side",
+        "icon": "$(open-preview)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "rpml.openPreviewToSide",
+          "when": "editorLangId == rpml",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        { "command": "rpml.openPreview", "when": "editorLangId == rpml" },
+        { "command": "rpml.openPreviewToSide", "when": "editorLangId == rpml" }
+      ]
+    },
+    "configuration": {
+      "title": "RPML",
+      "properties": {
+        "rpml.validate.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable structural + pin validation diagnostics for .rpml files."
+        }
+      }
+    }
+  },
   "scripts": {
-    "build": "echo 'vscode-extension: not yet implemented'"
+    "gen": "bun scripts/gen-elements.ts",
+    "copy-runtime": "mkdir -p media && cp ../../dist/rpui.js media/rpui.js",
+    "build": "bun run gen && bun run copy-runtime && bun run bundle",
+    "bundle": "esbuild src/extension.ts --bundle --platform=node --target=node18 --external:vscode --format=cjs --outfile=dist/extension.js",
+    "watch": "esbuild src/extension.ts --bundle --platform=node --target=node18 --external:vscode --format=cjs --outfile=dist/extension.js --watch",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "vscode:prepublish": "bun run build",
+    "package": "bun run build && vsce package --no-dependencies --out rpml-vscode-extension.vsix"
+  },
+  "dependencies": {
+    "rpml-parser": "workspace:*",
+    "rpml-validator": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/vscode": "^1.84.0",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.8.3"
   }
 }

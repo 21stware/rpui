@@ -1,0 +1,62 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "RPML",
+  "scopeName": "text.html.rpml",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#tag" },
+    { "include": "#entity" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.block.rpml",
+      "begin": "<!--",
+      "end": "-->",
+      "captures": { "0": { "name": "punctuation.definition.comment.rpml" } }
+    },
+    "entity": {
+      "name": "constant.character.entity.html.rpml",
+      "match": "&(?:[a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+);"
+    },
+    "tag": {
+      "begin": "(</?)([a-zA-Z][\\w:-]*)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.rpml" },
+        "2": { "name": "entity.name.tag.rpml" }
+      },
+      "end": "(/?>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.rpml" }
+      },
+      "name": "meta.tag.rpml",
+      "patterns": [
+        { "include": "#dataPinAttribute" },
+        { "include": "#attribute" }
+      ]
+    },
+    "dataPinAttribute": {
+      "match": "(?:\\s)(data-pin)(=)(\"[^\"]*\"|'[^']*')",
+      "captures": {
+        "1": { "name": "keyword.control.pin.rpml" },
+        "2": { "name": "punctuation.separator.key-value.rpml" },
+        "3": { "name": "constant.numeric.pin.rpml" }
+      }
+    },
+    "attribute": {
+      "patterns": [
+        {
+          "match": "([a-zA-Z][\\w:-]*)(=)(\"[^\"]*\"|'[^']*')",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.rpml" },
+            "2": { "name": "punctuation.separator.key-value.rpml" },
+            "3": { "name": "string.quoted.rpml" }
+          }
+        },
+        {
+          "match": "\\b([a-zA-Z][\\w:-]*)\\b(?!=)",
+          "name": "entity.other.attribute-name.boolean.rpml"
+        }
+      ]
+    }
+  }
+}

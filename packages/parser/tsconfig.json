@@ -4,5 +4,6 @@
     "lib": ["DOM", "ES2022"], "strict": true,
     "declaration": true, "emitDeclarationOnly": true, "outDir": "dist"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"]
 }

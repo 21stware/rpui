@@ -4,16 +4,16 @@
   "private": true,
   "description": "RPML document validator — structural + semantic checks",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "bin": {
     "rpml": "src/cli.ts"
   },
   "exports": {
     ".": {
+      "types": "./src/index.ts",
       "bun": "./src/index.ts",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "default": "./src/index.ts"
     }
   },
   "scripts": {

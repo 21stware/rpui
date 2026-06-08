@@ -1,0 +1,9 @@
+# Source — only the bundled dist/ ships
+src/**
+scripts/**
+tsconfig.json
+.gitignore
+**/*.map
+node_modules/**
+
+# Keep: dist/extension.js, media/rpui.js, data/elements.json, syntax/, language-configuration.json
