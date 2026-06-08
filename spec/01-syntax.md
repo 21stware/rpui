@@ -2,17 +2,17 @@
 
 ## 文件格式
 
-`.rpml` 文件是 **类 HTML 的标记**，UTF-8 编码，根元素为 `<rp-page>`。不需要 `<?xml?>` 声明，不需要 `<html>/<head>/<body>` 包装。
+`.rpml` 文件是 **类 HTML 的标记**，UTF-8 编码，根元素为 `<page-el>`。不需要 `<?xml?>` 声明，不需要 `<html>/<head>/<body>` 包装。
 
 渲染器按 **HTML 规则**解析（而非严格 XML），因此：
 - 布尔属性可省略值：`required`、`has-action`、`has-clear-button` 合法。
 - 文本中的裸 `&` 不需要转义（但 `&amp;`/`&lt;`/`&gt;` 仍被识别）。
-- 自闭合写法 `<rp-button />` 与显式闭合 `<rp-button></rp-button>` 均可。
+- 自闭合写法 `<button-el />` 与显式闭合 `<button-el></button-el>` 均可。
 
 ```html
-<rp-page title="页面标题" route="/route" description="说明">
+<page-el title="页面标题" route="/route" description="说明">
   ...
-</rp-page>
+</page-el>
 ```
 
 ## 标签命名
@@ -39,11 +39,11 @@
 
 ## 嵌套规则
 
-- `<rp-page>` 是唯一合法的根元素。
-- `<rp-main-view>` 必须是 `<rp-page>` 的直接子元素，且恰好一个。
-- 快照原语（`rp-viewport` 及其内部元素）嵌套在 `<rp-main-view>` 内。
-- `<rp-annotation id="N">` 是 `<rp-page>` 的直接子元素（顶级注释）。
-- 嵌套注释写在另一个 `<rp-annotation>` 内部。
+- `<page-el>` 是唯一合法的根元素。
+- `<main-view>` 必须是 `<page-el>` 的直接子元素，且恰好一个。
+- 快照原语（`viewport-el` 及其内部元素）嵌套在 `<main-view>` 内。
+- `<annotation-el id="N">` 是 `<page-el>` 的直接子元素（顶级注释）。
+- 嵌套注释写在另一个 `<annotation-el>` 内部。
 
 ## 文本内容
 

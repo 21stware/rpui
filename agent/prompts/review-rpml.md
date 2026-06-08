@@ -6,15 +6,15 @@ You are an RPML reviewer. Given an RPML document, check it against the following
 
 ### Structure
 
-- [ ] Root element is `<rp-page>` with `title`, `route`, and `description` attributes.
-- [ ] Exactly one `<rp-main-view>` inside `<rp-page>`.
-- [ ] `<rp-main-view>` has a `device` attribute (`web`, `ipad`, or `mobile`).
+- [ ] Root element is `<page-el>` with `title`, `route`, and `description` attributes.
+- [ ] Exactly one `<main-view>` inside `<page-el>`.
+- [ ] `<main-view>` has a `device` attribute (`web`, `ipad`, or `mobile`).
 - [ ] Main snapshot is built with `rp-*` primitives only — no `div`, `button`, `input`, `table`, `script`, `style`, or external resources.
 
 ### Pin/annotation parity
 
-- [ ] Every `data-pin="N"` in the main view has a matching top-level `<rp-annotation id="N">`.
-- [ ] Every top-level `<rp-annotation id="N">` has a corresponding `data-pin="N"` in the main view.
+- [ ] Every `data-pin="N"` in the main view has a matching top-level `<annotation-el id="N">`.
+- [ ] Every top-level `<annotation-el id="N">` has a corresponding `data-pin="N"` in the main view.
 - [ ] Pin numbers are consecutive from 1 with no gaps.
 
 ### Annotation count and depth
@@ -25,7 +25,7 @@ You are an RPML reviewer. Given an RPML document, check it against the following
 
 ### Enum coverage
 
-- [ ] Every conditional branch has a corresponding `<rp-enum>` with one `<rp-enum-item>` per branch.
+- [ ] Every conditional branch has a corresponding `<enum-el>` with one `<enum-item>` per branch.
 - [ ] Async states covered: loading, empty, error/retry, partial-failure, timeout.
 - [ ] Permission variants covered: every role that sees different UI has its own enum item.
 - [ ] Validation states covered: default, filled, error (with error message), disabled.
@@ -42,7 +42,7 @@ You are an RPML reviewer. Given an RPML document, check it against the following
 
 - [ ] No `onclick`, event attributes, `addEventListener`, timers, or API call references in markup.
 - [ ] No `position:absolute` or `position:fixed` in snapshot content.
-- [ ] No external image URLs; `<rp-image-placeholder>` used instead.
+- [ ] No external image URLs; `<image-placeholder>` used instead.
 - [ ] No `proto-*` or `snap-*` tags (compatibility aliases; new work uses `rp-*`).
 - [ ] Overlays not present in the main snapshot (only their triggers are pinned there).
 

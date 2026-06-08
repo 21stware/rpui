@@ -17,7 +17,7 @@
     "RpPage": {
       "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
       "properties": {
-        "tag": { "type": "string", "const": "rp-page" },
+        "tag": { "type": "string", "const": "page-el" },
         "attrs": {
           "type": "object",
           "required": ["title"],
@@ -43,7 +43,7 @@
     "RpMainView": {
       "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
       "properties": {
-        "tag": { "type": "string", "const": "rp-main-view" },
+        "tag": { "type": "string", "const": "main-view" },
         "attrs": {
           "type": "object",
           "properties": {
@@ -64,7 +64,7 @@
     "RpAnnotationTop": {
       "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
       "properties": {
-        "tag": { "type": "string", "const": "rp-annotation" },
+        "tag": { "type": "string", "const": "annotation-el" },
         "attrs": {
           "type": "object",
           "required": ["id"],
@@ -91,7 +91,7 @@
     "RpAnnotationNested": {
       "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
       "properties": {
-        "tag": { "type": "string", "const": "rp-annotation" },
+        "tag": { "type": "string", "const": "annotation-el" },
         "attrs": {
           "type": "object",
           "properties": {
@@ -116,7 +116,7 @@
     "RpEnum": {
       "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
       "properties": {
-        "tag": { "type": "string", "const": "rp-enum" },
+        "tag": { "type": "string", "const": "enum-el" },
         "attrs": { "type": "object", "additionalProperties": false },
         "children": {
           "type": "array",
@@ -128,7 +128,7 @@
     "RpEnumItem": {
       "allOf": [{ "$ref": "#/definitions/RpmlNode" }],
       "properties": {
-        "tag": { "type": "string", "const": "rp-enum-item" },
+        "tag": { "type": "string", "const": "enum-item" },
         "attrs": {
           "type": "object",
           "required": ["label"],

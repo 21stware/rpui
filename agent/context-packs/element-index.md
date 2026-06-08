@@ -6,165 +6,165 @@ All ~109 elements registered by the RPUI runtime. Each available as `rp-<tag>` (
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| rp-page | Canvas | Root document shell; holds title, route, description; layouts main view left, annotations right |
-| rp-main-view | Canvas | Scaled snapshot frame; device preset sets fixed width; scale attribute zooms the canvas |
-| rp-annotation | Canvas | Specification block; top-level (id=N) links to data-pin="N"; nested adds sub-region spec |
-| rp-enum | Canvas | Horizontal row of mutually exclusive state/variant cards |
-| rp-enum-item | Canvas | One state card with label and optional description; auto-numbered with a black square badge |
+| page-el | Canvas | Root document shell; holds title, route, description; layouts main view left, annotations right |
+| main-view | Canvas | Scaled snapshot frame; device preset sets fixed width; scale attribute zooms the canvas |
+| annotation-el | Canvas | Specification block; top-level (id=N) links to data-pin="N"; nested adds sub-region spec |
+| enum-el | Canvas | Horizontal row of mutually exclusive state/variant cards |
+| enum-item | Canvas | One state card with label and optional description; auto-numbered with a black square badge |
 
 ## Layout primitives
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| rp-viewport | Layout | Fixed-width snapshot viewport matching a device preset |
-| rp-layout | Layout | CSS grid container with columns, rows, and gap attributes |
-| rp-panel | Layout | White panel/card shell with optional padding and elevation |
-| rp-navbar | Layout | Top navigation bar container |
-| rp-sidebar | Layout | Side navigation container; supports collapsed state |
-| rp-logo | Layout | Logo placeholder with size and label |
-| rp-split-pane | Layout | Two-column split layout |
-| rp-divider | Layout | Horizontal or vertical divider line |
-| rp-spacer | Layout | Empty space with explicit size |
+| viewport-el | Layout | Fixed-width snapshot viewport matching a device preset |
+| layout-el | Layout | CSS grid container with columns, rows, and gap attributes |
+| panel-el | Layout | White panel/card shell with optional padding and elevation |
+| navbar-el | Layout | Top navigation bar container |
+| sidebar-el | Layout | Side navigation container; supports collapsed state |
+| logo-el | Layout | Logo placeholder with size and label |
+| split-pane | Layout | Two-column split layout |
+| divider-el | Layout | Horizontal or vertical divider line |
+| spacer-el | Layout | Empty space with explicit size |
 
 ## Control primitives
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| rp-search | Controls | Search field with state (default/focus/filled/error/disabled) and optional clear button |
-| rp-input | Controls | Text input field with label, state, value, error-message |
-| rp-textarea | Controls | Multi-line text input with rows and state |
-| rp-select | Controls | Dropdown select; state collapsed/expanded/disabled; options as CSV |
-| rp-button | Controls | Action button with variant (primary/secondary/ghost/danger/link), state, icon, size |
-| rp-button-group | Controls | Container grouping related buttons |
-| rp-checkbox | Controls | Checkbox with state (unchecked/checked/indeterminate/disabled) |
-| rp-radio | Controls | Radio button with state (unchecked/checked/disabled) |
-| rp-toggle | Controls | Toggle switch with state (on/off/disabled) |
-| rp-form | Controls | Form container with layout (vertical/horizontal) |
-| rp-form-item | Controls | Labeled form field wrapper with required and error attributes |
-| rp-date-picker | Controls | Date picker input with state and value |
-| rp-upload | Controls | File upload zone with state (empty/has-file/uploading) and progress |
-| rp-image-placeholder | Controls | Placeholder for images; use instead of external image URLs |
-| rp-progress | Controls | Progress bar or circle with value, kind, and status |
-| rp-slider | Controls | Single-thumb slider with value, min, max |
-| rp-range | Controls | Dual-thumb range slider with low, high, min, max |
-| rp-number-input | Controls | Numeric input with increment/decrement steppers |
-| rp-rating | Controls | Star rating display with value and max |
-| rp-pin-input | Controls | OTP/PIN cell input with length and value |
-| rp-color-swatch | Controls | Color swatch chip with hex value and label |
-| rp-autocomplete | Controls | Autocomplete input showing options; open attribute shows the list |
+| search-el | Controls | Search field with state (default/focus/filled/error/disabled) and optional clear button |
+| input-el | Controls | Text input field with label, state, value, error-message |
+| textarea-el | Controls | Multi-line text input with rows and state |
+| select-el | Controls | Dropdown select; state collapsed/expanded/disabled; options as CSV |
+| button-el | Controls | Action button with variant (primary/secondary/ghost/danger/link), state, icon, size |
+| button-group | Controls | Container grouping related buttons |
+| checkbox-el | Controls | Checkbox with state (unchecked/checked/indeterminate/disabled) |
+| radio-el | Controls | Radio button with state (unchecked/checked/disabled) |
+| toggle-el | Controls | Toggle switch with state (on/off/disabled) |
+| form-el | Controls | Form container with layout (vertical/horizontal) |
+| form-item | Controls | Labeled form field wrapper with required and error attributes |
+| date-picker | Controls | Date picker input with state and value |
+| upload-el | Controls | File upload zone with state (empty/has-file/uploading) and progress |
+| image-placeholder | Controls | Placeholder for images; use instead of external image URLs |
+| progress-el | Controls | Progress bar or circle with value, kind, and status |
+| slider-el | Controls | Single-thumb slider with value, min, max |
+| range-el | Controls | Dual-thumb range slider with low, high, min, max |
+| number-input | Controls | Numeric input with increment/decrement steppers |
+| rating-el | Controls | Star rating display with value and max |
+| pin-input | Controls | OTP/PIN cell input with length and value |
+| color-swatch | Controls | Color swatch chip with hex value and label |
+| autocomplete-el | Controls | Autocomplete input showing options; open attribute shows the list |
 
 ## Navigation primitives
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| rp-badge | Navigation | Numeric badge/count indicator with max cap |
-| rp-avatar | Navigation | User avatar circle with initials and size |
-| rp-list | Navigation | Generated list; auto-creates items when no children provided |
-| rp-list-item | Navigation | List row with label, icon, badge, and state |
-| rp-tabs | Navigation | Tabbed navigation container with active tab |
-| rp-tab | Navigation | Individual tab with label and optional badge |
-| rp-pagination | Navigation | Pagination control with total, current, and page-size |
-| rp-steps | Navigation | Step indicator for multi-step flows with active step |
-| rp-breadcrumb | Navigation | Breadcrumb trail from comma-separated items |
-| rp-segmented | Navigation | Segmented control (button group acting as radio) |
-| rp-command-palette | Navigation | Command palette overlay with query and results |
-| rp-context-menu | Navigation | Context menu with comma-separated items |
-| rp-menu | Navigation | Menu container |
-| rp-menu-item | Navigation | Menu row with label, icon, shortcut, and state |
-| rp-toc | Navigation | Table of contents from comma-separated items |
-| rp-kbd | Navigation | Keyboard shortcut chip(s) |
+| badge-el | Navigation | Numeric badge/count indicator with max cap |
+| avatar-el | Navigation | User avatar circle with initials and size |
+| list-el | Navigation | Generated list; auto-creates items when no children provided |
+| list-item | Navigation | List row with label, icon, badge, and state |
+| tabs-el | Navigation | Tabbed navigation container with active tab |
+| tab-el | Navigation | Individual tab with label and optional badge |
+| pagination-el | Navigation | Pagination control with total, current, and page-size |
+| steps-el | Navigation | Step indicator for multi-step flows with active step |
+| breadcrumb-el | Navigation | Breadcrumb trail from comma-separated items |
+| segmented-el | Navigation | Segmented control (button group acting as radio) |
+| command-palette | Navigation | Command palette overlay with query and results |
+| context-menu | Navigation | Context menu with comma-separated items |
+| menu-el | Navigation | Menu container |
+| menu-item | Navigation | Menu row with label, icon, shortcut, and state |
+| toc-el | Navigation | Table of contents from comma-separated items |
+| kbd-el | Navigation | Keyboard shortcut chip(s) |
 
 ## Data display primitives
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| rp-table | Data display | Generated static table; columns CSV; has-checkbox and has-action add affordances |
-| rp-table-row | Data display | Standalone table row with state (default/selected/unread/highlighted/disabled) |
-| rp-bulk-action-bar | Data display | Bulk action bar shown when rows are selected; count and actions CSV |
-| rp-empty | Data display | Empty state with label, description, and optional action |
-| rp-loading | Data display | Loading placeholder; kind skeleton or spinner; rows count |
-| rp-alert | Data display | Inline alert banner (info/success/warning/error) with title and message |
-| rp-toast | Data display | Toast notification (info/success/warning/error) rendered in annotations |
-| rp-dropdown | Data display | Static opened dropdown panel |
-| rp-popover | Data display | Static opened popover panel |
-| rp-tooltip | Data display | Visible tooltip bubble with text and position |
-| rp-modal | Data display | Static opened modal dialog with title, width, optional footer |
-| rp-drawer | Data display | Static opened side drawer with side, width, title |
-| rp-card | Data display | Content card with title, subtitle, optional image and footer slots |
-| rp-stat-card | Data display | KPI card with label, value, trend, and change |
-| rp-tag | Data display | Colored label tag; closable variant |
-| rp-chip | Data display | Compact token chip with label, icon, closable |
-| rp-tree | Data display | Tree container |
-| rp-tree-item | Data display | Tree node with label, icon, level, expanded/collapsed, state |
-| rp-timeline | Data display | Timeline container |
-| rp-timeline-item | Data display | Timeline event with label, time, and state |
-| rp-calendar | Data display | Month grid calendar with selected date |
-| rp-kanban | Data display | Kanban board container |
-| rp-kanban-column | Data display | Kanban column with title and count |
-| rp-kanban-card | Data display | Kanban card with label and tag |
-| rp-code-block | Data display | Code placeholder with language and line count |
-| rp-diff | Data display | Diff view with added/removed/context lines |
-| rp-image-grid | Data display | Grid of image placeholders with count and columns |
-| rp-key-value | Data display | Description list container |
-| rp-kv-row | Data display | Key-value row with label and value |
-| rp-accordion | Data display | Accordion container |
-| rp-accordion-item | Data display | Expandable accordion section with label |
-| rp-banner | Data display | Full-width page-level banner (info/success/warning/error) |
-| rp-skeleton | Data display | Loading skeleton shape (line/block/card/list/avatar) |
-| rp-countdown | Data display | Time-remaining chip with value |
-| rp-result | Data display | Full-page result screen (success/error/empty) with title and optional action |
-| rp-permission-gate | Enterprise | Locked content wrapper with reason label |
-| rp-quota-bar | Enterprise | Usage bar that turns red at ≥90%; label, used, limit |
-| rp-api-key | Enterprise | Masked API key display with copy affordance |
-| rp-audit-row | Enterprise | Audit log row with actor, action, time |
-| rp-workflow-node | Enterprise | Workflow step node with label and state |
+| table-el | Data display | Generated static table; columns CSV; has-checkbox and has-action add affordances |
+| table-row | Data display | Standalone table row with state (default/selected/unread/highlighted/disabled) |
+| bulk-action-bar | Data display | Bulk action bar shown when rows are selected; count and actions CSV |
+| empty-el | Data display | Empty state with label, description, and optional action |
+| loading-el | Data display | Loading placeholder; kind skeleton or spinner; rows count |
+| alert-el | Data display | Inline alert banner (info/success/warning/error) with title and message |
+| toast-el | Data display | Toast notification (info/success/warning/error) rendered in annotations |
+| dropdown-el | Data display | Static opened dropdown panel |
+| popover-el | Data display | Static opened popover panel |
+| tooltip-el | Data display | Visible tooltip bubble with text and position |
+| modal-el | Data display | Static opened modal dialog with title, width, optional footer |
+| drawer-el | Data display | Static opened side drawer with side, width, title |
+| card-el | Data display | Content card with title, subtitle, optional image and footer slots |
+| stat-card | Data display | KPI card with label, value, trend, and change |
+| tag-el | Data display | Colored label tag; closable variant |
+| chip-el | Data display | Compact token chip with label, icon, closable |
+| tree-el | Data display | Tree container |
+| tree-item | Data display | Tree node with label, icon, level, expanded/collapsed, state |
+| timeline-el | Data display | Timeline container |
+| timeline-item | Data display | Timeline event with label, time, and state |
+| calendar-el | Data display | Month grid calendar with selected date |
+| kanban-el | Data display | Kanban board container |
+| kanban-column | Data display | Kanban column with title and count |
+| kanban-card | Data display | Kanban card with label and tag |
+| code-block | Data display | Code placeholder with language and line count |
+| diff-el | Data display | Diff view with added/removed/context lines |
+| image-grid | Data display | Grid of image placeholders with count and columns |
+| key-value | Data display | Description list container |
+| kv-row | Data display | Key-value row with label and value |
+| accordion-el | Data display | Accordion container |
+| accordion-item | Data display | Expandable accordion section with label |
+| banner-el | Data display | Full-width page-level banner (info/success/warning/error) |
+| skeleton-el | Data display | Loading skeleton shape (line/block/card/list/avatar) |
+| countdown-el | Data display | Time-remaining chip with value |
+| result-el | Data display | Full-page result screen (success/error/empty) with title and optional action |
+| permission-gate | Enterprise | Locked content wrapper with reason label |
+| quota-bar | Enterprise | Usage bar that turns red at ≥90%; label, used, limit |
+| api-key | Enterprise | Masked API key display with copy affordance |
+| audit-row | Enterprise | Audit log row with actor, action, time |
+| workflow-node | Enterprise | Workflow step node with label and state |
 
 ## iOS platform primitives (use with device="mobile")
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| rp-ios-navbar | iOS | iOS-style navigation bar with title, large variant, back, trailing |
-| rp-ios-tabbar | iOS | iOS tab bar with items, icons, active tab |
-| rp-ios-list | iOS | iOS grouped list with header |
-| rp-ios-list-item | iOS | iOS list row with label, detail, icon, chevron |
-| rp-ios-action-sheet | iOS | iOS action sheet with title, actions, destructive action |
-| rp-ios-alert | iOS | iOS alert dialog with title, message, actions |
-| rp-ios-switch | iOS | iOS-style toggle switch |
-| rp-ios-segmented | iOS | iOS segmented control |
-| rp-ios-button | iOS | iOS-style button (filled/tinted/plain) |
-| rp-ios-search | iOS | iOS search bar |
-| rp-ios-stepper | iOS | iOS stepper control |
+| ios-navbar | iOS | iOS-style navigation bar with title, large variant, back, trailing |
+| ios-tabbar | iOS | iOS tab bar with items, icons, active tab |
+| ios-list | iOS | iOS grouped list with header |
+| ios-list-item | iOS | iOS list row with label, detail, icon, chevron |
+| ios-action-sheet | iOS | iOS action sheet with title, actions, destructive action |
+| ios-alert | iOS | iOS alert dialog with title, message, actions |
+| ios-switch | iOS | iOS-style toggle switch |
+| ios-segmented | iOS | iOS segmented control |
+| ios-button | iOS | iOS-style button (filled/tinted/plain) |
+| ios-search | iOS | iOS search bar |
+| ios-stepper | iOS | iOS stepper control |
 
 ## macOS platform primitives (use with device="web")
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| rp-macos-window | macOS | macOS window chrome with traffic light buttons |
-| rp-macos-toolbar | macOS | macOS toolbar strip |
-| rp-macos-menubar | macOS | macOS menu bar with items |
-| rp-macos-sidebar | macOS | macOS source list sidebar |
-| rp-macos-source-item | macOS | macOS sidebar source item with label, icon, group, state |
-| rp-macos-segmented | macOS | macOS segmented control |
-| rp-macos-popover | macOS | macOS-style popover |
-| rp-macos-sheet | macOS | macOS sheet dialog |
-| rp-macos-stepper | macOS | macOS stepper control |
-| rp-macos-disclosure | macOS | macOS disclosure triangle with label and expanded state |
-| rp-macos-table | macOS | macOS-style table with sortable header look |
+| macos-window | macOS | macOS window chrome with traffic light buttons |
+| macos-toolbar | macOS | macOS toolbar strip |
+| macos-menubar | macOS | macOS menu bar with items |
+| macos-sidebar | macOS | macOS source list sidebar |
+| macos-source-item | macOS | macOS sidebar source item with label, icon, group, state |
+| macos-segmented | macOS | macOS segmented control |
+| macos-popover | macOS | macOS-style popover |
+| macos-sheet | macOS | macOS sheet dialog |
+| macos-stepper | macOS | macOS stepper control |
+| macos-disclosure | macOS | macOS disclosure triangle with label and expanded state |
+| macos-table | macOS | macOS-style table with sortable header look |
 
 ## Agent / conversational UI primitives
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| rp-chat | Agent | Conversation container wrapping the message stream |
-| rp-user-message | Agent | Right-aligned user message bubble |
-| rp-assistant-message | Agent | Left-aligned assistant message with optional rich children |
-| rp-system-message | Agent | Centered system/context note |
-| rp-tool-call | Agent | Tool/function call card with name, state (running/done/error), args |
-| rp-agent-output | Agent | Command/code/tool output block (kind: text/code/terminal) |
-| rp-reasoning | Agent | Collapsible thinking/reasoning block |
-| rp-message-actions | Agent | Per-message action buttons (copy/retry/up/down/edit/share) |
-| rp-suggestions | Agent | Suggested reply/prompt chips |
-| rp-typing | Agent | Streaming typing indicator |
-| rp-composer | Agent | Prompt input bar with state (idle/streaming) |
-| rp-citation | Agent | Source reference chip with index and title |
-| rp-token-usage | Agent | Token/context usage meter with used and limit |
+| chat-el | Agent | Conversation container wrapping the message stream |
+| user-message | Agent | Right-aligned user message bubble |
+| assistant-message | Agent | Left-aligned assistant message with optional rich children |
+| system-message | Agent | Centered system/context note |
+| tool-call | Agent | Tool/function call card with name, state (running/done/error), args |
+| agent-output | Agent | Command/code/tool output block (kind: text/code/terminal) |
+| reasoning-el | Agent | Collapsible thinking/reasoning block |
+| message-actions | Agent | Per-message action buttons (copy/retry/up/down/edit/share) |
+| suggestions-el | Agent | Suggested reply/prompt chips |
+| typing-el | Agent | Streaming typing indicator |
+| composer-el | Agent | Prompt input bar with state (idle/streaming) |
+| citation-el | Agent | Source reference chip with index and title |
+| token-usage | Agent | Token/context usage meter with used and limit |

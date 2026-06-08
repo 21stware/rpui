@@ -27,36 +27,36 @@ Use `rp-*` tags for new work. Compatibility aliases are available:
 ## Canvas tags
 
 ```html
-<rp-page title="页面标题" route="/route" description="页面说明">
-  <rp-main-view device="web" scale="0.65">
-    <rp-viewport device="web">
+<page-el title="页面标题" route="/route" description="页面说明">
+  <main-view device="web" scale="0.65">
+    <viewport-el device="web">
       <!-- fixed-width, auto-height main snapshot built with rp-* primitives -->
-    </rp-viewport>
-  </rp-main-view>
+    </viewport-el>
+  </main-view>
 
-  <rp-annotation id="1" label="区域说明">...</rp-annotation>
-</rp-page>
+  <annotation-el id="1" label="区域说明">...</annotation-el>
+</page-el>
 ```
 
 Tags:
 
-- `<rp-page title="..." route="..." description="...">` — root document canvas. It keeps the title/main snapshot on the left and moves top-level annotations to the right-side scroll pane.
-- `<rp-main-view device="web|ipad|mobile" width="..." height="auto|900" scale="0.65">` — scaled main snapshot frame. Device presets are fixed width with auto height unless a numeric `height` is provided.
-- `<rp-viewport device="web|ipad|mobile" width="..." height="auto|900">` — snapshot viewport. Use the same `device` as the main view for clarity.
-- `<rp-annotation id="1" label="...">` — top-level annotation linked to `data-pin="1"`; rendered in the right annotation pane.
-- `<rp-annotation label="...">` — nested annotation; no `id` required.
-- `<rp-enum>` — horizontal state/variant container.
-- `<rp-enum-item label="..." description="...">` — one explicit state/variant card with optional short description.
+- `<page-el title="..." route="..." description="...">` — root document canvas. It keeps the title/main snapshot on the left and moves top-level annotations to the right-side scroll pane.
+- `<main-view device="web|ipad|mobile" width="..." height="auto|900" scale="0.65">` — scaled main snapshot frame. Device presets are fixed width with auto height unless a numeric `height` is provided.
+- `<viewport-el device="web|ipad|mobile" width="..." height="auto|900">` — snapshot viewport. Use the same `device` as the main view for clarity.
+- `<annotation-el id="1" label="...">` — top-level annotation linked to `data-pin="1"`; rendered in the right annotation pane.
+- `<annotation-el label="...">` — nested annotation; no `id` required.
+- `<enum-el>` — horizontal state/variant container.
+- `<enum-item label="..." description="...">` — one explicit state/variant card with optional short description.
 
 ## Pin rule
 
-Inside `<rp-main-view>`, add `data-pin="N"` to meaningful regions. Number pins from 1 without gaps.
+Inside `<main-view>`, add `data-pin="N"` to meaningful regions. Number pins from 1 without gaps.
 
 Every `data-pin="N"` must have a matching top-level annotation:
 
 ```html
-<rp-navbar data-pin="1">...</rp-navbar>
-<rp-annotation id="1" label="顶部导航">...</rp-annotation>
+<navbar-el data-pin="1">...</navbar-el>
+<annotation-el id="1" label="顶部导航">...</annotation-el>
 ```
 
 RPUI renders water-drop pins automatically. Never write pin DOM manually.
@@ -67,10 +67,10 @@ The runtime makes the canvas navigable. Authors do not write any of these attrib
 
 - Every annotation gets a `data-rp-section` path. Top-level annotations use their `id` (e.g. `3`); nested annotations use the parent path plus their 1-based position among annotation siblings (e.g. `3-2`, `3-2-1`). This supports up to 3–5 levels of nesting.
 - Every annotation renders a marker showing its **local index** (the last path segment): top-level = blue water-drop with the id; nested depth 1 = purple circle; nested depth ≥2 = green triangle. A nested annotation at `3-2` is marked `2`, at `3-2-1` is marked `1` — local to its parent, not the full path.
-- To explain a UI slice that is rendered inside an annotation, nest another `<rp-annotation>` around/after it. The nested annotation gets its own numbered circle/triangle marker and its body indents one level: `main view → ⬤ annotation 3 → UI slice → ① nested annotation → detail`.
+- To explain a UI slice that is rendered inside an annotation, nest another `<annotation-el>` around/after it. The nested annotation gets its own numbered circle/triangle marker and its body indents one level: `main view → ⬤ annotation 3 → UI slice → ① nested annotation → detail`.
 - Clicking a pin in the main snapshot, or clicking an annotation title, updates the URL to `?section=<path>` and scrolls/focuses the matching annotation with a dashed-outline highlight.
 - Loading a URL with `?section=3-2-1` focuses that nested annotation on load (reverse deep link).
-- Each `<rp-enum-item>` is auto-numbered with a black square index badge (1, 2, 3…), so annotation prose can reference "state 2" unambiguously.
+- Each `<enum-item>` is auto-numbered with a black square index badge (1, 2, 3…), so annotation prose can reference "state 2" unambiguously.
 
 Keep annotation and enum-item sibling order intentional and stable: the generated addresses depend on DOM order.
 
@@ -79,7 +79,7 @@ Keep annotation and enum-item sibling order intentional and stable: the generate
 
 - RPUI is static. Do not create interactions.
 - Do not use `onclick`, hover behavior, runtime focus, timers, API calls, or framework state.
-- Do not use external images; use `<rp-image-placeholder>`.
+- Do not use external images; use `<image-placeholder>`.
 - Do not use `position:absolute` or `position:fixed` in snapshot content. RPUI owns pin positioning.
 - Do not use raw `div`, `button`, `input`, or `table` to represent product UI. Use `rp-*` primitives.
 - Basic text and simple inline HTML are allowed inside annotations.
@@ -88,162 +88,162 @@ Keep annotation and enum-item sibling order intentional and stable: the generate
 - Keep annotations compact and document-flow oriented. Do not stretch annotation content to full width.
 - Choose a device preset for new prototypes: `web` (1440px), `ipad` (834px), or `mobile` (390px). Presets use fixed width and auto height unless a numeric height is provided.
 - In the main snapshot, keep selects collapsed; show their expanded list in an annotation enum.
-- Overlays and transient feedback — `rp-modal`, `rp-drawer`, `rp-dropdown`, `rp-popover`, `rp-tooltip`, `rp-toast` — are interaction results, not page regions. Do not place them in the main snapshot. Instead: pin the trigger element (button/row/field), state the trigger condition in the annotation, and render the overlay inside that annotation (usually in an `<rp-enum>`). Never stack mutually exclusive overlays/states side by side in the snapshot. A permanently docked side panel may stay open in the snapshot, but document its open/close trigger anyway.
-- Use `<rp-enum>` for state families, permission variants, hidden interaction results, and validation branches. Use `rp-enum-item description="..."` for a short clarification of a state.
+- Overlays and transient feedback — `modal-el`, `drawer-el`, `dropdown-el`, `popover-el`, `tooltip-el`, `toast-el` — are interaction results, not page regions. Do not place them in the main snapshot. Instead: pin the trigger element (button/row/field), state the trigger condition in the annotation, and render the overlay inside that annotation (usually in an `<enum-el>`). Never stack mutually exclusive overlays/states side by side in the snapshot. A permanently docked side panel may stay open in the snapshot, but document its open/close trigger anyway.
+- Use `<enum-el>` for state families, permission variants, hidden interaction results, and validation branches. Use `enum-item description="..."` for a short clarification of a state.
 
 ## Snapshot primitives
 
 ### Containers
 
-- `<rp-viewport device="web|ipad|mobile" width="1440" height="auto|900">` — fixed-width snapshot viewport; presets default to auto height.
-- `<rp-layout columns="260px 1fr" rows="auto" gap="16">` — CSS grid container.
-- `<rp-panel padding="24" elevation="1|2">` — white panel/card shell.
-- `<rp-card title="..." subtitle="..." has-image has-footer>` — content card.
-- `<rp-modal width="480" title="..." has-footer>` — static opened modal.
-- `<rp-drawer side="left|right" width="360" title="...">` — static opened drawer.
-- `<rp-dropdown width="300" title="...">` — static opened dropdown.
-- `<rp-popover width="300" title="...">` — static opened popover.
-- `<rp-tooltip text="..." position="top|bottom|left|right">` — visible tooltip bubble.
+- `<viewport-el device="web|ipad|mobile" width="1440" height="auto|900">` — fixed-width snapshot viewport; presets default to auto height.
+- `<layout-el columns="260px 1fr" rows="auto" gap="16">` — CSS grid container.
+- `<panel-el padding="24" elevation="1|2">` — white panel/card shell.
+- `<card-el title="..." subtitle="..." has-image has-footer>` — content card.
+- `<modal-el width="480" title="..." has-footer>` — static opened modal.
+- `<drawer-el side="left|right" width="360" title="...">` — static opened drawer.
+- `<dropdown-el width="300" title="...">` — static opened dropdown.
+- `<popover-el width="300" title="...">` — static opened popover.
+- `<tooltip-el text="..." position="top|bottom|left|right">` — visible tooltip bubble.
 
 ### Navigation
 
-- `<rp-navbar height="64">` — top navigation container.
-- `<rp-sidebar width="260" collapsed>` — side navigation container.
-- `<rp-logo size="82" label="LOGO">` — logo placeholder.
-- `<rp-list items="4" state="first-selected">` — generated list when no children are provided.
-- `<rp-list-item label="..." icon="inbox" badge="12" state="default|selected|disabled">`.
-- `<rp-tabs active="0">` with `<rp-tab label="全部" badge="12">`; `active` can be index or label.
-- `<rp-breadcrumb items="首页,设置,用户管理">`.
-- `<rp-pagination total="128" current="2" page-size="20">`.
-- `<rp-steps steps="填写信息,确认,完成" active="1">`.
+- `<navbar-el height="64">` — top navigation container.
+- `<sidebar-el width="260" collapsed>` — side navigation container.
+- `<logo-el size="82" label="LOGO">` — logo placeholder.
+- `<list-el items="4" state="first-selected">` — generated list when no children are provided.
+- `<list-item label="..." icon="inbox" badge="12" state="default|selected|disabled">`.
+- `<tabs-el active="0">` with `<tab-el label="全部" badge="12">`; `active` can be index or label.
+- `<breadcrumb-el items="首页,设置,用户管理">`.
+- `<pagination-el total="128" current="2" page-size="20">`.
+- `<steps-el steps="填写信息,确认,完成" active="1">`.
 
 ### Data and content display
 
-- `<rp-table rows="6" columns="发件人,消息预览,时间,状态" has-checkbox has-action>` — generated static table. Cell text is sampled by the runtime from the column names, so you cannot specify exact cell values; describe precise data in the annotation instead.
-- `<rp-table-row state="default|selected|unread|highlighted|disabled">` — standalone row slice.
-- `<rp-bulk-action-bar count="3" actions="标为已读,归档,删除">`.
-- `<rp-empty label="暂无数据" description="..." has-action>`.
-- `<rp-loading rows="4" kind="skeleton|spinner">` (`style="spinner"` also works for compatibility).
-- `<rp-image-placeholder width="160" height="100" label="Image">`.
-- `<rp-avatar size="32" initials="OC">`.
-- `<rp-badge count="120" max="99">`.
-- `<rp-tag label="已启用" color="green|orange|red" closable>`.
-- `<rp-stat-card label="活跃用户" value="12,480" trend="up|down|flat" change="+12%">`.
+- `<table-el rows="6" columns="发件人,消息预览,时间,状态" has-checkbox has-action>` — generated static table. Cell text is sampled by the runtime from the column names, so you cannot specify exact cell values; describe precise data in the annotation instead.
+- `<table-row state="default|selected|unread|highlighted|disabled">` — standalone row slice.
+- `<bulk-action-bar count="3" actions="标为已读,归档,删除">`.
+- `<empty-el label="暂无数据" description="..." has-action>`.
+- `<loading-el rows="4" kind="skeleton|spinner">` (`style="spinner"` also works for compatibility).
+- `<image-placeholder width="160" height="100" label="Image">`.
+- `<avatar-el size="32" initials="OC">`.
+- `<badge-el count="120" max="99">`.
+- `<tag-el label="已启用" color="green|orange|red" closable>`.
+- `<stat-card label="活跃用户" value="12,480" trend="up|down|flat" change="+12%">`.
 
 ### Forms and controls
 
 All form states are explicit through attributes; there is no runtime focus or input behavior.
 
-- `<rp-search state="default|focus|filled|error|disabled" placeholder="..." value="..." has-clear-button>`.
-- `<rp-input state="default|focus|filled|error|disabled" label="..." placeholder="..." value="..." has-clear-button error-message="...">`.
-- `<rp-textarea state="default|focus|filled|error|disabled" rows="3" placeholder="..." value="...">`.
-- `<rp-select state="collapsed|expanded|disabled" label="..." value="..." options="A,B,C">`.
-- `<rp-date-picker state="default|focus|filled|error|disabled" value="2026-06-07">`.
-- `<rp-checkbox state="unchecked|checked|indeterminate|disabled" label="...">`.
-- `<rp-radio state="unchecked|checked|disabled" label="...">`.
-- `<rp-toggle state="on|off|disabled" label="...">`.
-- `<rp-button label="..." variant="primary|secondary|ghost|danger|link" state="default|disabled|loading" icon="plus" size="sm|md|lg">`.
-- `<rp-button-group>...</rp-button-group>`.
-- `<rp-form layout="vertical|horizontal">`.
-- `<rp-form-item label="..." required error="...">...</rp-form-item>`.
-- `<rp-upload state="empty|has-file|uploading" file="document.pdf" progress="60">`.
+- `<search-el state="default|focus|filled|error|disabled" placeholder="..." value="..." has-clear-button>`.
+- `<input-el state="default|focus|filled|error|disabled" label="..." placeholder="..." value="..." has-clear-button error-message="...">`.
+- `<textarea-el state="default|focus|filled|error|disabled" rows="3" placeholder="..." value="...">`.
+- `<select-el state="collapsed|expanded|disabled" label="..." value="..." options="A,B,C">`.
+- `<date-picker state="default|focus|filled|error|disabled" value="2026-06-07">`.
+- `<checkbox-el state="unchecked|checked|indeterminate|disabled" label="...">`.
+- `<radio-el state="unchecked|checked|disabled" label="...">`.
+- `<toggle-el state="on|off|disabled" label="...">`.
+- `<button-el label="..." variant="primary|secondary|ghost|danger|link" state="default|disabled|loading" icon="plus" size="sm|md|lg">`.
+- `<button-group>...</button-group>`.
+- `<form-el layout="vertical|horizontal">`.
+- `<form-item label="..." required error="...">...</form-item>`.
+- `<upload-el state="empty|has-file|uploading" file="document.pdf" progress="60">`.
 
 ### Feedback
 
-- `<rp-alert type="info|success|warning|error" title="..." message="..." closable>`.
-- `<rp-toast type="info|success|warning|error" title="..." message="..." closable>`.
-- `<rp-banner type="info|success|warning|error" title="..." message="..." has-action closable>` — full-width page banner.
-- `<rp-progress value="40" kind="bar|circle" status="success|error">`.
-- `<rp-skeleton shape="line|block|card|list|avatar">` — loading placeholder.
-- `<rp-countdown value="02:45:18">` — time-remaining chip.
-- `<rp-result status="success|error|empty" title="..." description="..." has-action>` — full-page result.
+- `<alert-el type="info|success|warning|error" title="..." message="..." closable>`.
+- `<toast-el type="info|success|warning|error" title="..." message="..." closable>`.
+- `<banner-el type="info|success|warning|error" title="..." message="..." has-action closable>` — full-width page banner.
+- `<progress-el value="40" kind="bar|circle" status="success|error">`.
+- `<skeleton-el shape="line|block|card|list|avatar">` — loading placeholder.
+- `<countdown-el value="02:45:18">` — time-remaining chip.
+- `<result-el status="success|error|empty" title="..." description="..." has-action>` — full-page result.
 
 ### Data input (additional)
 
-- `<rp-slider value="60" min="0" max="100" label="..." show-value>`.
-- `<rp-range low="20" high="70" min="0" max="100">` — dual-thumb range.
-- `<rp-number-input value="42">` — input with +/- steppers.
-- `<rp-rating value="3" max="5">` — star rating.
-- `<rp-pin-input length="4" value="12">` — OTP/PIN cells.
-- `<rp-color-swatch value="#2563eb" label="...">`.
-- `<rp-autocomplete value="..." placeholder="..." options="A,B,C" open>`.
+- `<slider-el value="60" min="0" max="100" label="..." show-value>`.
+- `<range-el low="20" high="70" min="0" max="100">` — dual-thumb range.
+- `<number-input value="42">` — input with +/- steppers.
+- `<rating-el value="3" max="5">` — star rating.
+- `<pin-input length="4" value="12">` — OTP/PIN cells.
+- `<color-swatch value="#2563eb" label="...">`.
+- `<autocomplete-el value="..." placeholder="..." options="A,B,C" open>`.
 
 ### Data display (additional)
 
-- `<rp-tree>` + `<rp-tree-item label="..." icon="..." level="0" expanded|collapsed state="selected">`.
-- `<rp-timeline>` + `<rp-timeline-item label="..." time="..." state="default|active|done|error">`.
-- `<rp-calendar month="2026 年 6 月" selected="15">` — month grid.
-- `<rp-kanban>` + `<rp-kanban-column title="..." count="3">` + `<rp-kanban-card label="..." tag="...">`.
-- `<rp-code-block lang="ts" lines="5">` — code placeholder with line numbers.
-- `<rp-diff rows="4">` — added/removed/context lines.
-- `<rp-image-grid count="6" columns="3">`.
-- `<rp-key-value>` + `<rp-kv-row label="..." value="...">` — description list.
-- `<rp-accordion>` + `<rp-accordion-item label="..." expanded>`.
-- `<rp-chip label="..." icon="..." closable>` — compact token.
+- `<tree-el>` + `<tree-item label="..." icon="..." level="0" expanded|collapsed state="selected">`.
+- `<timeline-el>` + `<timeline-item label="..." time="..." state="default|active|done|error">`.
+- `<calendar-el month="2026 年 6 月" selected="15">` — month grid.
+- `<kanban-el>` + `<kanban-column title="..." count="3">` + `<kanban-card label="..." tag="...">`.
+- `<code-block lang="ts" lines="5">` — code placeholder with line numbers.
+- `<diff-el rows="4">` — added/removed/context lines.
+- `<image-grid count="6" columns="3">`.
+- `<key-value>` + `<kv-row label="..." value="...">` — description list.
+- `<accordion-el>` + `<accordion-item label="..." expanded>`.
+- `<chip-el label="..." icon="..." closable>` — compact token.
 
 ### Navigation & layout (additional)
 
-- `<rp-segmented options="日,周,月" active="1">`.
-- `<rp-menu>` + `<rp-menu-item label="..." icon="..." shortcut="⌘O" state="disabled">`.
-- `<rp-context-menu items="复制,重命名,删除">`.
-- `<rp-command-palette query="..." results="A,B,C">`.
-- `<rp-toc items="概述,安装,用法">` — table of contents.
-- `<rp-kbd keys="⌘,K">` — keyboard shortcut chips.
-- `<rp-split-pane columns="1fr 1fr">`, `<rp-divider vertical>`, `<rp-spacer size="16">`.
+- `<segmented-el options="日,周,月" active="1">`.
+- `<menu-el>` + `<menu-item label="..." icon="..." shortcut="⌘O" state="disabled">`.
+- `<context-menu items="复制,重命名,删除">`.
+- `<command-palette query="..." results="A,B,C">`.
+- `<toc-el items="概述,安装,用法">` — table of contents.
+- `<kbd-el keys="⌘,K">` — keyboard shortcut chips.
+- `<split-pane columns="1fr 1fr">`, `<divider-el vertical>`, `<spacer-el size="16">`.
 
 ### Enterprise / SaaS
 
-- `<rp-permission-gate reason="需管理员权限">…locked slot…</rp-permission-gate>`.
-- `<rp-quota-bar label="API 调用" used="920" limit="1000">` — turns red at ≥90%.
-- `<rp-api-key value="sk_live_••••3f9a">` — masked key with copy affordance.
-- `<rp-audit-row actor="..." action="..." time="...">`.
-- `<rp-workflow-node label="..." state="default|active|done|error">`.
+- `<permission-gate reason="需管理员权限">…locked slot…</permission-gate>`.
+- `<quota-bar label="API 调用" used="920" limit="1000">` — turns red at ≥90%.
+- `<api-key value="sk_live_••••3f9a">` — masked key with copy affordance.
+- `<audit-row actor="..." action="..." time="...">`.
+- `<workflow-node label="..." state="default|active|done|error">`.
 
 ### iOS platform (`rp-ios-*`, use with device="mobile")
 
-- `<rp-ios-navbar title="..." large back="返回" trailing="编辑">`.
-- `<rp-ios-tabbar items="A,B,C" icons="home,search,user" active="0">`.
-- `<rp-ios-list header="...">` + `<rp-ios-list-item label="..." detail="..." icon="..." chevron>`.
-- `<rp-ios-action-sheet title="..." actions="A,B,C" destructive="删除">`.
-- `<rp-ios-alert title="..." message="..." actions="取消,确定">`.
-- `<rp-ios-switch label="...">`, `<rp-ios-segmented options="A,B" active="0">`.
-- `<rp-ios-button label="..." variant="filled|tinted|plain">`, `<rp-ios-search>`, `<rp-ios-stepper>`.
+- `<ios-navbar title="..." large back="返回" trailing="编辑">`.
+- `<ios-tabbar items="A,B,C" icons="home,search,user" active="0">`.
+- `<ios-list header="...">` + `<ios-list-item label="..." detail="..." icon="..." chevron>`.
+- `<ios-action-sheet title="..." actions="A,B,C" destructive="删除">`.
+- `<ios-alert title="..." message="..." actions="取消,确定">`.
+- `<ios-switch label="...">`, `<ios-segmented options="A,B" active="0">`.
+- `<ios-button label="..." variant="filled|tinted|plain">`, `<ios-search>`, `<ios-stepper>`.
 
 ### macOS platform (`rp-macos-*`, use with device="web")
 
-- `<rp-macos-window title="...">` — window chrome with traffic lights.
-- `<rp-macos-menubar items="文件,编辑,显示">`, `<rp-macos-toolbar>`.
-- `<rp-macos-sidebar>` + `<rp-macos-source-item label="..." icon="..." group state="selected">`.
-- `<rp-macos-segmented options="A,B,C" active="0">`.
-- `<rp-macos-popover title="...">`, `<rp-macos-sheet title="...">`.
-- `<rp-macos-stepper>`, `<rp-macos-disclosure label="..." expanded>`.
-- `<rp-macos-table columns="名称,大小" rows="5">` — sortable-header table look.
+- `<macos-window title="...">` — window chrome with traffic lights.
+- `<macos-menubar items="文件,编辑,显示">`, `<macos-toolbar>`.
+- `<macos-sidebar>` + `<macos-source-item label="..." icon="..." group state="selected">`.
+- `<macos-segmented options="A,B,C" active="0">`.
+- `<macos-popover title="...">`, `<macos-sheet title="...">`.
+- `<macos-stepper>`, `<macos-disclosure label="..." expanded>`.
+- `<macos-table columns="名称,大小" rows="5">` — sortable-header table look.
 
 ### Agent / conversational UI
 
 For chat, copilot, and agent prototypes:
 
-- `<rp-chat>` — conversation container; wraps the message stream.
-- `<rp-user-message text="..." initials="我">` — right-aligned user bubble (text attr or rich children).
-- `<rp-assistant-message name="助手" text="...">` — left-aligned assistant message; children render as rich content (can contain tool-call/output/citation).
-- `<rp-system-message text="...">` — centered system/context note.
-- `<rp-tool-call name="search" state="running|done|error" args="...">` — tool/function call card with status.
-- `<rp-agent-output kind="text|code|terminal" label="..." text="...">` — command/code/tool output block.
-- `<rp-reasoning expanded>…</rp-reasoning>` — collapsible thinking/reasoning block.
-- `<rp-message-actions actions="copy,retry,up,down,edit,share">` — per-message action buttons.
-- `<rp-suggestions items="A,B,C">` — suggested reply / prompt chips.
-- `<rp-typing>` — streaming typing indicator.
-- `<rp-composer value="..." placeholder="..." state="idle|streaming">` — prompt input bar (send button becomes stop while streaming).
-- `<rp-citation index="1" title="...">` — source reference chip.
-- `<rp-token-usage used="1840" limit="8000">` — token/context usage meter.
+- `<chat-el>` — conversation container; wraps the message stream.
+- `<user-message text="..." initials="我">` — right-aligned user bubble (text attr or rich children).
+- `<assistant-message name="助手" text="...">` — left-aligned assistant message; children render as rich content (can contain tool-call/output/citation).
+- `<system-message text="...">` — centered system/context note.
+- `<tool-call name="search" state="running|done|error" args="...">` — tool/function call card with status.
+- `<agent-output kind="text|code|terminal" label="..." text="...">` — command/code/tool output block.
+- `<reasoning-el expanded>…</reasoning-el>` — collapsible thinking/reasoning block.
+- `<message-actions actions="copy,retry,up,down,edit,share">` — per-message action buttons.
+- `<suggestions-el items="A,B,C">` — suggested reply / prompt chips.
+- `<typing-el>` — streaming typing indicator.
+- `<composer-el value="..." placeholder="..." state="idle|streaming">` — prompt input bar (send button becomes stop while streaming).
+- `<citation-el index="1" title="...">` — source reference chip.
+- `<token-usage used="1840" limit="8000">` — token/context usage meter.
 
 ## Icon rule
 
 Use Lucide icon names through the `icon` attribute when available:
 
 ```html
-<rp-button label="新建" icon="plus" variant="primary"></rp-button>
-<rp-list-item label="已归档" icon="archive"></rp-list-item>
+<button-el label="新建" icon="plus" variant="primary"></button-el>
+<list-item label="已归档" icon="archive"></list-item>
 ```
 
 The runtime renders inline SVG. Do not import lucide or any icon CDN.
@@ -275,21 +275,21 @@ For each page, consider whether these states apply:
   <script type="module" src="./dist/rpui.js"></script>
 </head>
 <body>
-  <rp-page title="页面标题" route="/route" description="页面说明">
-    <rp-main-view device="web" scale="0.65">
-      <rp-viewport device="web">
+  <page-el title="页面标题" route="/route" description="页面说明">
+    <main-view device="web" scale="0.65">
+      <viewport-el device="web">
         <!-- main snapshot built only with rp-* primitives -->
-      </rp-viewport>
-    </rp-main-view>
+      </viewport-el>
+    </main-view>
 
-    <rp-annotation id="1" label="区域说明">
+    <annotation-el id="1" label="区域说明">
       简短说明此区域的职责。
-      <rp-enum>
-        <rp-enum-item label="默认" description="正常可用的数据态。"><rp-empty label="示例"></rp-empty></rp-enum-item>
-        <rp-enum-item label="加载" description="首次进入或刷新时展示。"><rp-loading rows="3"></rp-loading></rp-enum-item>
-      </rp-enum>
-    </rp-annotation>
-  </rp-page>
+      <enum-el>
+        <enum-item label="默认" description="正常可用的数据态。"><empty-el label="示例"></empty-el></enum-item>
+        <enum-item label="加载" description="首次进入或刷新时展示。"><loading-el rows="3"></loading-el></enum-item>
+      </enum-el>
+    </annotation-el>
+  </page-el>
 </body>
 </html>
 ```

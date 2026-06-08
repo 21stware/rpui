@@ -33,10 +33,10 @@ export class MessageActionsElement extends HTMLElement { connectedCallback() { i
 export class SuggestionsElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const items = csv(this,'items','总结要点,继续,给个例子'); this.innerHTML = items.map(t=>`<span class="rp-suggestion">${escapeHtml(t)}</span>`).join(''); } }
 
 // Streaming typing indicator (no avatar).
-export class TypingElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; this.innerHTML = `<span class="rp-typing-dots"><span></span><span></span><span></span></span>`; } }
+export class TypingElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; this.innerHTML = `<span class="typing-el-dots"><span></span><span></span><span></span></span>`; } }
 
 // Composer / prompt input.
-export class ComposerElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const value = attr(this,'value'); const state = attr(this,'state','idle'); const sendIcon = state==='streaming' ? icon('stop',16) : icon('send',16); this.innerHTML = `<span class="rp-composer-attach">${icon('paperclip',16)}</span><span class="rp-composer-input ${value?'rp-value':'rp-placeholder'}">${escapeHtml(value || attr(this,'placeholder','给助手发消息…'))}</span><span class="rp-composer-send ${state}">${sendIcon}</span>`; } }
+export class ComposerElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const value = attr(this,'value'); const state = attr(this,'state','idle'); const sendIcon = state==='streaming' ? icon('stop',16) : icon('send',16); this.innerHTML = `<span class="composer-el-attach">${icon('paperclip',16)}</span><span class="composer-el-input ${value?'rp-value':'rp-placeholder'}">${escapeHtml(value || attr(this,'placeholder','给助手发消息…'))}</span><span class="composer-el-send ${state}">${sendIcon}</span>`; } }
 
 // Citation / source reference chip.
 export class CitationElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const index = attr(this,'index','1'); const title = attr(this,'title', this.textContent?.trim() || '来源'); this.innerHTML = `<span class="rp-cite-idx">${escapeHtml(index)}</span><span class="rp-cite-title">${escapeHtml(title)}</span>`; } }

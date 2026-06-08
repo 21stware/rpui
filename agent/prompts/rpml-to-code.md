@@ -8,30 +8,30 @@ Before generating code, parse the RPML and extract:
 
 ### 1. Component hierarchy
 
-Walk the `<rp-main-view>` tree and map each `rp-*` primitive to its framework equivalent. The `data-pin` attributes identify the top-level named regions.
+Walk the `<main-view>` tree and map each `rp-*` primitive to its framework equivalent. The `data-pin` attributes identify the top-level named regions.
 
 ### 2. State machines
 
-Every `<rp-enum>` defines a set of mutually exclusive states. For each enum:
-- Collect all `<rp-enum-item label="...">` labels — these become union type members.
+Every `<enum-el>` defines a set of mutually exclusive states. For each enum:
+- Collect all `<enum-item label="...">` labels — these become union type members.
 - The parent annotation's `label` names the state machine.
 - The `description` attributes on enum items document transition conditions.
 
 Example mapping:
 ```
-<rp-enum> with items ["default", "loading", "error", "empty"]
+<enum-el> with items ["default", "loading", "error", "empty"]
 → type TableState = "default" | "loading" | "error" | "empty"
 ```
 
 ### 3. Permission gates
 
-Every `<rp-permission-gate>` and every annotation mentioning role conditions defines an auth guard. Extract:
+Every `<permission-gate>` and every annotation mentioning role conditions defines an auth guard. Extract:
 - The roles that can see/use the gated element.
 - The fallback (locked UI, hidden element, or redirect).
 
 ### 4. Form validation rules
 
-For each `<rp-form>` / `<rp-form-item>`:
+For each `<form-el>` / `<form-item>`:
 - `required` attribute → required field rule.
 - `error="..."` text → the validation message and its trigger condition (described in the annotation body).
 - Cross-field constraints described in annotation prose → extract as named validation functions.
@@ -41,7 +41,7 @@ For each `<rp-form>` / `<rp-form-item>`:
 Scan annotation bodies for mentions of:
 - Data sources (API endpoints, table names, service names).
 - Refresh cadence (polling interval, websocket, on-demand).
-- Payload shapes implied by column names in `<rp-table columns="...">` and `<rp-kv-row label="..." value="...">`.
+- Payload shapes implied by column names in `<table-el columns="...">` and `<kv-row label="..." value="...">`.
 - Error codes or HTTP status handling described in error/retry enum items.
 
 ## Code generation rules
@@ -59,7 +59,7 @@ Scan annotation bodies for mentions of:
 ```
 ComponentName/
   index.tsx          # root component with state machine wiring
-  types.ts           # union types from rp-enum, permission role types
+  types.ts           # union types from enum-el, permission role types
   validation.ts      # form validation schema
   api.ts             # API contract interfaces and fetch stubs
   states/

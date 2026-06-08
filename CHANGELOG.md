@@ -4,7 +4,7 @@
 
 ### Added
 - Monorepo structure with Bun workspaces (`@bracken/rpui` renderer, `rpml-parser`, `rpml-validator`, `rpml-vscode-extension`)
-- RPML as a first-class file format (`.rpml`) — pure markup, root `<rp-page>`, no HTML wrapper
+- RPML as a first-class file format (`.rpml`) — pure markup, root `<page-el>`, no HTML wrapper
 - `rpml-parser` — `.rpml` text → AST → DOM (`parse()`, `astToDom()`)
 - `rpml-validator` — structural + semantic validation (pin↔annotation parity, `rpml validate` CLI)
 - `rpml-loader.ts` — `<rpml-app src="...">` custom element + `?rpml=` URL param rendering
@@ -16,7 +16,7 @@
 
 ## 0.2.1 — 2026-06-07
 
-- Add agent UI components (`rp-chat`, `rp-tool-call`, `rp-reasoning`, etc.)
+- Add agent UI components (`chat-el`, `tool-call`, `reasoning-el`, etc.)
 - Add preview gallery in docs/
 
 ## 0.2.0 — 2026-06-06

@@ -10,12 +10,15 @@ import { IosActionSheetElement, IosAlertElement, IosButtonElement, IosListElemen
 import { MacDisclosureElement, MacMenubarElement, MacPopoverElement, MacSegmentedElement, MacSheetElement, MacSidebarElement, MacSourceItemElement, MacStepperElement, MacTableElement, MacToolbarElement, MacWindowElement } from './primitives/macos';
 import { AgentOutputElement, AssistantMessageElement, ChatElement, CitationElement, ComposerElement, MessageActionsElement, ReasoningElement, SuggestionsElement, SystemMessageElement, TokenUsageElement, ToolCallElement, TypingElement, UserMessageElement } from './primitives/agent';
 
+/** Tag name: compound names used bare (e.g. main-view), single-word names get -el suffix. */
+function tag(s: string): string { return s.includes('-') ? s : `${s}-el`; }
+
 export function registerAll() {
-  define('rp-page', RpPage); define('proto-page', RpPage);
-  define('rp-main-view', RpMainView); define('proto-main-view', RpMainView);
-  define('rp-annotation', RpAnnotation); define('proto-annotation', RpAnnotation);
-  define('rp-enum', RpEnum); define('proto-enum', RpEnum);
-  define('rp-enum-item', RpEnumItem); define('proto-enum-item', RpEnumItem);
+  define('page-el', RpPage);
+  define('main-view', RpMainView);
+  define('annotation-el', RpAnnotation);
+  define('enum-el', RpEnum);
+  define('enum-item', RpEnumItem);
   const pairs: Array<[string, CustomElementConstructor]> = [
     // layout
     ['viewport', ViewportElement], ['layout', LayoutElement], ['panel', PanelElement], ['navbar', NavbarElement], ['sidebar', SidebarElement], ['logo', LogoElement], ['split-pane', SplitPaneElement], ['divider', DividerElement], ['spacer', SpacerElement],
@@ -32,5 +35,5 @@ export function registerAll() {
     // agent / conversational UI
     ['chat', ChatElement], ['user-message', UserMessageElement], ['assistant-message', AssistantMessageElement], ['system-message', SystemMessageElement], ['tool-call', ToolCallElement], ['agent-output', AgentOutputElement], ['reasoning', ReasoningElement], ['message-actions', MessageActionsElement], ['suggestions', SuggestionsElement], ['typing', TypingElement], ['composer', ComposerElement], ['citation', CitationElement], ['token-usage', TokenUsageElement]
   ];
-  for (const [suffix, ctor] of pairs) { define(`snap-${suffix}`, ctor); define(`rp-${suffix}`, ctor); }
+  for (const [suffix, ctor] of pairs) { define(tag(suffix), ctor); }
 }

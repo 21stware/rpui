@@ -16,6 +16,6 @@ export class NavbarElement extends HTMLElement { connectedCallback() { injectSty
 export class SidebarElement extends HTMLElement { connectedCallback() { injectStyle(); this.style.setProperty('--snap-width', `${attr(this,'width','260')}px`); } }
 export class LogoElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.hasAttribute('size')) this.style.setProperty('--snap-size', `${attr(this,'size','82')}px`); if (!this.innerHTML.trim()) this.textContent = attr(this,'label','LOGO'); } }
 export class SplitPaneElement extends HTMLElement { connectedCallback() { injectStyle(); this.style.setProperty('--snap-columns', attr(this,'columns','1fr 1fr')); } }
-export class DividerElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.hasAttribute('vertical')) this.classList.add('rp-divider-v'); } }
+export class DividerElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.hasAttribute('vertical')) this.classList.add('divider-el-v'); } }
 export class SpacerElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.hasAttribute('size')) this.style.setProperty('--snap-size', `${attr(this,'size','16')}px`); } }
 

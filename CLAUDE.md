@@ -27,11 +27,25 @@ packages/vscode-extension/ — VS Code extension (rpml-vscode-extension, WIP, pr
 spec/                    — RPML language specification
 examples/                — .rpml example files (01–09; viewer loads via ?rpml=)
 agent/                   — agent guides, prompts, context packs
-tools/                   — dev scripts (validate-examples.sh, check-spec-coverage.ts)
+tools/                   — dev scripts; tools/build-site.ts + tools/site/ generate docs/
 demo/viewer.html         — RPML viewer (single-file or folder-drop gallery)
 preview/                 — dev component browser (served by vite dev server)
+docs/                    — GENERATED site portal (gitignored; CI rebuilds via `bun run site`)
 dist/                    — root dist/ (synced from packages/renderer-web/dist/ at build)
 ```
+
+## Documentation site (docs/ portal)
+
+`docs/` is a **fully generated** static portal — do not hand-edit it (gitignored). `bun run site` (= `bun tools/build-site.ts`) reads `spec/`, `agent/`, and `preview/components.js` and emits:
+
+- `index.html` — hero landing page
+- `guide.html` — docs reader: sidebar + Markdown-rendered `spec/` (11 docs) + `agent/` guides, with per-doc TOC and hash routing
+- `components.html` — component browser (reuses `components.js`)
+- `examples.html` — example gallery (live-scaled iframes → `demo/viewer.html`)
+- `api.html` — package exports, CLI usage, element index
+- `site.css` — shared styles (Inter + JetBrains Mono, modern tech aesthetic)
+
+`spec/` Markdown is the **single source of truth** — never hand-copy spec content into HTML. The generator lives in `tools/build-site.ts` + `tools/site/` (markdown.ts converter, css.ts, chrome.ts shell, one module per page). CI runs `bun run site` then copies `dist/*.js`, `components.js`, `llms.txt`, `demo/`, `examples/` into `docs/` before deploying to GitHub Pages. `REPO` URL is set in `tools/site/chrome.ts`.
 
 ## Development commands
 
@@ -59,7 +73,7 @@ Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages
 
 ## RPML file format
 
-`.rpml` files are **HTML-like markup** (parsed as HTML, not strict XML — boolean attrs and bare `&` allowed; self-closing leaves are normalized by `expandSelfClosing`). Root element `<rp-page>`, **no HTML wrapper**. Load at runtime with:
+`.rpml` files are **HTML-like markup** (parsed as HTML, not strict XML — boolean attrs and bare `&` allowed; self-closing leaves are normalized by `expandSelfClosing`). Root element `<page-el>`, **no HTML wrapper**. Load at runtime with:
 
 ```html
 <script type="module" src="dist/rpml-loader.js"></script>
@@ -115,13 +129,13 @@ Important custom elements:
 When creating or editing prototype HTML, follow `SKILL.md` and `llms.txt`:
 
 - Use `rp-*` tags for new work. `proto-*` and `snap-*` exist for compatibility.
-- Use `<rp-page>` as the root and exactly one `<rp-main-view>` per prototype page.
-- Prefer `<rp-main-view device="web|ipad|mobile" scale="...">` and matching `<rp-viewport device="...">` for new prototypes. Device presets are fixed-width and auto-height by default; explicit numeric `height` opts into legacy fixed-height clipping.
-- Build the main snapshot inside `<rp-main-view>` using `rp-*` snapshot primitives, typically with an `<rp-viewport>` child.
-- Add `data-pin="N"` to meaningful regions inside `<rp-main-view>`. Number pins from 1 without gaps.
-- Every `data-pin="N"` must have a matching top-level `<rp-annotation id="N" label="...">`.
-- Keep annotations compact; use nested `<rp-annotation>` only when a rule belongs to a smaller sub-region.
-- Use `<rp-enum>` and `<rp-enum-item label="...">` to document conditional states and variants.
+- Use `<page-el>` as the root and exactly one `<main-view>` per prototype page.
+- Prefer `<main-view device="web|ipad|mobile" scale="...">` and matching `<viewport-el device="...">` for new prototypes. Device presets are fixed-width and auto-height by default; explicit numeric `height` opts into legacy fixed-height clipping.
+- Build the main snapshot inside `<main-view>` using `rp-*` snapshot primitives, typically with an `<viewport-el>` child.
+- Add `data-pin="N"` to meaningful regions inside `<main-view>`. Number pins from 1 without gaps.
+- Every `data-pin="N"` must have a matching top-level `<annotation-el id="N" label="...">`.
+- Keep annotations compact; use nested `<annotation-el>` only when a rule belongs to a smaller sub-region.
+- Use `<enum-el>` and `<enum-item label="...">` to document conditional states and variants.
 - Do not use direct HTML UI elements such as `div`, `button`, `input`, or `table` to represent product UI in prototypes; use `rp-*` primitives instead. Basic text in annotations is fine.
 - Do not add interactive JavaScript, `onclick`, hover behavior, runtime focus, timers, API calls, external CSS, image CDNs, or icon CDNs to prototypes.
 - Do not use `position:absolute` or `position:fixed` in snapshot content; RPUI owns pin positioning.

@@ -34,8 +34,8 @@ export function expandSelfClosing(source: string): string {
  *  Requires a browser environment (DOMParser available). */
 export function parse(source: string): RpmlNode {
   const doc = new DOMParser().parseFromString(expandSelfClosing(source.trim()), 'text/html');
-  const root = doc.body.querySelector('rp-page') ?? doc.body.firstElementChild;
-  if (!root) throw new Error('RPML parse error: no <rp-page> root element found');
+  const root = doc.body.querySelector('page-el') ?? doc.body.firstElementChild;
+  if (!root) throw new Error('RPML parse error: no <page-el> root element found');
   return domToAst(root);
 }
 
@@ -54,12 +54,12 @@ function domToAst(el: Element): RpmlNode {
 
 /** Parse a .rpml string into a DOM Element using the live document's HTML parser.
  *  Requires a browser environment. Custom elements upgrade against the live
- *  registry — identical to inlining <rp-page> in a .html file. */
+ *  registry — identical to inlining <page-el> in a .html file. */
 export function parseToPage(source: string): Element {
   const holder = document.createElement('div');
   holder.innerHTML = expandSelfClosing(source.trim());
-  const root = holder.querySelector('rp-page') ?? holder.firstElementChild;
-  if (!root) throw new Error('RPML parse error: no <rp-page> root element found');
+  const root = holder.querySelector('page-el') ?? holder.firstElementChild;
+  if (!root) throw new Error('RPML parse error: no <page-el> root element found');
   return root;
 }
 

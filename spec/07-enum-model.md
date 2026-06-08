@@ -2,20 +2,20 @@
 
 ## 基础用法
 
-`<rp-enum>` 是水平排列的状态卡片容器，每个 `<rp-enum-item>` 表示一个互斥状态。
+`<enum-el>` 是水平排列的状态卡片容器，每个 `<enum-item>` 表示一个互斥状态。
 
 ```xml
-<rp-enum>
-  <rp-enum-item label="待审核" description="提交后默认态，高亮黄色标签" />
-  <rp-enum-item label="审核中" description="审核员已认领，标签变蓝" />
-  <rp-enum-item label="已通过" description="绿色标签，操作区只保留归档按钮" />
-  <rp-enum-item label="已拒绝" description="红色标签，显示拒绝原因折叠块" />
-</rp-enum>
+<enum-el>
+  <enum-item label="待审核" description="提交后默认态，高亮黄色标签" />
+  <enum-item label="审核中" description="审核员已认领，标签变蓝" />
+  <enum-item label="已通过" description="绿色标签，操作区只保留归档按钮" />
+  <enum-item label="已拒绝" description="红色标签，显示拒绝原因折叠块" />
+</enum-el>
 ```
 
 ## 自动编号
 
-运行时为每个 `rp-enum-item` 添加黑色方块索引徽章（1、2、3…），注释文字可引用"状态 2"。
+运行时为每个 `enum-item` 添加黑色方块索引徽章（1、2、3…），注释文字可引用"状态 2"。
 
 ## 覆盖矩阵方法
 
@@ -31,12 +31,12 @@
 
 ## description 属性
 
-`description` 是 `rp-enum-item` 的可选短注释，适合写**触发条件或渲染规则**，不适合长段落（长段落改用嵌套注释）。
+`description` 是 `enum-item` 的可选短注释，适合写**触发条件或渲染规则**，不适合长段落（长段落改用嵌套注释）。
 
 ## 嵌套位置
 
-`<rp-enum>` 可以放在：
-- 顶级 `<rp-annotation>` 体内（描述该区域的整体状态族）
-- 嵌套 `<rp-annotation>` 体内（描述子元素的状态族）
+`<enum-el>` 可以放在：
+- 顶级 `<annotation-el>` 体内（描述该区域的整体状态族）
+- 嵌套 `<annotation-el>` 体内（描述子元素的状态族）
 
-不要把 `<rp-enum>` 放在 `<rp-main-view>` 内。
+不要把 `<enum-el>` 放在 `<main-view>` 内。

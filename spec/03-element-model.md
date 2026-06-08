@@ -4,7 +4,7 @@
 
 | 分类 | 前缀 | 说明 |
 |------|------|------|
-| 画布元素 | `rp-page` / `rp-main-view` / `rp-annotation` / `rp-enum` | 文档结构骨架 |
+| 画布元素 | `page-el` / `main-view` / `annotation-el` / `enum-el` | 文档结构骨架 |
 | 快照原语 | `rp-*`（其余） | 静态 UI 积木 |
 
 ## 别名系统
@@ -23,10 +23,10 @@ RPML 元素通过 HTML 属性传递所有显示状态，不接受子文本作为
 
 ```xml
 <!-- 正确 -->
-<rp-button label="提交" variant="primary" state="loading" />
+<button-el label="提交" variant="primary" state="loading" />
 
 <!-- 错误：不要用文本内容传 label -->
-<rp-button>提交</rp-button>
+<button-el>提交</button-el>
 ```
 
 ## 幂等渲染
@@ -38,8 +38,8 @@ RPML 元素通过 HTML 属性传递所有显示状态，不接受子文本作为
 快照原语通常没有子元素，推荐自闭合写法：
 
 ```xml
-<rp-button label="确定" variant="primary" />
-<rp-avatar size="32" initials="LY" />
+<button-el label="确定" variant="primary" />
+<avatar-el size="32" initials="LY" />
 ```
 
 ## 元素完整列表

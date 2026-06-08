@@ -14,9 +14,9 @@ RPUI does not simulate interaction. It bakes time-based behavior into a spatial 
 
 A realistic complex application page is **not** a few annotated regions. Calibrate to this baseline:
 
-- **8–10 top-level annotations** (`<rp-annotation id="N">`), one per meaningful pinned region.
+- **8–10 top-level annotations** (`<annotation-el id="N">`), one per meaningful pinned region.
 - **3–5 levels of annotation nesting** where the domain warrants it: region → element → state family → per-state rule → boundary/exception.
-- **Every conditional branch enumerated** with `<rp-enum>` — states, permission variants, validation outcomes, async results.
+- **Every conditional branch enumerated** with `<enum-el>` — states, permission variants, validation outcomes, async results.
 - Annotation bodies written at **implementation depth**: trigger conditions, data source, state-machine transitions, permission gates, validation rules, error handling, boundary values.
 
 `demo/golden.html` is the reference for this bar. Study it before authoring. The minimal template at the bottom of this file shows mechanics only — never treat it as a complexity target.
@@ -43,21 +43,21 @@ Output a complete HTML file that imports exactly one RPUI runtime file:
 
 The document must contain:
 
-1. one `<rp-page>` root with `title`, `route`, and `description` (the description should state which representative state the main snapshot captures),
-2. exactly one `<rp-main-view>` containing the main page snapshot,
+1. one `<page-el>` root with `title`, `route`, and `description` (the description should state which representative state the main snapshot captures),
+2. exactly one `<main-view>` containing the main page snapshot,
 3. snapshot content built with `rp-*` primitives only,
 4. numbered `data-pin="N"` anchors on every meaningful main-view region,
-5. matching top-level `<rp-annotation id="N" label="...">` blocks,
-6. `<rp-enum>` / `<rp-enum-item>` for every conditional branch and state family.
+5. matching top-level `<annotation-el id="N" label="...">` blocks,
+6. `<enum-el>` / `<enum-item>` for every conditional branch and state family.
 
 ## The recursive decomposition method
 
 This is the core technique for reaching completeness. Decompose every pinned region top-down through up to five semantic levels. Stop at the level where further splitting adds no implementation value.
 
-- **L1 — Region** (`<rp-annotation id="N">`, pinned): a structural area of the page (navbar, sidebar, filter bar, table, drawer). One per `data-pin`.
-- **L2 — Element / concern** (nested `<rp-annotation>`): a distinct responsibility inside the region (search behavior, a single column, the bulk-action bar, one form field group).
-- **L3 — State family** (`<rp-enum>` or a nested annotation containing one): the set of mutually exclusive states for that element (default/focus/filled/error; collapsed/expanded; the rows' read×SLA×selected matrix).
-- **L4 — Per-state rule** (`<rp-enum-item>` + `description`, or a deeper annotation): what each state _means_ and the rule behind it — trigger, threshold, transition, gate.
+- **L1 — Region** (`<annotation-el id="N">`, pinned): a structural area of the page (navbar, sidebar, filter bar, table, drawer). One per `data-pin`.
+- **L2 — Element / concern** (nested `<annotation-el>`): a distinct responsibility inside the region (search behavior, a single column, the bulk-action bar, one form field group).
+- **L3 — State family** (`<enum-el>` or a nested annotation containing one): the set of mutually exclusive states for that element (default/focus/filled/error; collapsed/expanded; the rows' read×SLA×selected matrix).
+- **L4 — Per-state rule** (`<enum-item>` + `description`, or a deeper annotation): what each state _means_ and the rule behind it — trigger, threshold, transition, gate.
 - **L5 — Boundary / exception** (deepest annotation/enum): extremes and failure modes — 0/empty/overflow values, race conditions, permission denials, irreversible actions.
 
 Not every region needs all five levels. A simple stat card may stop at L3. A data table with a detail drawer will routinely reach L5. Let the domain decide depth; let completeness decide breadth.
@@ -68,7 +68,7 @@ L1/L2 annotation bodies must read like a spec, not a caption. For a non-trivial 
 
 - **Trigger / entry condition** — what causes this to appear or activate.
 - **Data source & refresh** — where values come from, polling/refresh cadence.
-- **State enumeration** — which states exist (then expand them in `<rp-enum>`).
+- **State enumeration** — which states exist (then expand them in `<enum-el>`).
 - **Permission gate** — which roles see/use it, what changes per role.
 - **Validation rule** — required fields, formats, cross-field constraints.
 - **Error / async handling** — loading, empty, partial-failure, retry behavior.
@@ -85,18 +85,18 @@ Completeness in complex apps is combinatorial, not a flat list. When two or more
 - **flow-step × validation** — each wizard step × (valid / invalid / pending).
 - **read-state × SLA × selection** — a table row's appearance is the product of all three.
 
-Build the matrix mentally, drop impossible cells, and create one `<rp-enum-item>` for each surviving combination. If a cell is intentionally out of scope, say so in an annotation rather than leaving it blank.
+Build the matrix mentally, drop impossible cells, and create one `<enum-item>` for each surviving combination. If a cell is intentionally out of scope, say so in an annotation rather than leaving it blank.
 
 ## Implementation steps
 
 1. Identify route, title, and a one-sentence description naming the representative state the snapshot captures.
 2. Choose a device preset: `web` desktop/admin, `ipad` tablet, `mobile` phone. Prefer fixed-width, auto-height.
 3. Choose the **most information-dense representative state** for the main snapshot: loaded data, an active selection, an open drawer/expanded panel central to the page, role-specific controls, active validation. The snapshot should look like the page on a busy day, not an empty shell.
-4. Build the snapshot inside `<rp-main-view device="…">` using only `rp-*` primitives, usually inside `<rp-viewport device="…">`.
+4. Build the snapshot inside `<main-view device="…">` using only `rp-*` primitives, usually inside `<viewport-el device="…">`.
 5. Add `data-pin="N"` to every meaningful region. Number from 1, no gaps.
-6. For every pin create one top-level `<rp-annotation id="N" label="…">`.
+6. For every pin create one top-level `<annotation-el id="N" label="…">`.
 7. Apply the recursive decomposition method to each region (L1→L5 as warranted).
-8. For every conditional branch, build a coverage matrix and expand it with `<rp-enum>` / `<rp-enum-item label="…" description="…">`.
+8. For every conditional branch, build a coverage matrix and expand it with `<enum-el>` / `<enum-item label="…" description="…">`.
 9. Write annotation bodies at implementation depth using the content-structure dimensions.
 10. Verify no interactive JS, event attributes, external images, external CSS, or CDN icons are used.
 
@@ -114,13 +114,13 @@ So a nested annotation at `1-1` is marked simply **1** — the number is local t
 
 - Clicking a pin, or any annotation title, updates the URL `?section=<path>` and scrolls/focuses that annotation (dashed outline).
 - Opening a URL with `?section=3-2-1` focuses that nested annotation on load.
-- `<rp-enum-item>` cards are auto-numbered with a black square index badge (1, 2, 3…) so prose can refer to "state 2".
+- `<enum-item>` cards are auto-numbered with a black square index badge (1, 2, 3…) so prose can refer to "state 2".
 
 Use stable, intentional nesting order — index-based addresses and markers depend on sibling order.
 
 ### Annotating a UI slice further
 
-When a UI slice rendered inside an annotation needs its own explanation, do not flatten it into prose. Nest another `<rp-annotation>` around or after the slice: it receives its own numbered marker (circle/triangle) and its body indents one level. The chain reads:
+When a UI slice rendered inside an annotation needs its own explanation, do not flatten it into prose. Nest another `<annotation-el>` around or after the slice: it receives its own numbered marker (circle/triangle) and its body indents one level. The chain reads:
 
 ```
 main view  →  ⬤ annotation 1 (pinned)  →  UI slice  →  ① nested annotation (marked "1")  →  detail
@@ -129,29 +129,29 @@ main view  →  ⬤ annotation 1 (pinned)  →  UI slice  →  ① nested annota
 Example — a slice that itself has sub-rules:
 
 ```html
-<rp-annotation id="3" label="筛选区">
+<annotation-el id="3" label="筛选区">
   触发条件、数据来源……
-  <rp-enum>
-    <rp-enum-item label="展开浮层"><rp-select state="expanded" options="全部,P1,P2"></rp-select></rp-enum-item>
-  </rp-enum>
-  <rp-annotation label="排序规则">      <!-- marked ① (purple circle), indented -->
+  <enum-el>
+    <enum-item label="展开浮层"><select-el state="expanded" options="全部,P1,P2"></select-el></enum-item>
+  </enum-el>
+  <annotation-el label="排序规则">      <!-- marked ① (purple circle), indented -->
     点击列头切换升/降序，默认按 SLA 剩余时间升序。
-    <rp-annotation label="多列排序">    <!-- marked ① (green triangle), indented again -->
+    <annotation-el label="多列排序">    <!-- marked ① (green triangle), indented again -->
       按住 Shift 点击追加次级排序键。
-    </rp-annotation>
-  </rp-annotation>
-</rp-annotation>
+    </annotation-el>
+  </annotation-el>
+</annotation-el>
 ```
 
 ## Mid-level composition patterns
 
 Complex pages are built from recurring composite modules. Assemble these from primitives rather than reinventing per page:
 
-- **Data table module**: `rp-tabs` (status filter) + filter row (`rp-select`/`rp-date-picker`/`rp-toggle`) + `rp-bulk-action-bar` + `rp-table` (`has-checkbox has-action`) + `rp-pagination`.
-- **Master–detail**: `rp-layout columns="minmax(0,1fr) <w>"` with the list on the left and a detail panel on the right. If the detail panel opens on row click (transient), apply the overlay trigger pattern; only keep it open in the snapshot when it is a permanently docked region.
-- **Dashboard header**: `rp-layout columns="repeat(N,1fr)"` of `rp-stat-card`.
-- **Multi-step flow**: `rp-steps` + per-step `rp-form` / `rp-form-item`, each step's validation enumerated.
-- **Form with validation**: `rp-form` + `rp-form-item label required error` + control in `error`/`filled` states enumerated side by side.
+- **Data table module**: `tabs-el` (status filter) + filter row (`select-el`/`date-picker`/`toggle-el`) + `bulk-action-bar` + `table-el` (`has-checkbox has-action`) + `pagination-el`.
+- **Master–detail**: `layout-el columns="minmax(0,1fr) <w>"` with the list on the left and a detail panel on the right. If the detail panel opens on row click (transient), apply the overlay trigger pattern; only keep it open in the snapshot when it is a permanently docked region.
+- **Dashboard header**: `layout-el columns="repeat(N,1fr)"` of `stat-card`.
+- **Multi-step flow**: `steps-el` + per-step `form-el` / `form-item`, each step's validation enumerated.
+- **Form with validation**: `form-el` + `form-item label required error` + control in `error`/`filled` states enumerated side by side.
 
 ## Component families
 
@@ -171,38 +171,38 @@ For native-feeling iOS / macOS prototypes, prefer the platform-prefixed primitiv
 - **iOS** (`rp-ios-*`): ios-navbar, ios-tabbar, ios-list / ios-list-item, ios-action-sheet, ios-alert, ios-switch, ios-segmented, ios-button, ios-search, ios-stepper. Use with `device="mobile"`.
 - **macOS** (`rp-macos-*`): macos-window, macos-toolbar, macos-menubar, macos-sidebar / macos-source-item, macos-segmented, macos-popover, macos-sheet, macos-stepper, macos-disclosure, macos-table. Use with `device="web"`.
 
-Choose the platform that matches the product: a generic web SaaS page uses the plain `rp-*` set; a native iOS app uses `rp-ios-*` inside a `device="mobile"` viewport; a native macOS app wraps content in `rp-macos-window`. Do not mix platform styles within one snapshot.
+Choose the platform that matches the product: a generic web SaaS page uses the plain `rp-*` set; a native iOS app uses `rp-ios-*` inside a `device="mobile"` viewport; a native macOS app wraps content in `macos-window`. Do not mix platform styles within one snapshot.
 
 > ARIA note: component states (checked/expanded/selected/disabled/current) mirror the structure ARIA APG expects, so annotations can describe accessibility intent. RPUI stays static and does **not** emit runtime `role`/`aria-*` — treat ARIA as a design reference for *which states to document*, not as something the runtime manages.
 
 ## Overlay trigger pattern (critical)
 
-Overlays and transient feedback are **interaction results, not page regions**. This includes `rp-modal`, `rp-drawer`, `rp-dropdown`, `rp-popover`, `rp-tooltip`, and `rp-toast`. Do **not** place them in the main snapshot — a snapshot showing an open modal or a live toast is a frozen mid-interaction frame, which contradicts RPUI's "space replaces time" model. Worse, never stack mutually exclusive overlays (empty + loading + modal + toast) side by side in the snapshot as if they coexist.
+Overlays and transient feedback are **interaction results, not page regions**. This includes `modal-el`, `drawer-el`, `dropdown-el`, `popover-el`, `tooltip-el`, and `toast-el`. Do **not** place them in the main snapshot — a snapshot showing an open modal or a live toast is a frozen mid-interaction frame, which contradicts RPUI's "space replaces time" model. Worse, never stack mutually exclusive overlays (empty + loading + modal + toast) side by side in the snapshot as if they coexist.
 
 Instead, model each overlay as a **trigger → result** pair:
 
 1. **Pin the trigger** in the main snapshot — the button, row, field, or menu entry that opens the overlay (e.g. an action button, a table row, a `…` menu). The snapshot shows only this resting trigger.
 2. **State the trigger condition** in the annotation body: what action or system event opens it, any precondition, and the permission gate.
-3. **Render the overlay inside the annotation**, normally as an `<rp-enum>` showing the closed→open transition or the overlay's own variants (e.g. confirm vs. irreversible, success vs. partial-failure vs. error toast).
+3. **Render the overlay inside the annotation**, normally as an `<enum-el>` showing the closed→open transition or the overlay's own variants (e.g. confirm vs. irreversible, success vs. partial-failure vs. error toast).
 
 ```html
 <!-- main snapshot: only the trigger is pinned -->
-<rp-button label="批量关闭" variant="danger" data-pin="5"></rp-button>
+<button-el label="批量关闭" variant="danger" data-pin="5"></button-el>
 
 <!-- annotation: trigger condition + overlay rendered here -->
-<rp-annotation id="5" label="批量关闭">
+<annotation-el id="5" label="批量关闭">
   触发条件：勾选 ≥1 行后点击「批量关闭」，仅主管/坐席可见。点击弹出二次确认。
-  <rp-enum>
-    <rp-enum-item label="确认弹窗" description="列出影响范围与可逆性。">
-      <rp-modal title="批量关闭确认" has-footer>
-        <rp-alert type="warning" title="将关闭 3 条工单" message="客户 7 天内可重开。"></rp-alert>
-      </rp-modal>
-    </rp-enum-item>
-    <rp-enum-item label="关闭成功" description="3s 自动消失，列表刷新。">
-      <rp-toast type="success" title="已关闭 3 条工单"></rp-toast>
-    </rp-enum-item>
-  </rp-enum>
-</rp-annotation>
+  <enum-el>
+    <enum-item label="确认弹窗" description="列出影响范围与可逆性。">
+      <modal-el title="批量关闭确认" has-footer>
+        <alert-el type="warning" title="将关闭 3 条工单" message="客户 7 天内可重开。"></alert-el>
+      </modal-el>
+    </enum-item>
+    <enum-item label="关闭成功" description="3s 自动消失，列表刷新。">
+      <toast-el type="success" title="已关闭 3 条工单"></toast-el>
+    </enum-item>
+  </enum-el>
+</annotation-el>
 ```
 
 Narrow exception: when a side panel is a **permanently docked structural region** of the page (not a transiently opened overlay), it may appear open in the snapshot as the representative state — but its open/close trigger and conditions must still be documented in its annotation. When unsure, treat it as an overlay and use the trigger pattern.
@@ -210,16 +210,16 @@ Narrow exception: when a side panel is a **permanently docked structural region*
 ## Authoring rules
 
 - Use `rp-*` tags for new work. `proto-*` and `snap-*` are compatibility aliases only.
-- Use `<rp-page>` as root; exactly one `<rp-main-view>` per page.
+- Use `<page-el>` as root; exactly one `<main-view>` per page.
 - Use `rp-*` primitives for both the snapshot and UI slices inside annotations. Never use raw `div`/`button`/`input`/`table` for product UI; plain text and simple inline markup in annotations is fine.
 - No CSS or JS in the prototype; no `position:absolute`/`fixed` in snapshot content (RPUI owns pin positioning).
-- Do not hide important content behind interactions — expand it into `<rp-enum>`.
-- Overlays and transient feedback (`rp-modal`, `rp-drawer`, `rp-dropdown`, `rp-popover`, `rp-tooltip`, `rp-toast`) are interaction results: do not place them in the main snapshot. Pin the trigger and render the overlay inside its annotation (see Overlay trigger pattern). Plain collapsed `rp-select` in the snapshot is fine; its expanded list belongs in an annotation enum.
-- Note runtime limits honestly: `rp-table` cell text is sampled by the runtime from column names — for exact data, describe it in the annotation rather than expecting the table to render it.
+- Do not hide important content behind interactions — expand it into `<enum-el>`.
+- Overlays and transient feedback (`modal-el`, `drawer-el`, `dropdown-el`, `popover-el`, `tooltip-el`, `toast-el`) are interaction results: do not place them in the main snapshot. Pin the trigger and render the overlay inside its annotation (see Overlay trigger pattern). Plain collapsed `select-el` in the snapshot is fine; its expanded list belongs in an annotation enum.
+- Note runtime limits honestly: `table-el` cell text is sampled by the runtime from column names — for exact data, describe it in the annotation rather than expecting the table to render it.
 
 ## Multi-page applications
 
-One `<rp-page>` = one screen. For an application with several screens:
+One `<page-el>` = one screen. For an application with several screens:
 
 - Produce one RPUI HTML file per screen; name files by route.
 - If a single page exceeds ~12 pins, it is too dense — split a sub-area into its own page and note in the description that it details a region of the parent.
@@ -235,28 +235,28 @@ One `<rp-page>` = one screen. For an application with several screens:
     <script type="module" src="./dist/rpui.js"></script>
   </head>
   <body>
-    <rp-page title="页面标题" route="/route" description="主快照取『…』代表态">
-      <rp-main-view device="web" scale="0.65">
-        <rp-viewport device="web">
+    <page-el title="页面标题" route="/route" description="主快照取『…』代表态">
+      <main-view device="web" scale="0.65">
+        <viewport-el device="web">
           <!-- main snapshot -->
-        </rp-viewport>
-      </rp-main-view>
+        </viewport-el>
+      </main-view>
 
-      <rp-annotation id="1" label="区域说明">
+      <annotation-el id="1" label="区域说明">
         触发条件、数据来源、权限与校验在此用一两句说清。
-        <rp-enum>
-          <rp-enum-item label="默认" description="正常数据态。"
-            ><rp-empty label="示例"></rp-empty
-          ></rp-enum-item>
-          <rp-enum-item label="加载中" description="首次进入或刷新。"
-            ><rp-loading rows="3"></rp-loading
-          ></rp-enum-item>
-          <rp-enum-item label="错误" description="服务端或网络异常。"
-            ><rp-alert type="error" title="加载失败" message="请重试"></rp-alert
-          ></rp-enum-item>
-        </rp-enum>
-      </rp-annotation>
-    </rp-page>
+        <enum-el>
+          <enum-item label="默认" description="正常数据态。"
+            ><empty-el label="示例"></empty-el
+          ></enum-item>
+          <enum-item label="加载中" description="首次进入或刷新。"
+            ><loading-el rows="3"></loading-el
+          ></enum-item>
+          <enum-item label="错误" description="服务端或网络异常。"
+            ><alert-el type="error" title="加载失败" message="请重试"></alert-el
+          ></enum-item>
+        </enum-el>
+      </annotation-el>
+    </page-el>
   </body>
 </html>
 ```

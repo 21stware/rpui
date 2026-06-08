@@ -24,7 +24,7 @@ export class RpAnnotation extends HTMLElement {
     } else {
       const parentSection = (this.closest('[data-rp-section]') as HTMLElement | null)?.dataset.rpSection ?? '';
       const siblings = this.parentElement ? Array.from(this.parentElement.children).filter(
-        el => el.tagName.toLowerCase() === 'rp-annotation' || el.tagName.toLowerCase() === 'proto-annotation'
+        el => el.tagName.toLowerCase() === 'annotation-el' || el.tagName.toLowerCase() === 'annotation-el'
       ) : [];
       const idx = siblings.indexOf(this) + 1;
       sectionPath = parentSection ? `${parentSection}-${idx}` : String(idx);
@@ -33,18 +33,18 @@ export class RpAnnotation extends HTMLElement {
 
     const marker = document.createElement('span');
     const kind = id ? 'drop' : depth <= 1 ? 'circle' : 'triangle';
-    marker.className = `rp-annotation-marker ${kind}`;
+    marker.className = `annotation-el-marker ${kind}`;
     // Show the local index (last segment of the section path) inside every marker,
     // so a UI slice annotated one level deeper can be referenced unambiguously.
     const localIndex = id || sectionPath.split('-').pop() || '';
     marker.innerHTML = `<span>${escapeHtml(localIndex)}</span>`;
 
     const head = document.createElement('div');
-    head.className = 'rp-annotation-head';
+    head.className = 'annotation-el-head';
     head.append(marker);
 
     const title = document.createElement('span');
-    title.className = 'rp-annotation-title';
+    title.className = 'annotation-el-title';
     title.textContent = label;
     title.addEventListener('click', () => {
       const url = new URL(location.href);
@@ -55,7 +55,7 @@ export class RpAnnotation extends HTMLElement {
     head.append(title);
 
     const body = document.createElement('div');
-    body.className = 'rp-annotation-body';
+    body.className = 'annotation-el-body';
     existing.forEach(n => body.appendChild(n));
     this.append(head, body);
 
@@ -66,9 +66,9 @@ export class RpAnnotation extends HTMLElement {
 
   // A UI slice inside this annotation may carry data-pin markers on sub-regions.
   // Render pins on those slices so their numbers connect to the deeper annotations
-  // that explain them — mirroring how rp-main-view pins top-level regions.
+  // that explain them — mirroring how main-view pins top-level regions.
   private setupSlicePins() {
-    const body = this.querySelector<HTMLElement>(':scope > .rp-annotation-body');
+    const body = this.querySelector<HTMLElement>(':scope > .annotation-el-body');
     if (!body || !body.querySelector('[data-pin]')) return;
     this.ro?.disconnect();
     this.scheduleSlicePins(body);
@@ -86,7 +86,7 @@ export class RpAnnotation extends HTMLElement {
     const bodyRect = body.getBoundingClientRect();
     body.querySelectorAll<HTMLElement>('[data-pin]').forEach(target => {
       // Only own data-pin elements whose nearest annotation ancestor is this one.
-      if (target.closest('rp-annotation, proto-annotation') !== this) return;
+      if (target.closest('annotation-el, annotation-el') !== this) return;
       const pinId = target.dataset.pin;
       if (!pinId) return;
       const r = target.getBoundingClientRect();
@@ -102,7 +102,7 @@ export class RpAnnotation extends HTMLElement {
   annotationDepth() {
     let d = 0; let p = this.parentElement;
     while (p) {
-      if (p.tagName.toLowerCase() === 'rp-annotation' || p.tagName.toLowerCase() === 'proto-annotation') d++;
+      if (p.tagName.toLowerCase() === 'annotation-el' || p.tagName.toLowerCase() === 'annotation-el') d++;
       p = p.parentElement;
     }
     return d;
@@ -121,25 +121,25 @@ export class RpEnumItem extends HTMLElement {
     // Compute 1-based index among same-tag siblings
     const parent = this.parentElement;
     const siblings = parent ? Array.from(parent.children).filter(
-      el => el.tagName.toLowerCase() === 'rp-enum-item' || el.tagName.toLowerCase() === 'proto-enum-item'
+      el => el.tagName.toLowerCase() === 'enum-item' || el.tagName.toLowerCase() === 'enum-item'
     ) : [];
     const idx = siblings.indexOf(this) + 1;
 
     const labelEl = document.createElement('span');
-    labelEl.className = 'rp-enum-label';
+    labelEl.className = 'enum-el-label';
 
     const idxBadge = document.createElement('span');
-    idxBadge.className = 'rp-enum-index';
+    idxBadge.className = 'enum-el-index';
     idxBadge.textContent = String(idx);
 
     const labelText = document.createElement('span');
-    labelText.className = 'rp-enum-label-text';
+    labelText.className = 'enum-el-label-text';
     labelText.textContent = attr(this, 'label', 'State');
 
     const description = attr(this, 'description');
     if (description) {
       const desc = document.createElement('span');
-      desc.className = 'rp-enum-description';
+      desc.className = 'enum-el-description';
       desc.textContent = description;
       labelText.appendChild(desc);
     }
@@ -147,7 +147,7 @@ export class RpEnumItem extends HTMLElement {
     labelEl.append(idxBadge, labelText);
 
     const content = document.createElement('div');
-    content.className = 'rp-enum-content';
+    content.className = 'enum-el-content';
     children.forEach(n => content.appendChild(n));
     this.append(labelEl, content);
   }

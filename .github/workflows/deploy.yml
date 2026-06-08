@@ -34,6 +34,9 @@ jobs:
 
       - run: bun run --cwd packages/renderer-web build
 
+      - name: Build site (spec/ + agent/ → docs/*.html)
+        run: bun run site
+
       - name: Assemble docs/
         run: |
           mkdir -p docs/dist

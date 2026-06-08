@@ -1,16 +1,16 @@
 # RPML Monorepo
 
-**RPML** (Rapid Prototype Markup Language) is a static UI prototype specification language and rendering runtime. A `.rpml` file is pure markup starting with `<rp-page>` — no HTML wrapper needed.
+**RPML** (Rapid Prototype Markup Language) is a static UI prototype specification language and rendering runtime. A `.rpml` file is pure markup starting with `<page-el>` — no HTML wrapper needed.
 
 ```xml
-<rp-page title="任务管理" route="/tasks" description="主快照：有数据、筛选展开、抽屉打开。">
-  <rp-main-view device="web" scale="0.65">
-    <rp-viewport device="web">
-      <rp-navbar height="56" data-pin="1"><rp-logo label="PM+"></rp-logo></rp-navbar>
-    </rp-viewport>
-  </rp-main-view>
-  <rp-annotation id="1" label="导航栏">固定顶栏，高度 56px。</rp-annotation>
-</rp-page>
+<page-el title="任务管理" route="/tasks" description="主快照：有数据、筛选展开、抽屉打开。">
+  <main-view device="web" scale="0.65">
+    <viewport-el device="web">
+      <navbar-el height="56" data-pin="1"><logo-el label="PM+"></logo-el></navbar-el>
+    </viewport-el>
+  </main-view>
+  <annotation-el id="1" label="导航栏">固定顶栏，高度 56px。</annotation-el>
+</page-el>
 ```
 
 ## Packages

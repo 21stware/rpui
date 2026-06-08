@@ -8,8 +8,8 @@ export function resolveWidth(el: Element, fallback: number): number { const raw 
 export function hasExplicitNumericHeight(el: Element): boolean { const raw = el.getAttribute('height'); return raw !== null && raw !== '' && Number.isFinite(Number(raw)); }
 export function usesAutoHeight(el: Element): boolean { const raw = el.getAttribute('height'); return raw === 'auto' || el.hasAttribute('auto-height') || (!!el.getAttribute('device') && !hasExplicitNumericHeight(el)); }
 export function resolveHeight(el: Element, fallback: number): number { const raw = el.getAttribute('height'); const height = raw === null || raw === '' ? NaN : Number(raw); return Number.isFinite(height) ? height : fallback; }
-export function isTopAnnotation(node: Node): node is HTMLElement { if (!(node instanceof HTMLElement)) return false; const tag = node.tagName.toLowerCase(); return tag === 'rp-annotation' || tag === 'proto-annotation'; }
-export function isViewportNode(node: Node): node is HTMLElement { if (!(node instanceof HTMLElement)) return false; const tag = node.tagName.toLowerCase(); return tag === 'rp-viewport' || tag === 'snap-viewport'; }
+export function isTopAnnotation(node: Node): node is HTMLElement { if (!(node instanceof HTMLElement)) return false; const tag = node.tagName.toLowerCase(); return tag === 'annotation-el' || tag === 'annotation-el'; }
+export function isViewportNode(node: Node): node is HTMLElement { if (!(node instanceof HTMLElement)) return false; const tag = node.tagName.toLowerCase(); return tag === 'viewport-el' || tag === 'viewport-el'; }
 export function define(name: string, ctor: CustomElementConstructor) {
   if (customElements.get(name)) return;
   const Alias = class extends (ctor as { new(): HTMLElement }) {};

@@ -1,82 +1,82 @@
-<rp-page
+<page-el
   title="多步骤向导 — 新建工作区"
   route="/onboarding/workspace/new"
   description="新建工作区四步向导，主快照为第 2 步（成员邀请）填写状态，邮箱字段输入中。">
 
-  <rp-main-view device="web" scale="0.7">
-    <rp-viewport device="web">
-      <rp-panel padding="48">
-        <rp-layout rows="auto auto auto" gap="32">
+  <main-view device="web" scale="0.7">
+    <viewport-el device="web">
+      <panel-el padding="48">
+        <layout-el rows="auto auto auto" gap="32">
 
-          <rp-steps steps="基本信息,邀请成员,配置权限,完成" current="2" layout="horizontal" data-pin="1" />
+          <steps-el steps="基本信息,邀请成员,配置权限,完成" current="2" layout="horizontal" data-pin="1" />
 
-          <rp-layout rows="auto" gap="24" data-pin="2">
-            <rp-form>
-              <rp-form-item label="邀请成员（邮箱）" required hint="每行一个邮箱地址，最多 20 人">
-                <rp-textarea placeholder="alice@example.com&#10;bob@example.com" value="alice@example.com&#10;bob@" rows="4" state="focus" />
-              </rp-form-item>
-              <rp-form-item label="邀请角色">
-                <rp-select options="成员,管理员,只读访客" value="成员" state="filled" />
-              </rp-form-item>
-            </rp-form>
-          </rp-layout>
+          <layout-el rows="auto" gap="24" data-pin="2">
+            <form-el>
+              <form-item label="邀请成员（邮箱）" required hint="每行一个邮箱地址，最多 20 人">
+                <textarea-el placeholder="alice@example.com&#10;bob@example.com" value="alice@example.com&#10;bob@" rows="4" state="focus" />
+              </form-item>
+              <form-item label="邀请角色">
+                <select-el options="成员,管理员,只读访客" value="成员" state="filled" />
+              </form-item>
+            </form-el>
+          </layout-el>
 
-          <rp-layout columns="1fr max-content max-content" gap="12" data-pin="3">
-            <rp-button label="上一步" variant="ghost" />
-            <rp-button label="跳过此步" variant="secondary" />
-            <rp-button label="下一步" variant="primary" />
-          </rp-layout>
+          <layout-el columns="1fr max-content max-content" gap="12" data-pin="3">
+            <button-el label="上一步" variant="ghost" />
+            <button-el label="跳过此步" variant="secondary" />
+            <button-el label="下一步" variant="primary" />
+          </layout-el>
 
-        </rp-layout>
-      </rp-panel>
-    </rp-viewport>
-  </rp-main-view>
+        </layout-el>
+      </panel-el>
+    </viewport-el>
+  </main-view>
 
-  <rp-annotation id="1" label="步骤指示器">
+  <annotation-el id="1" label="步骤指示器">
     共 4 步，当前第 2 步。已完成步骤显示勾选图标，当前步骤高亮，未来步骤置灰。
     步骤标题可点击但已完成步骤才允许跳回（当前及以后不可点击向前跳）。
 
-    <rp-annotation label="步骤状态">
-      <rp-enum>
-        <rp-enum-item label="未开始" description="灰色圆圈 + 序号" />
-        <rp-enum-item label="当前" description="蓝色高亮圆圈，步骤标题加粗" />
-        <rp-enum-item label="已完成" description="绿色勾图标，允许点击返回" />
-        <rp-enum-item label="有错误（回溯后）" description="红色感叹号，提示该步骤有未修复的验证错误" />
-      </rp-enum>
-    </rp-annotation>
-  </rp-annotation>
+    <annotation-el label="步骤状态">
+      <enum-el>
+        <enum-item label="未开始" description="灰色圆圈 + 序号" />
+        <enum-item label="当前" description="蓝色高亮圆圈，步骤标题加粗" />
+        <enum-item label="已完成" description="绿色勾图标，允许点击返回" />
+        <enum-item label="有错误（回溯后）" description="红色感叹号，提示该步骤有未修复的验证错误" />
+      </enum-el>
+    </annotation-el>
+  </annotation-el>
 
-  <rp-annotation id="2" label="邀请成员表单">
+  <annotation-el id="2" label="邀请成员表单">
     每行一个邮箱，前端解析换行分割，去除空行和首尾空格。最多 20 个邮箱，超过时实时提示剩余可用数。
 
-    <rp-annotation label="邮箱格式校验">
-      <rp-enum>
-        <rp-enum-item label="合法行" description="绿色勾前缀" />
-        <rp-enum-item label="格式错误行" description="红色叉前缀 + 行内提示，不阻止继续输入" />
-        <rp-enum-item label="重复邮箱" description="黄色警告前缀，允许提交但会自动去重" />
-        <rp-enum-item label="已在工作区" description="灰色提示'已是成员'，自动跳过" />
-      </rp-enum>
-    </rp-annotation>
+    <annotation-el label="邮箱格式校验">
+      <enum-el>
+        <enum-item label="合法行" description="绿色勾前缀" />
+        <enum-item label="格式错误行" description="红色叉前缀 + 行内提示，不阻止继续输入" />
+        <enum-item label="重复邮箱" description="黄色警告前缀，允许提交但会自动去重" />
+        <enum-item label="已在工作区" description="灰色提示'已是成员'，自动跳过" />
+      </enum-el>
+    </annotation-el>
 
-    <rp-annotation label="角色选择">
+    <annotation-el label="角色选择">
       批量邀请共用同一个角色。如需不同角色，提交后在成员管理页单独修改。
       角色说明：成员（读写项目）、管理员（含成员管理权限）、只读访客（仅查看）。
-    </rp-annotation>
-  </rp-annotation>
+    </annotation-el>
+  </annotation-el>
 
-  <rp-annotation id="3" label="底部操作按钮">
-    <rp-annotation label="下一步行为">
+  <annotation-el id="3" label="底部操作按钮">
+    <annotation-el label="下一步行为">
       点击"下一步"先触发字段验证：有格式错误邮箱时弹出确认（含错误邮箱数量），用户可选继续（跳过错误行）或取消修改。
       无错误时直接进入第 3 步并保存草稿（PUT /onboarding/draft）。
-    </rp-annotation>
+    </annotation-el>
 
-    <rp-annotation label="跳过此步">
+    <annotation-el label="跳过此步">
       跳过后不发送邀请，直接进入第 3 步。工作区创建完成后可在成员管理页随时邀请。
-    </rp-annotation>
+    </annotation-el>
 
-    <rp-annotation label="上一步">
+    <annotation-el label="上一步">
       返回第 1 步，当前表单内容暂存（不清空）。
-    </rp-annotation>
-  </rp-annotation>
+    </annotation-el>
+  </annotation-el>
 
-</rp-page>
+</page-el>

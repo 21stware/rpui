@@ -27,31 +27,31 @@ export class RpPage extends HTMLElement {
     const existing = Array.from(this.childNodes);
 
     const header = document.createElement('div');
-    header.className = 'rp-page-header';
-    header.innerHTML = `<div class="rp-page-title-row"><h1 class="rp-page-title">${escapeHtml(pageTitle)}</h1><span class="rp-page-route">${escapeHtml(route)}</span></div><p class="rp-page-description">${escapeHtml(description)}</p>`;
+    header.className = 'page-el-header';
+    header.innerHTML = `<div class="page-el-title-row"><h1 class="page-el-title">${escapeHtml(pageTitle)}</h1><span class="page-el-route">${escapeHtml(route)}</span></div><p class="page-el-description">${escapeHtml(description)}</p>`;
 
     const body = document.createElement('div');
-    body.className = 'rp-page-body';
+    body.className = 'page-el-body';
     const main = document.createElement('main');
-    main.className = 'rp-page-main';
+    main.className = 'page-el-main';
     const pane = document.createElement('aside');
-    pane.className = 'rp-annotation-pane';
+    pane.className = 'annotation-el-pane';
     pane.setAttribute('aria-label', 'Annotations');
     const paneInner = document.createElement('div');
-    paneInner.className = 'rp-annotation-pane-inner';
+    paneInner.className = 'annotation-el-pane-inner';
 
     existing.forEach(n => (isTopAnnotation(n) ? paneInner : body).appendChild(n));
     pane.appendChild(paneInner);
     main.append(header, body);
 
     const shell = document.createElement('div');
-    shell.className = 'rp-page-shell';
+    shell.className = 'page-el-shell';
     shell.append(main, pane);
     this.appendChild(shell);
 
     // Bind header max-width to main view rendered width so description never drives page width
     requestAnimationFrame(() => {
-      const mv = body.querySelector<HTMLElement>('rp-main-view, proto-main-view');
+      const mv = body.querySelector<HTMLElement>('main-view, main-view');
       if (mv) header.style.maxWidth = `${mv.offsetWidth}px`;
     });
 
