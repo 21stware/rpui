@@ -6,7 +6,7 @@ const MARK = `<span class="mark">R</span>`;
 
 export interface PageOpts {
   title: string;
-  active: 'home' | 'guide' | 'components' | 'examples' | 'api';
+  active: 'home' | 'guide' | 'components' | 'examples' | 'api' | 'playground';
   version: string;
   /** extra <head> markup (page-specific styles/scripts) */
   head?: string;
@@ -25,6 +25,7 @@ function header(active: PageOpts['active'], version: string, base: string): stri
     ${link('guide', 'guide.html', '文档')}
     ${link('components', 'components.html', '组件')}
     ${link('examples', 'examples.html', '示例')}
+    ${link('playground', 'playground.html', 'Playground')}
     ${link('api', 'api.html', 'API')}
   </nav>
   <div class="nav-right">
@@ -52,7 +53,7 @@ function footer(base: string): string {
     </ul></div>
     <div><h4>资源</h4><ul>
       <li><a href="${base}llms.txt" target="_blank">llms.txt</a></li>
-      <li><a href="${base}demo/viewer.html" target="_blank">RPML Viewer</a></li>
+      <li><a href="${base}playground.html">Playground</a></li>
       <li><a href="${REPO}" target="_blank" rel="noopener">GitHub</a></li>
       <li><a href="${REPO}/issues" target="_blank" rel="noopener">Issues</a></li>
     </ul></div>

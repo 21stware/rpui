@@ -35,7 +35,7 @@ export function buildApi(ctx: Ctx): string {
 <h3>2. 加载器元素</h3>
 <pre class="code" data-lang="html"><code>&lt;script type="module" src="dist/rpml-loader.js"&gt;&lt;/script&gt;
 &lt;rpml-app src="./page.rpml"&gt;&lt;/rpml-app&gt;
-&lt;!-- 或 URL 参数：viewer.html?rpml=./page.rpml --&gt;</code></pre>
+&lt;!-- 或 URL 参数：playground.html?rpml=./page.rpml --&gt;</code></pre>
 <h3>3. 编程式</h3>
 <pre class="code" data-lang="js"><code>import { parseToPage } from 'rpml-parser';
 document.body.appendChild(parseToPage(rpmlSource));</code></pre>
@@ -70,8 +70,8 @@ bun run compile examples -o examples.html</code></pre>
 </tbody>
 </table>
 
-<h2 id="viewer">RPML Viewer</h2>
-<p><a href="demo/viewer.html" target="_blank" rel="noopener">demo/viewer.html</a> 支持三种加载：URL 参数 <code>?rpml=</code>、拖拽单个 <code>.rpml</code>、拖拽<strong>文件夹</strong>构建带侧边栏的文档集（按文件路径生成导航树，hash 路由，<code>index.rpml</code> 作默认主页）。</p>
+<h2 id="viewer">Playground</h2>
+<p><a href="playground.html">Playground</a> 支持三种加载：URL 参数 <code>?rpml=</code>、拖拽单个 <code>.rpml</code>、拖拽<strong>文件夹</strong>构建带侧边栏的文档集（按文件路径生成导航树，hash 路由，<code>index.rpml</code> 作默认主页）。</p>
 
 <h2 id="elements">元素索引</h2>
 <p>全部 RPML 元素一句话索引。完整属性见<a href="components.html">组件</a>页与 <a href="${ctx.REPO}/tree/main/spec/elements" target="_blank" rel="noopener">spec/elements</a>。</p>

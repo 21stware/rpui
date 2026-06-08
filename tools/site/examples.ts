@@ -14,7 +14,7 @@ const EXAMPLES: { file: string; level: string; title: string; desc: string }[] =
 
 export function buildExamples(ctx: Ctx): string {
   const cards = EXAMPLES.map(e => {
-    const url = `demo/viewer.html?rpml=../examples/${e.file}.rpml`;
+    const url = `playground.html?rpml=examples/${e.file}.rpml`;
     return `<a class="ex-card" href="${url}" target="_blank" rel="noopener">
       <div class="ex-thumb"><iframe src="${url}" loading="lazy" tabindex="-1"></iframe></div>
       <div class="ex-body"><span class="tag">${e.file}.rpml · ${e.level}</span><h3>${e.title}</h3><p>${e.desc}</p></div>
@@ -24,11 +24,11 @@ export function buildExamples(ctx: Ctx): string {
   const body = `
 <div class="page-intro">
   <h1>示例画廊</h1>
-  <p>9 个由浅入深的 <code>.rpml</code> 原型。点击任意卡片在 RPML Viewer 中打开；也可把整个文件夹拖进 Viewer 构建带侧边栏的文档集。</p>
+  <p>9 个由浅入深的 <code>.rpml</code> 原型。点击任意卡片在 Playground 中打开；也可把整个文件夹拖进 Playground 构建带侧边栏的文档集。</p>
 </div>
 <section class="ex-grid">${cards}</section>
 <div style="text-align:center;padding:48px 28px 8px">
-  <a class="btn btn-ghost" href="demo/viewer.html" target="_blank" rel="noopener">打开 RPML Viewer →</a>
+  <a class="btn btn-ghost" href="playground.html">打开 Playground →</a>
 </div>`;
 
   const script = `<script>

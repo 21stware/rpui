@@ -1,6 +1,6 @@
 # Examples
 
-每个 `.rpml` 文件可通过 `demo/viewer.html` 加载，或直接用 `bun packages/validator/src/cli.ts <file>` 验证。
+每个 `.rpml` 文件可在站点 Playground 中加载（`bun run site` 后打开 `docs/playground.html`），或直接用 `bun packages/validator/src/cli.ts <file>` 验证。
 
 | 文件 | 复杂度 | 说明 |
 |------|--------|------|
@@ -17,5 +17,5 @@
 ## 打开方式
 
 ```
-demo/viewer.html?rpml=../examples/04-ticket-desk.rpml
+docs/playground.html?rpml=examples/04-ticket-desk.rpml
 ```

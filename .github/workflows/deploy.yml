@@ -45,7 +45,6 @@ jobs:
           cp packages/renderer-web/dist/gallery.js docs/dist/gallery.js
           cp preview/components.js docs/components.js
           cp llms.txt docs/llms.txt
-          cp -r demo docs/demo
           cp -r examples docs/examples
 
       - uses: actions/configure-pages@v4

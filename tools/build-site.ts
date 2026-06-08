@@ -15,6 +15,7 @@ import { buildGuide } from './site/guide.ts';
 import { buildExamples } from './site/examples.ts';
 import { buildApi } from './site/api.ts';
 import { buildComponents } from './site/components-page.ts';
+import { buildPlayground } from './site/playground.ts';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = join(ROOT, 'docs');
@@ -35,6 +36,7 @@ write('guide.html', buildGuide(ctx));
 write('components.html', buildComponents(ctx));
 write('examples.html', buildExamples(ctx));
 write('api.html', buildApi(ctx));
+write('playground.html', buildPlayground(ctx));
 console.log('Done.');
 
 export type Ctx = typeof ctx;

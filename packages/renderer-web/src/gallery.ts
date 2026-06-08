@@ -2,7 +2,7 @@
  * RPML gallery — renders a collection of .rpml documents with a sidebar nav.
  *
  * Used by:
- *  - demo/viewer.html  (folder drag-and-drop → in-memory gallery)
+ *  - playground.html   (folder drag-and-drop → in-memory gallery)
  *  - rpml-compiler     (compiled single-file HTML; docs inlined as a global)
  *
  * A "doc" is { path, source }. The sidebar tree is derived from the slash-

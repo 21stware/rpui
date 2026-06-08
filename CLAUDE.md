@@ -28,7 +28,6 @@ spec/                    — RPML language specification
 examples/                — .rpml example files (01–09; viewer loads via ?rpml=)
 agent/                   — agent guides, prompts, context packs
 tools/                   — dev scripts; tools/build-site.ts + tools/site/ generate docs/
-demo/viewer.html         — RPML viewer (single-file or folder-drop gallery)
 preview/                 — dev component browser (served by vite dev server)
 docs/                    — GENERATED site portal (gitignored; CI rebuilds via `bun run site`)
 dist/                    — root dist/ (synced from packages/renderer-web/dist/ at build)
@@ -41,11 +40,12 @@ dist/                    — root dist/ (synced from packages/renderer-web/dist/
 - `index.html` — hero landing page
 - `guide.html` — docs reader: sidebar + Markdown-rendered `spec/` (11 docs) + `agent/` guides, with per-doc TOC and hash routing
 - `components.html` — component browser (reuses `components.js`)
-- `examples.html` — example gallery (live-scaled iframes → `demo/viewer.html`)
+- `examples.html` — example gallery (live-scaled iframes → `playground.html`)
 - `api.html` — package exports, CLI usage, element index
+- `playground.html` — in-browser RPML viewer (single-file or folder-drop gallery)
 - `site.css` — shared styles (Inter + JetBrains Mono, modern tech aesthetic)
 
-`spec/` Markdown is the **single source of truth** — never hand-copy spec content into HTML. The generator lives in `tools/build-site.ts` + `tools/site/` (markdown.ts converter, css.ts, chrome.ts shell, one module per page). CI runs `bun run site` then copies `dist/*.js`, `components.js`, `llms.txt`, `demo/`, `examples/` into `docs/` before deploying to GitHub Pages. `REPO` URL is set in `tools/site/chrome.ts`.
+`spec/` Markdown is the **single source of truth** — never hand-copy spec content into HTML. The generator lives in `tools/build-site.ts` + `tools/site/` (markdown.ts converter, css.ts, chrome.ts shell, one module per page). CI runs `bun run site` then copies `dist/*.js`, `components.js`, `llms.txt`, `examples/` into `docs/` before deploying to GitHub Pages. `REPO` URL is set in `tools/site/chrome.ts`.
 
 ## Development commands
 
@@ -59,7 +59,7 @@ bash tools/validate-examples.sh                # validate all examples/*.rpml
 bun run compile <dir> -o out.html              # compile a dir of .rpml → one HTML
 ```
 
-Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages/renderer-web/src/rpui.ts` via Vite (root is repo root). `demo/viewer.html` imports `../dist/rpml-loader.js` + `../dist/gallery.js` — run the build first.
+Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages/renderer-web/src/rpui.ts` via Vite (root is repo root). The generated `playground.html` imports `./dist/rpml-loader.js` + `./dist/gallery.js` — run the build first.
 
 ## TypeScript/build setup
 
@@ -89,13 +89,13 @@ The parser applies the rewrite on the source string (`rewriteTags`, run after `e
 <rpml-app src="./my-page.rpml"></rpml-app>
 ```
 
-Or via URL param: `demo/viewer.html?rpml=../examples/04-ticket-desk.rpml`
+Or via URL param: `playground.html?rpml=examples/04-ticket-desk.rpml`
 
-## Viewer & compiler
+## Playground & compiler
 
-- `demo/viewer.html`: drag a single `.rpml` to render it; drag a **folder** to build a sidebar gallery (nav tree from file paths, hash routing `#<path>`, `index.rpml` as default home, no localStorage). Also supports `?rpml=` and a file picker.
+- `playground.html` (generated into `docs/` by `bun run site`, source in `tools/site/playground.ts`): drag a single `.rpml` to render it; drag a **folder** to build a sidebar gallery (nav tree from file paths, hash routing `#<path>`, `index.rpml` as default home, no localStorage). Also supports `?rpml=` and a file picker.
 - `bun run compile <dir> -o out.html`: recursively reads `.rpml`, validates (errors abort, warnings print), inlines all sources as `globalThis.__RPML_DOCS__` plus `gallery.js` into one self-contained HTML that works from `file://`. `index.rpml` is the default home.
-- Shared logic lives in `packages/renderer-web/src/gallery.ts` (`mountGallery(docs, host)`); both the viewer and compiler consume it — single source of truth.
+- Shared logic lives in `packages/renderer-web/src/gallery.ts` (`mountGallery(docs, host)`); both the playground and compiler consume it — single source of truth.
 
 
 Validate with: `bun packages/validator/src/cli.ts <file.rpml>`
@@ -153,7 +153,7 @@ For state coverage, consider loaded, empty, loading, error/retry, search default
 
 ## Demo/reference files
 
-- `demo/viewer.html` — RPML viewer: load any `.rpml` via `?rpml=../examples/04-ticket-desk.rpml`, drag-and-drop, or file picker.
+- `playground.html` (generated into `docs/`) — in-browser RPML viewer: load any `.rpml` via `?rpml=examples/04-ticket-desk.rpml`, drag-and-drop, or file picker.
 - `examples/` — all 9 prototype examples as `.rpml` files (01–09); see `examples/README.md`.
 - `llms.txt` is the component/tag reference for generated prototypes.
 - `SKILL.md` documents the prototype implementation workflow, recursive decomposition method, overlay-trigger pattern, and quality bar.
