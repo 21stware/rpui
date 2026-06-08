@@ -10,6 +10,8 @@ A generated prototype imports one file only:
 
 `dist/rpui.js` registers all custom elements and injects runtime CSS plus Lucide-style inline SVG icons. Do not import external CSS, image CDNs, icon CDNs, or UI frameworks.
 
+ARIA note: component states (checked / expanded / selected / disabled / current / pressed) follow the structure that the W3C ARIA Authoring Practices expect, so annotations can describe accessibility intent precisely. RPUI is static and does not emit runtime `role` / `aria-*` attributes — treat ARIA as a reference for which states to expose and document, not as runtime behavior.
+
 ## Core model
 
 RPUI has two layers:
@@ -150,7 +152,90 @@ All form states are explicit through attributes; there is no runtime focus or in
 
 - `<rp-alert type="info|success|warning|error" title="..." message="..." closable>`.
 - `<rp-toast type="info|success|warning|error" title="..." message="..." closable>`.
+- `<rp-banner type="info|success|warning|error" title="..." message="..." has-action closable>` — full-width page banner.
 - `<rp-progress value="40" kind="bar|circle" status="success|error">`.
+- `<rp-skeleton shape="line|block|card|list|avatar">` — loading placeholder.
+- `<rp-countdown value="02:45:18">` — time-remaining chip.
+- `<rp-result status="success|error|empty" title="..." description="..." has-action>` — full-page result.
+
+### Data input (additional)
+
+- `<rp-slider value="60" min="0" max="100" label="..." show-value>`.
+- `<rp-range low="20" high="70" min="0" max="100">` — dual-thumb range.
+- `<rp-number-input value="42">` — input with +/- steppers.
+- `<rp-rating value="3" max="5">` — star rating.
+- `<rp-pin-input length="4" value="12">` — OTP/PIN cells.
+- `<rp-color-swatch value="#2563eb" label="...">`.
+- `<rp-autocomplete value="..." placeholder="..." options="A,B,C" open>`.
+
+### Data display (additional)
+
+- `<rp-tree>` + `<rp-tree-item label="..." icon="..." level="0" expanded|collapsed state="selected">`.
+- `<rp-timeline>` + `<rp-timeline-item label="..." time="..." state="default|active|done|error">`.
+- `<rp-calendar month="2026 年 6 月" selected="15">` — month grid.
+- `<rp-kanban>` + `<rp-kanban-column title="..." count="3">` + `<rp-kanban-card label="..." tag="...">`.
+- `<rp-code-block lang="ts" lines="5">` — code placeholder with line numbers.
+- `<rp-diff rows="4">` — added/removed/context lines.
+- `<rp-image-grid count="6" columns="3">`.
+- `<rp-key-value>` + `<rp-kv-row label="..." value="...">` — description list.
+- `<rp-accordion>` + `<rp-accordion-item label="..." expanded>`.
+- `<rp-chip label="..." icon="..." closable>` — compact token.
+
+### Navigation & layout (additional)
+
+- `<rp-segmented options="日,周,月" active="1">`.
+- `<rp-menu>` + `<rp-menu-item label="..." icon="..." shortcut="⌘O" state="disabled">`.
+- `<rp-context-menu items="复制,重命名,删除">`.
+- `<rp-command-palette query="..." results="A,B,C">`.
+- `<rp-toc items="概述,安装,用法">` — table of contents.
+- `<rp-kbd keys="⌘,K">` — keyboard shortcut chips.
+- `<rp-split-pane columns="1fr 1fr">`, `<rp-divider vertical>`, `<rp-spacer size="16">`.
+
+### Enterprise / SaaS
+
+- `<rp-permission-gate reason="需管理员权限">…locked slot…</rp-permission-gate>`.
+- `<rp-quota-bar label="API 调用" used="920" limit="1000">` — turns red at ≥90%.
+- `<rp-api-key value="sk_live_••••3f9a">` — masked key with copy affordance.
+- `<rp-audit-row actor="..." action="..." time="...">`.
+- `<rp-workflow-node label="..." state="default|active|done|error">`.
+
+### iOS platform (`rp-ios-*`, use with device="mobile")
+
+- `<rp-ios-navbar title="..." large back="返回" trailing="编辑">`.
+- `<rp-ios-tabbar items="A,B,C" icons="home,search,user" active="0">`.
+- `<rp-ios-list header="...">` + `<rp-ios-list-item label="..." detail="..." icon="..." chevron>`.
+- `<rp-ios-action-sheet title="..." actions="A,B,C" destructive="删除">`.
+- `<rp-ios-alert title="..." message="..." actions="取消,确定">`.
+- `<rp-ios-switch label="...">`, `<rp-ios-segmented options="A,B" active="0">`.
+- `<rp-ios-button label="..." variant="filled|tinted|plain">`, `<rp-ios-search>`, `<rp-ios-stepper>`.
+
+### macOS platform (`rp-macos-*`, use with device="web")
+
+- `<rp-macos-window title="...">` — window chrome with traffic lights.
+- `<rp-macos-menubar items="文件,编辑,显示">`, `<rp-macos-toolbar>`.
+- `<rp-macos-sidebar>` + `<rp-macos-source-item label="..." icon="..." group state="selected">`.
+- `<rp-macos-segmented options="A,B,C" active="0">`.
+- `<rp-macos-popover title="...">`, `<rp-macos-sheet title="...">`.
+- `<rp-macos-stepper>`, `<rp-macos-disclosure label="..." expanded>`.
+- `<rp-macos-table columns="名称,大小" rows="5">` — sortable-header table look.
+
+### Agent / conversational UI
+
+For chat, copilot, and agent prototypes:
+
+- `<rp-chat>` — conversation container; wraps the message stream.
+- `<rp-user-message text="..." initials="我">` — right-aligned user bubble (text attr or rich children).
+- `<rp-assistant-message name="助手" text="...">` — left-aligned assistant message; children render as rich content (can contain tool-call/output/citation).
+- `<rp-system-message text="...">` — centered system/context note.
+- `<rp-tool-call name="search" state="running|done|error" args="...">` — tool/function call card with status.
+- `<rp-agent-output kind="text|code|terminal" label="..." text="...">` — command/code/tool output block.
+- `<rp-reasoning expanded>…</rp-reasoning>` — collapsible thinking/reasoning block.
+- `<rp-message-actions actions="copy,retry,up,down,edit,share">` — per-message action buttons.
+- `<rp-suggestions items="A,B,C">` — suggested reply / prompt chips.
+- `<rp-typing>` — streaming typing indicator.
+- `<rp-composer value="..." placeholder="..." state="idle|streaming">` — prompt input bar (send button becomes stop while streaming).
+- `<rp-citation index="1" title="...">` — source reference chip.
+- `<rp-token-usage used="1840" limit="8000">` — token/context usage meter.
 
 ## Icon rule
 

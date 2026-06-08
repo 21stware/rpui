@@ -153,6 +153,28 @@ Complex pages are built from recurring composite modules. Assemble these from pr
 - **Multi-step flow**: `rp-steps` + per-step `rp-form` / `rp-form-item`, each step's validation enumerated.
 - **Form with validation**: `rp-form` + `rp-form-item label required error` + control in `error`/`filled` states enumerated side by side.
 
+## Component families
+
+RPUI ships a broad primitive set. Pick the smallest primitive that conveys the intent. See `llms.txt` for the full attribute reference; for a visual catalog of every component and its states, run `npm run dev` and open the source-mode preview at `/preview/`.
+
+- **Layout**: viewport, layout, panel, card, split-pane, divider, spacer, sidebar, navbar.
+- **Data input**: input, search, textarea, select, date-picker, checkbox, radio, toggle, slider, range, number-input, rating, pin-input, color-swatch, autocomplete, upload, button, button-group, form, form-item.
+- **Data display**: table, table-row, list, list-item, tree, timeline, calendar, kanban, code-block, diff, image-grid, key-value, accordion, stat-card, tag, chip, badge, avatar, image-placeholder, progress.
+- **Navigation**: tabs, breadcrumb, pagination, steps, segmented, menu, context-menu, command-palette, toc, kbd.
+- **Feedback / overlays**: alert, toast, banner, empty, loading, skeleton, countdown, result, progress, tooltip, dropdown, popover, modal, drawer.
+- **Enterprise / SaaS**: permission-gate, quota-bar, api-key, audit-row, workflow-node.
+
+### Platform primitives (Apple HIG)
+
+For native-feeling iOS / macOS prototypes, prefer the platform-prefixed primitives over the generic web ones:
+
+- **iOS** (`rp-ios-*`): ios-navbar, ios-tabbar, ios-list / ios-list-item, ios-action-sheet, ios-alert, ios-switch, ios-segmented, ios-button, ios-search, ios-stepper. Use with `device="mobile"`.
+- **macOS** (`rp-macos-*`): macos-window, macos-toolbar, macos-menubar, macos-sidebar / macos-source-item, macos-segmented, macos-popover, macos-sheet, macos-stepper, macos-disclosure, macos-table. Use with `device="web"`.
+
+Choose the platform that matches the product: a generic web SaaS page uses the plain `rp-*` set; a native iOS app uses `rp-ios-*` inside a `device="mobile"` viewport; a native macOS app wraps content in `rp-macos-window`. Do not mix platform styles within one snapshot.
+
+> ARIA note: component states (checked/expanded/selected/disabled/current) mirror the structure ARIA APG expects, so annotations can describe accessibility intent. RPUI stays static and does **not** emit runtime `role`/`aria-*` — treat ARIA as a design reference for *which states to document*, not as something the runtime manages.
+
 ## Overlay trigger pattern (critical)
 
 Overlays and transient feedback are **interaction results, not page regions**. This includes `rp-modal`, `rp-drawer`, `rp-dropdown`, `rp-popover`, `rp-tooltip`, and `rp-toast`. Do **not** place them in the main snapshot — a snapshot showing an open modal or a live toast is a frozen mid-interaction frame, which contradicts RPUI's "space replaces time" model. Worse, never stack mutually exclusive overlays (empty + loading + modal + toast) side by side in the snapshot as if they coexist.

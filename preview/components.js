@@ -1,0 +1,136 @@
+// Component catalog data for the dev preview explorer.
+// Each entry: { group, name, html, attrs: [[attr, desc], ...] }
+// `html` is rendered live and also shown as source.
+
+export const COMPONENTS = [
+  // ---------- Layout ----------
+  { group: 'Layout', name: 'rp-viewport', html: '<rp-viewport device="web" style="height:160px"><rp-panel padding="16">视口内容</rp-panel></rp-viewport>', attrs: [['device', 'web | ipad | mobile 预设尺寸'], ['width', '显式宽度，覆盖预设'], ['height', '数字固定高度，或 auto']] },
+  { group: 'Layout', name: 'rp-layout', html: '<rp-layout columns="1fr 1fr 1fr" gap="12"><rp-panel padding="12">A</rp-panel><rp-panel padding="12">B</rp-panel><rp-panel padding="12">C</rp-panel></rp-layout>', attrs: [['columns', 'CSS grid-template-columns'], ['rows', 'CSS grid-template-rows'], ['gap', '间距 px']] },
+  { group: 'Layout', name: 'rp-panel', html: '<rp-panel padding="20" elevation="1">面板内容</rp-panel>', attrs: [['padding', '内边距 px'], ['elevation', '0 | 1 | 2 阴影层级']] },
+  { group: 'Layout', name: 'rp-card', html: '<rp-card title="卡片标题" subtitle="副标题" has-footer>正文内容</rp-card>', attrs: [['title', '标题'], ['subtitle', '副标题'], ['has-image', '顶部图片占位'], ['has-footer', '底部操作区']] },
+  { group: 'Layout', name: 'rp-split-pane', html: '<rp-split-pane columns="1fr 1fr" style="width:360px"><div>左侧</div><div>右侧</div></rp-split-pane>', attrs: [['columns', '分栏比例']] },
+  { group: 'Layout', name: 'rp-divider', html: '上<rp-divider></rp-divider>下', attrs: [['vertical', '竖向分隔']] },
+  { group: 'Layout', name: 'rp-navbar', html: '<rp-navbar height="56"><rp-logo></rp-logo><rp-badge count="5"></rp-badge><rp-avatar initials="OC"></rp-avatar></rp-navbar>', attrs: [['height', '高度 px']] },
+  { group: 'Layout', name: 'rp-sidebar', html: '<rp-sidebar width="220"><rp-list><rp-list-item label="概览" icon="layout-dashboard" state="selected"></rp-list-item><rp-list-item label="设置" icon="settings"></rp-list-item></rp-list></rp-sidebar>', attrs: [['width', '宽度 px'], ['collapsed', '折叠态']] },
+  { group: 'Layout', name: 'rp-logo', html: '<rp-logo label="LOGO" size="100"></rp-logo>', attrs: [['label', '文字'], ['size', '宽度 px']] },
+
+  // ---------- Data input ----------
+  { group: 'Data input', name: 'rp-input', html: '<rp-input label="姓名" state="focus" value="张三" has-clear-button></rp-input>', attrs: [['state', 'default | focus | filled | error | disabled'], ['label', '标签'], ['value', '值'], ['placeholder', '占位'], ['has-clear-button', '清除按钮'], ['error-message', '错误文案']] },
+  { group: 'Data input', name: 'rp-search', html: '<rp-search state="filled" value="关键词" has-clear-button></rp-search>', attrs: [['state', '同 rp-input'], ['value', '值'], ['placeholder', '占位']] },
+  { group: 'Data input', name: 'rp-textarea', html: '<rp-textarea state="filled" rows="3" value="多行文本内容"></rp-textarea>', attrs: [['state', '同 rp-input'], ['rows', '行数'], ['value', '值']] },
+  { group: 'Data input', name: 'rp-select', html: '<rp-select state="expanded" value="管理员" options="访客,成员,管理员"></rp-select>', attrs: [['state', 'collapsed | expanded | disabled'], ['value', '当前值'], ['options', '逗号分隔选项'], ['label', '标签']] },
+  { group: 'Data input', name: 'rp-date-picker', html: '<rp-date-picker state="filled" value="2026-06-08"></rp-date-picker>', attrs: [['state', '同 rp-input'], ['value', '日期值']] },
+  { group: 'Data input', name: 'rp-checkbox', html: '<rp-checkbox state="checked" label="已选"></rp-checkbox> <rp-checkbox state="indeterminate" label="部分"></rp-checkbox>', attrs: [['state', 'unchecked | checked | indeterminate | disabled'], ['label', '标签']] },
+  { group: 'Data input', name: 'rp-radio', html: '<rp-radio state="checked" label="选项 A"></rp-radio>', attrs: [['state', 'unchecked | checked | disabled'], ['label', '标签']] },
+  { group: 'Data input', name: 'rp-toggle', html: '<rp-toggle state="on" label="启用"></rp-toggle>', attrs: [['state', 'on | off | disabled'], ['label', '标签']] },
+  { group: 'Data input', name: 'rp-slider', html: '<rp-slider value="60" show-value></rp-slider>', attrs: [['value', '当前值'], ['min', '最小值'], ['max', '最大值'], ['label', '标签'], ['show-value', '显示数值']] },
+  { group: 'Data input', name: 'rp-range', html: '<rp-range low="20" high="70"></rp-range>', attrs: [['low', '低端值'], ['high', '高端值'], ['min', '最小值'], ['max', '最大值']] },
+  { group: 'Data input', name: 'rp-number-input', html: '<rp-number-input value="42"></rp-number-input>', attrs: [['value', '数值']] },
+  { group: 'Data input', name: 'rp-rating', html: '<rp-rating value="3" max="5"></rp-rating>', attrs: [['value', '已选星数'], ['max', '总星数']] },
+  { group: 'Data input', name: 'rp-pin-input', html: '<rp-pin-input length="4" value="12"></rp-pin-input>', attrs: [['length', '位数'], ['value', '已输入值'], ['state', '状态']] },
+  { group: 'Data input', name: 'rp-color-swatch', html: '<rp-color-swatch value="#7c3aed"></rp-color-swatch>', attrs: [['value', '颜色值'], ['label', '显示文字']] },
+  { group: 'Data input', name: 'rp-autocomplete', html: '<rp-autocomplete value="设" open options="设置,设备管理,设计稿"></rp-autocomplete>', attrs: [['value', '输入值'], ['options', '候选项'], ['open', '展开下拉']] },
+  { group: 'Data input', name: 'rp-upload', html: '<rp-upload state="uploading" progress="60"></rp-upload>', attrs: [['state', 'empty | has-file | uploading'], ['file', '文件名'], ['progress', '上传进度']] },
+  { group: 'Data input', name: 'rp-button', html: '<rp-button label="主操作" variant="primary" icon="plus"></rp-button> <rp-button label="次要" variant="secondary"></rp-button> <rp-button label="危险" variant="danger"></rp-button>', attrs: [['label', '文字'], ['variant', 'primary | secondary | ghost | danger | link'], ['icon', '图标名'], ['state', 'default | disabled | loading'], ['size', 'sm | md | lg']] },
+  { group: 'Data input', name: 'rp-form', html: '<rp-form><rp-form-item label="标题" required><rp-input value="工单标题"></rp-input></rp-form-item><rp-form-item label="描述"><rp-textarea rows="2"></rp-textarea></rp-form-item></rp-form>', attrs: [['layout', 'vertical | horizontal']] },
+  { group: 'Data input', name: 'rp-form-item', html: '<rp-form-item label="邮箱" required error="格式不正确"><rp-input state="error" value="bad@"></rp-input></rp-form-item>', attrs: [['label', '标签'], ['required', '必填标记'], ['error', '错误文案']] },
+
+  // ---------- Data display ----------
+  { group: 'Data display', name: 'rp-table', html: '<rp-table rows="4" columns="名称,负责人,状态" has-checkbox has-action></rp-table>', attrs: [['rows', '行数'], ['columns', '逗号分隔列名'], ['has-checkbox', '复选列'], ['has-action', '操作列']] },
+  { group: 'Data display', name: 'rp-table-row', html: '<rp-table-row state="unread"></rp-table-row>', attrs: [['state', 'default | selected | unread | highlighted | disabled']] },
+  { group: 'Data display', name: 'rp-list', html: '<rp-list><rp-list-item label="收件箱" icon="inbox" badge="12" state="selected"></rp-list-item><rp-list-item label="已归档" icon="archive"></rp-list-item></rp-list>', attrs: [['items', '自动生成条数'], ['state', 'first-selected']] },
+  { group: 'Data display', name: 'rp-list-item', html: '<rp-list-item label="消息" icon="message-square" badge="3"></rp-list-item>', attrs: [['label', '文字'], ['icon', '图标名'], ['badge', '角标'], ['state', 'default | selected | disabled']] },
+  { group: 'Data display', name: 'rp-tree', html: '<rp-tree><rp-tree-item label="src" icon="folder" expanded level="0"></rp-tree-item><rp-tree-item label="rpui.ts" level="1" state="selected"></rp-tree-item></rp-tree>', attrs: [['(子) rp-tree-item', 'label / icon / level / expanded | collapsed / state']] },
+  { group: 'Data display', name: 'rp-timeline', html: '<rp-timeline><rp-timeline-item label="已创建" time="14:00" state="done"></rp-timeline-item><rp-timeline-item label="处理中" time="14:30" state="active"></rp-timeline-item></rp-timeline>', attrs: [['(子) rp-timeline-item', 'label / time / state: default|active|done|error']] },
+  { group: 'Data display', name: 'rp-calendar', html: '<rp-calendar month="2026 年 6 月" selected="8"></rp-calendar>', attrs: [['month', '月份标题'], ['selected', '选中日']] },
+  { group: 'Data display', name: 'rp-kanban', html: '<rp-kanban><rp-kanban-column title="待办" count="2"><rp-kanban-card label="修复登录" tag="P1"></rp-kanban-card></rp-kanban-column><rp-kanban-column title="进行中" count="1"><rp-kanban-card label="重构"></rp-kanban-card></rp-kanban-column></rp-kanban>', attrs: [['(子) rp-kanban-column', 'title / count'], ['(子) rp-kanban-card', 'label / tag']] },
+  { group: 'Data display', name: 'rp-code-block', html: '<rp-code-block lang="typescript" lines="5"></rp-code-block>', attrs: [['lang', '语言标签'], ['lines', '行数']] },
+  { group: 'Data display', name: 'rp-diff', html: '<rp-diff rows="5"></rp-diff>', attrs: [['rows', '行数（自动 +/-/上下文）']] },
+  { group: 'Data display', name: 'rp-image-grid', html: '<rp-image-grid count="6" columns="3"></rp-image-grid>', attrs: [['count', '图片数'], ['columns', '列数']] },
+  { group: 'Data display', name: 'rp-key-value', html: '<rp-key-value><rp-kv-row label="状态" value="进行中"></rp-kv-row><rp-kv-row label="负责人" value="张明"></rp-kv-row></rp-key-value>', attrs: [['(子) rp-kv-row', 'label / value']] },
+  { group: 'Data display', name: 'rp-accordion', html: '<rp-accordion><rp-accordion-item label="基本信息" expanded>内容区</rp-accordion-item><rp-accordion-item label="高级设置">折叠内容</rp-accordion-item></rp-accordion>', attrs: [['(子) rp-accordion-item', 'label / expanded']] },
+  { group: 'Data display', name: 'rp-stat-card', html: '<rp-stat-card label="活跃用户" value="12,480" trend="up" change="+12%"></rp-stat-card>', attrs: [['label', '指标名'], ['value', '数值'], ['trend', 'up | down | flat'], ['change', '变化文案']] },
+  { group: 'Data display', name: 'rp-tag', html: '<rp-tag label="已启用" color="green" closable></rp-tag> <rp-tag label="风险" color="red"></rp-tag>', attrs: [['label', '文字'], ['color', 'green | orange | red'], ['closable', '关闭按钮']] },
+  { group: 'Data display', name: 'rp-chip', html: '<rp-chip label="标签" icon="tag" closable></rp-chip>', attrs: [['label', '文字'], ['icon', '图标名'], ['closable', '关闭按钮']] },
+  { group: 'Data display', name: 'rp-badge', html: '<rp-badge count="128" max="99"></rp-badge>', attrs: [['count', '数值'], ['max', '上限，超出显示 max+']] },
+  { group: 'Data display', name: 'rp-avatar', html: '<rp-avatar size="40" initials="OC"></rp-avatar>', attrs: [['size', '尺寸 px'], ['initials', '首字母']] },
+  { group: 'Data display', name: 'rp-image-placeholder', html: '<rp-image-placeholder width="160" height="100" label="封面"></rp-image-placeholder>', attrs: [['width', '宽'], ['height', '高'], ['label', '文字']] },
+  { group: 'Data display', name: 'rp-bulk-action-bar', html: '<rp-bulk-action-bar count="3" actions="归档,删除,导出"></rp-bulk-action-bar>', attrs: [['count', '已选数'], ['actions', '逗号分隔动作']] },
+
+  // ---------- Navigation ----------
+  { group: 'Navigation', name: 'rp-tabs', html: '<rp-tabs active="1"><rp-tab label="全部" badge="38"></rp-tab><rp-tab label="未读" badge="12"></rp-tab><rp-tab label="已归档"></rp-tab></rp-tabs>', attrs: [['active', '索引或标签'], ['(子) rp-tab', 'label / badge']] },
+  { group: 'Navigation', name: 'rp-breadcrumb', html: '<rp-breadcrumb items="工作台,设置,团队"></rp-breadcrumb>', attrs: [['items', '逗号分隔路径']] },
+  { group: 'Navigation', name: 'rp-pagination', html: '<rp-pagination total="128" current="2" page-size="20"></rp-pagination>', attrs: [['total', '总数'], ['current', '当前页'], ['page-size', '每页条数']] },
+  { group: 'Navigation', name: 'rp-steps', html: '<rp-steps steps="填写信息,分配角色,完成" active="1"></rp-steps>', attrs: [['steps', '逗号分隔步骤'], ['active', '当前步索引']] },
+  { group: 'Navigation', name: 'rp-segmented', html: '<rp-segmented options="日,周,月" active="1"></rp-segmented>', attrs: [['options', '逗号分隔'], ['active', '索引或标签']] },
+  { group: 'Navigation', name: 'rp-menu', html: '<rp-menu><rp-menu-item label="打开" icon="folder" shortcut="⌘O"></rp-menu-item><rp-menu-item label="删除" icon="trash-2" shortcut="⌫"></rp-menu-item></rp-menu>', attrs: [['(子) rp-menu-item', 'label / icon / shortcut / state']] },
+  { group: 'Navigation', name: 'rp-context-menu', html: '<rp-context-menu items="复制,重命名,移动到,删除"></rp-context-menu>', attrs: [['items', '逗号分隔（含「删除」自动标红）']] },
+  { group: 'Navigation', name: 'rp-command-palette', html: '<rp-command-palette query="" results="新建文件,打开设置,搜索工单,切换主题"></rp-command-palette>', attrs: [['query', '当前输入'], ['results', '逗号分隔结果']] },
+  { group: 'Navigation', name: 'rp-toc', html: '<rp-toc items="概述,安装,用法,API"></rp-toc>', attrs: [['items', '逗号分隔目录项']] },
+  { group: 'Navigation', name: 'rp-kbd', html: '<rp-kbd keys="⌘,K"></rp-kbd>', attrs: [['keys', '逗号分隔按键']] },
+
+  // ---------- Feedback ----------
+  { group: 'Feedback', name: 'rp-alert', html: '<rp-alert type="warning" title="SLA 风险" message="1 小时内未响应将升级" closable></rp-alert>', attrs: [['type', 'info | success | warning | error'], ['title', '标题'], ['message', '正文'], ['closable', '关闭按钮']] },
+  { group: 'Feedback', name: 'rp-toast', html: '<rp-toast type="success" title="已保存"></rp-toast>', attrs: [['type', '同 rp-alert'], ['title', '标题'], ['message', '正文']] },
+  { group: 'Feedback', name: 'rp-banner', html: '<rp-banner type="warning" title="维护通知" message="今晚 22:00 例行维护" closable></rp-banner>', attrs: [['type', '同 rp-alert'], ['title', '标题'], ['message', '正文'], ['has-action', '操作按钮'], ['closable', '关闭']] },
+  { group: 'Feedback', name: 'rp-empty', html: '<rp-empty label="暂无数据" description="创建后显示在这里" has-action></rp-empty>', attrs: [['label', '主文案'], ['description', '说明'], ['has-action', '操作按钮']] },
+  { group: 'Feedback', name: 'rp-loading', html: '<rp-loading rows="4"></rp-loading>', attrs: [['kind', 'skeleton | spinner'], ['rows', '骨架行数']] },
+  { group: 'Feedback', name: 'rp-skeleton', html: '<rp-skeleton shape="card"></rp-skeleton>', attrs: [['shape', 'line | block | card | list | avatar']] },
+  { group: 'Feedback', name: 'rp-progress', html: '<rp-progress value="64"></rp-progress>', attrs: [['value', '0-100'], ['kind', 'bar | circle'], ['status', 'success | error']] },
+  { group: 'Feedback', name: 'rp-countdown', html: '<rp-countdown value="02:45:18"></rp-countdown>', attrs: [['value', '剩余时间文案']] },
+  { group: 'Feedback', name: 'rp-result', html: '<rp-result status="success" title="提交成功" description="我们会尽快处理" has-action></rp-result>', attrs: [['status', 'success | error | empty'], ['title', '标题'], ['description', '说明'], ['has-action', '操作按钮']] },
+
+  // ---------- Overlays ----------
+  { group: 'Overlays', name: 'rp-modal', html: '<rp-modal title="确认操作" has-footer><rp-alert type="warning" title="不可恢复" message="请确认后继续"></rp-alert></rp-modal>', attrs: [['title', '标题'], ['width', '宽度'], ['has-footer', '底部按钮']] },
+  { group: 'Overlays', name: 'rp-drawer', html: '<rp-drawer title="详情" width="320"><rp-form><rp-form-item label="名称"><rp-input value="张三"></rp-input></rp-form-item></rp-form></rp-drawer>', attrs: [['title', '标题'], ['width', '宽度'], ['side', 'left | right']] },
+  { group: 'Overlays', name: 'rp-dropdown', html: '<rp-dropdown title="菜单"><rp-list-item label="编辑" icon="edit"></rp-list-item><rp-list-item label="删除" icon="trash-2"></rp-list-item></rp-dropdown>', attrs: [['title', '标题'], ['width', '宽度']] },
+  { group: 'Overlays', name: 'rp-popover', html: '<rp-popover title="提示">弹出内容</rp-popover>', attrs: [['title', '标题'], ['width', '宽度']] },
+  { group: 'Overlays', name: 'rp-tooltip', html: '<rp-tooltip text="提示气泡"></rp-tooltip>', attrs: [['text', '文字'], ['position', 'top | bottom | left | right']] },
+
+  // ---------- Enterprise ----------
+  { group: 'Enterprise', name: 'rp-permission-gate', html: '<rp-permission-gate reason="需管理员权限"><rp-button label="删除组织" variant="danger"></rp-button></rp-permission-gate>', attrs: [['reason', '锁定原因']] },
+  { group: 'Enterprise', name: 'rp-quota-bar', html: '<rp-quota-bar label="API 调用" used="920" limit="1000"></rp-quota-bar>', attrs: [['label', '标签'], ['used', '已用'], ['limit', '上限（≥90% 标红）']] },
+  { group: 'Enterprise', name: 'rp-api-key', html: '<rp-api-key value="sk_live_••••••••3f9a"></rp-api-key>', attrs: [['value', '掩码后的密钥']] },
+  { group: 'Enterprise', name: 'rp-audit-row', html: '<rp-audit-row actor="张明" action="将工单标记为已解决" time="2 分钟前"></rp-audit-row>', attrs: [['actor', '操作者'], ['action', '动作描述'], ['time', '时间']] },
+  { group: 'Enterprise', name: 'rp-workflow-node', html: '<rp-workflow-node label="审批" state="active"></rp-workflow-node>', attrs: [['label', '节点名'], ['state', 'default | active | done | error']] },
+
+  // ---------- iOS ----------
+  { group: 'iOS', name: 'rp-ios-navbar', html: '<rp-ios-navbar title="消息" large back="返回" trailing="编辑"></rp-ios-navbar>', attrs: [['title', '标题'], ['large', '大标题'], ['back', '返回文字'], ['trailing', '右侧文字']] },
+  { group: 'iOS', name: 'rp-ios-tabbar', html: '<rp-ios-tabbar items="主页,搜索,通知,我的" icons="home,search,bell,user" active="0"></rp-ios-tabbar>', attrs: [['items', '逗号分隔'], ['icons', '逗号分隔图标'], ['active', '索引']] },
+  { group: 'iOS', name: 'rp-ios-list', html: '<rp-ios-list header="账户"><rp-ios-list-item label="Apple ID" detail="zhang@me.com" icon="user" chevron></rp-ios-list-item><rp-ios-list-item label="通知" icon="bell" chevron></rp-ios-list-item></rp-ios-list>', attrs: [['header', '分组标题'], ['(子) rp-ios-list-item', 'label / detail / icon / chevron']] },
+  { group: 'iOS', name: 'rp-ios-action-sheet', html: '<rp-ios-action-sheet title="选择来源" actions="拍照,从相册选择,浏览文件" destructive="删除"></rp-ios-action-sheet>', attrs: [['title', '标题'], ['actions', '逗号分隔'], ['destructive', '标红的动作']] },
+  { group: 'iOS', name: 'rp-ios-alert', html: '<rp-ios-alert title="删除会话？" message="此操作无法撤销" actions="取消,删除"></rp-ios-alert>', attrs: [['title', '标题'], ['message', '正文'], ['actions', '逗号分隔按钮']] },
+  { group: 'iOS', name: 'rp-ios-switch', html: '<rp-ios-switch label="Wi-Fi"></rp-ios-switch>', attrs: [['label', '标签'], ['state', 'on | off']] },
+  { group: 'iOS', name: 'rp-ios-segmented', html: '<rp-ios-segmented options="全部,未读,提及" active="0"></rp-ios-segmented>', attrs: [['options', '逗号分隔'], ['active', '索引']] },
+  { group: 'iOS', name: 'rp-ios-button', html: '<rp-ios-button label="继续"></rp-ios-button> <rp-ios-button label="淡色" variant="tinted"></rp-ios-button>', attrs: [['label', '文字'], ['variant', 'filled | tinted | plain']] },
+  { group: 'iOS', name: 'rp-ios-search', html: '<rp-ios-search placeholder="搜索"></rp-ios-search>', attrs: [['value', '值'], ['placeholder', '占位']] },
+  { group: 'iOS', name: 'rp-ios-stepper', html: '<rp-ios-stepper></rp-ios-stepper>', attrs: [['value', '数值']] },
+
+  // ---------- macOS ----------
+  { group: 'macOS', name: 'rp-macos-window', html: '<rp-macos-window title="访达"><rp-macos-toolbar><rp-macos-segmented options="图标,列表,分栏" active="1"></rp-macos-segmented></rp-macos-toolbar><rp-macos-table columns="名称,大小" rows="4"></rp-macos-table></rp-macos-window>', attrs: [['title', '窗口标题']] },
+  { group: 'macOS', name: 'rp-macos-menubar', html: '<rp-macos-menubar items="文件,编辑,显示,窗口,帮助"></rp-macos-menubar>', attrs: [['items', '逗号分隔菜单']] },
+  { group: 'macOS', name: 'rp-macos-toolbar', html: '<rp-macos-toolbar><rp-macos-segmented options="A,B,C" active="0"></rp-macos-segmented></rp-macos-toolbar>', attrs: [['(slot)', '放入工具项']] },
+  { group: 'macOS', name: 'rp-macos-sidebar', html: '<rp-macos-sidebar><rp-macos-source-item group label="收藏夹"></rp-macos-source-item><rp-macos-source-item label="最近使用" icon="clock" state="selected"></rp-macos-source-item><rp-macos-source-item label="下载" icon="download"></rp-macos-source-item></rp-macos-sidebar>', attrs: [['(子) rp-macos-source-item', 'label / icon / group / state']] },
+  { group: 'macOS', name: 'rp-macos-segmented', html: '<rp-macos-segmented options="全部,未读,标记" active="0"></rp-macos-segmented>', attrs: [['options', '逗号分隔'], ['active', '索引']] },
+  { group: 'macOS', name: 'rp-macos-popover', html: '<rp-macos-popover title="快速操作"><rp-macos-stepper></rp-macos-stepper></rp-macos-popover>', attrs: [['title', '标题']] },
+  { group: 'macOS', name: 'rp-macos-sheet', html: '<rp-macos-sheet title="导出文档"><rp-key-value><rp-kv-row label="格式" value="PDF"></rp-kv-row></rp-key-value></rp-macos-sheet>', attrs: [['title', '标题']] },
+  { group: 'macOS', name: 'rp-macos-disclosure', html: '<rp-macos-disclosure label="高级选项" expanded>展开内容</rp-macos-disclosure>', attrs: [['label', '标签'], ['expanded', '展开态']] },
+  { group: 'macOS', name: 'rp-macos-stepper', html: '<rp-macos-stepper></rp-macos-stepper>', attrs: [['value', '数值']] },
+  { group: 'macOS', name: 'rp-macos-table', html: '<rp-macos-table columns="名称,修改日期,大小" rows="5"></rp-macos-table>', attrs: [['columns', '逗号分隔列名'], ['rows', '行数']] },
+
+  // ---------- Agent / 对话式 UI ----------
+  { group: 'Agent UI', name: 'rp-chat', html: '<rp-chat><rp-user-message text="帮我查一下登录失败的工单"></rp-user-message><rp-assistant-message text="找到 3 条相关工单，最近一条是 #TK-20593。"></rp-assistant-message></rp-chat>', attrs: [['(容器)', '包裹 user/assistant message 等对话内容']] },
+  { group: 'Agent UI', name: 'rp-user-message', html: '<rp-user-message text="帮我总结这份报告的要点" initials="我"></rp-user-message>', attrs: [['text', '消息文本（或放入子元素）'], ['initials', '头像首字母']] },
+  { group: 'Agent UI', name: 'rp-assistant-message', html: '<rp-assistant-message name="助手" text="好的，报告共有三个要点……"></rp-assistant-message>', attrs: [['name', '助手名'], ['text', '文本（或放入富文本子元素）']] },
+  { group: 'Agent UI', name: 'rp-system-message', html: '<rp-system-message text="已切换到 GPT-5 模型"></rp-system-message>', attrs: [['text', '系统提示文本']] },
+  { group: 'Agent UI', name: 'rp-tool-call', html: '<rp-tool-call name="search_tickets" state="done" args=\'{ "query": "登录失败", "limit": 5 }\'></rp-tool-call>', attrs: [['name', '工具/函数名'], ['state', 'running | done | error'], ['args', '参数（代码块展示）']] },
+  { group: 'Agent UI', name: 'rp-agent-output', html: '<rp-agent-output kind="terminal" label="终端输出" text="$ npm run build\\n✓ built in 111ms"></rp-agent-output>', attrs: [['kind', 'text | code | terminal'], ['label', '标题'], ['text', '输出内容（或子元素）']] },
+  { group: 'Agent UI', name: 'rp-reasoning', html: '<rp-reasoning expanded>先定位工单状态机，再筛选 SLA 超时项……</rp-reasoning>', attrs: [['expanded', '展开思考内容']] },
+  { group: 'Agent UI', name: 'rp-message-actions', html: '<rp-message-actions actions="copy,retry,up,down"></rp-message-actions>', attrs: [['actions', 'copy,retry,up,down,edit,share']] },
+  { group: 'Agent UI', name: 'rp-suggestions', html: '<rp-suggestions items="总结要点,继续,给个例子"></rp-suggestions>', attrs: [['items', '逗号分隔的建议回复']] },
+  { group: 'Agent UI', name: 'rp-typing', html: '<rp-typing></rp-typing>', attrs: [['(无)', '流式输入中的三点指示器']] },
+  { group: 'Agent UI', name: 'rp-composer', html: '<rp-composer placeholder="给助手发消息…"></rp-composer>', attrs: [['value', '输入值'], ['placeholder', '占位'], ['state', 'idle | streaming（发送变停止）']] },
+  { group: 'Agent UI', name: 'rp-citation', html: '<rp-citation index="1" title="工单 #TK-20593 处理记录"></rp-citation>', attrs: [['index', '编号'], ['title', '来源标题']] },
+  { group: 'Agent UI', name: 'rp-token-usage', html: '<rp-token-usage used="1840" limit="8000"></rp-token-usage>', attrs: [['used', '已用 token'], ['limit', '上限']] },
+];
+

@@ -12,7 +12,7 @@ A prototype imports the generated runtime once:
 <script type="module" src="./dist/rpui.js"></script>
 ```
 
-The runtime registers custom elements as a side effect and injects its global stylesheet and inline SVG icons. The model-facing component reference is `llms.txt`, and the repeatable prototype authoring workflow is `skill.txt`.
+The runtime registers custom elements as a side effect and injects its global stylesheet and inline SVG icons. The model-facing component reference is `llms.txt`, and the repeatable prototype authoring workflow is `SKILL.md`.
 
 ## Development commands
 
@@ -27,7 +27,7 @@ npm run clean      # remove and recreate dist/
 
 Use `npm run dev` during component development. It serves `preview/index.html`, which imports `/src/rpui.ts` directly through Vite.
 
-After building, open `demo/index.html` in a browser to view the demo. Open `demo/showcase.html` to review primitive coverage. The demo files import `../dist/rpui.js`, so they validate the built release artifact.
+After building, open `demo/index.html` (complex web dashboard) or `demo/showcase.html` (mobile app) in a browser. `demo/golden.html` is the high-complexity reference prototype. The demo files import `../dist/rpui.js`, so they validate the built release artifact. For browsing the full component catalog during development, use `npm run dev` (source-mode preview at `/preview/`).
 
 There are currently no test or lint scripts in `package.json`. To type-check/build after a change, use `npm run typecheck` and `npm run build`.
 
@@ -48,8 +48,8 @@ Runtime source is split into internal modules and bundled into one browser file.
 
 - `src/core/` — inline icons, runtime CSS injection, DOM/attribute helpers, device sizing helpers.
 - `src/canvas/` — `RpPage`, `RpMainView`, `RpAnnotation`, `RpEnum`, and `RpEnumItem`.
-- `src/primitives/` — snapshot primitive component groups for layout, controls, navigation, and data/display elements.
-- `src/registry.ts` — central custom-element registration and alias mapping.
+- `src/primitives/` — snapshot primitive component groups: `layout.ts`, `controls.ts`, `navigation.ts`, `data-display.ts` (general web `rp-*`), plus `ios.ts` (`rp-ios-*`, Apple HIG iOS) and `macos.ts` (`rp-macos-*`, Apple HIG macOS).
+- `src/registry.ts` — central custom-element registration and alias mapping (~109 suffixes, each registered as both `rp-*` and `snap-*`).
 
 The runtime is a client-side Web Components implementation that:
 
@@ -77,7 +77,7 @@ Important custom elements:
 
 ## RPUI prototype authoring rules
 
-When creating or editing prototype HTML, follow `skill.txt` and `llms.txt`:
+When creating or editing prototype HTML, follow `SKILL.md` and `llms.txt`:
 
 - Use `rp-*` tags for new work. `proto-*` and `snap-*` exist for compatibility.
 - Use `<rp-page>` as the root and exactly one `<rp-main-view>` per prototype page.
@@ -96,7 +96,9 @@ For state coverage, consider loaded, empty, loading, error/retry, search default
 ## Demo/reference files
 
 - `README.md` gives the project summary, build/demo instructions, and release artifact notes.
-- `demo/index.html` demonstrates the intended static document structure, pins, annotations, and enum-based state coverage.
-- `demo/showcase.html` covers the snapshot primitive surface and common states for visual review.
+- `demo/index.html` — complex web dashboard (task management): pins, nested annotations, overlay-trigger pattern.
+- `demo/showcase.html` — mobile app prototype (`device="mobile"`).
+- `demo/golden.html` — high-complexity reference (9 top-level annotations, 3–5 levels deep, implementation-level annotation bodies); study before authoring complex prototypes.
+- `preview/index.html` — development-only component catalog grouped by family (input/display/navigation/feedback/enterprise/iOS/macOS); imports `/src/rpui.ts` and is served by `npm run dev` at `/preview/`. Not part of the published `demo/` smoke tests.
 - `llms.txt` is the component/tag reference for generated prototypes.
-- `skill.txt` documents the prototype implementation workflow and quality bar.
+- `SKILL.md` documents the prototype implementation workflow, recursive decomposition method, overlay-trigger pattern, and quality bar.
