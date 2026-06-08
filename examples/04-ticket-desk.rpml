@@ -1,21 +1,21 @@
-<page-el
+<page
   title="工单服务台"
   route="/support/tickets"
   description="企业客服工单服务台，主快照为客服 L1 视角：有筛选展开、一条工单抽屉已打开、批量标记在内回复已填写状态。">
 
-  <main-view device="web" scale="0.58">
-    <viewport-el device="web">
-      <navbar-el height="60" data-pin="1">
-        <logo-el label="HelpDesk Pro"></logo-el>
-        <breadcrumb-el items="控制台,工单管理,全部工单"></breadcrumb-el>
-        <search-el state="filled" value="订单号 2024" has-clear-button placeholder="搜索工单、用户、关键词"></search-el>
-        <badge-el count="7" max="99"></badge-el>
-        <avatar-el size="32" initials="CS"></avatar-el>
-      </navbar-el>
+  <view device="web" scale="0.58">
+    <viewport device="web">
+      <navigator height="60" data-pin="1">
+        <logo label="HelpDesk Pro"></logo>
+        <breadcrumb items="控制台,工单管理,全部工单"></breadcrumb>
+        <search state="filled" value="订单号 2024" has-clear-button placeholder="搜索工单、用户、关键词"></search>
+        <badge count="7" max="99"></badge>
+        <avatar size="32" initials="CS"></avatar>
+      </navigator>
 
-      <layout-el columns="260px 1fr 400px">
-        <sidebar-el width="260" data-pin="2">
-          <list-el>
+      <layout columns="260px 1fr 400px">
+        <sidebar width="260" data-pin="2">
+          <list>
             <list-item label="全部工单" icon="inbox" badge="124"></list-item>
             <list-item label="待处理" icon="clock" state="selected" badge="38"></list-item>
             <list-item label="处理中" icon="loader" badge="21"></list-item>
@@ -23,42 +23,42 @@
             <list-item label="已解决" icon="check-circle" badge="50"></list-item>
             <list-item label="已关闭" icon="archive"></list-item>
             <list-item label="垃圾工单" icon="trash-2" badge="3"></list-item>
-          </list-el>
-          <divider-el></divider-el>
-          <list-el>
+          </list>
+          <divider></divider>
+          <list>
             <list-item label="分配给我" icon="user" badge="12"></list-item>
             <list-item label="未分配" icon="user-x" badge="9"></list-item>
             <list-item label="逾期工单" icon="alert-triangle" badge="5"></list-item>
-          </list-el>
-        </sidebar-el>
+          </list>
+        </sidebar>
 
-        <panel-el padding="16" elevation="1">
-          <layout-el rows="auto auto auto auto" gap="12">
+        <panel padding="16" elevation="1">
+          <layout rows="auto auto auto auto" gap="12">
 
-            <layout-el columns="1fr repeat(5,max-content)" gap="10" data-pin="3">
-              <segmented-el value="全部渠道" options="全部渠道,邮件,工单系统,微信,电话"></segmented-el>
-              <select-el state="filled" value="全部优先级" options="全部优先级,P0 紧急,P1 高,P2 中,P3 低"></select-el>
-              <select-el state="filled" value="全部团队" options="全部团队,L1 客服,L2 技术,财务"></select-el>
-              <select-el state="filled" value="全部标签" options="全部标签,Bug,账号,支付,功能请求"></select-el>
+            <layout columns="1fr repeat(5,max-content)" gap="10" data-pin="3">
+              <segmented value="全部渠道" options="全部渠道,邮件,工单系统,微信,电话"></segmented>
+              <select state="filled" value="全部优先级" options="全部优先级,P0 紧急,P1 高,P2 中,P3 低"></select>
+              <select state="filled" value="全部团队" options="全部团队,L1 客服,L2 技术,财务"></select>
+              <select state="filled" value="全部标签" options="全部标签,Bug,账号,支付,功能请求"></select>
               <date-picker state="filled" value="2026-06-01"></date-picker>
-              <button-el label="清除筛选" variant="link"></button-el>
-            </layout-el>
+              <button label="清除筛选" variant="link"></button>
+            </layout>
 
             <bulk-action-bar count="4" actions="批量分配,批量标记解决,批量添加标签,合并工单" data-pin="4"></bulk-action-bar>
 
-            <table-el rows="8" columns="编号,标题,用户,渠道,优先级,分配给,SLA,状态" has-checkbox has-action data-pin="5"></table-el>
+            <table rows="8" columns="编号,标题,用户,渠道,优先级,分配给,SLA,状态" has-checkbox has-action data-pin="5"></table>
 
-            <pagination-el total="38" current="1" page-size="10"></pagination-el>
+            <pagination total="38" current="1" page-size="10"></pagination>
 
-          </layout-el>
-        </panel-el>
+          </layout>
+        </panel>
 
-        <drawer-el title="工单 #20240612-003" placement="right" width="400" state="open" data-pin="6">
-          <layout-el rows="auto auto auto auto auto" gap="16">
-            <layout-el columns="1fr max-content" gap="8">
-              <tag-el label="P1 高" variant="danger"></tag-el>
-              <select-el state="filled" value="处理中" options="待处理,处理中,待用户回复,已解决,已关闭"></select-el>
-            </layout-el>
+        <drawer title="工单 #20240612-003" placement="right" width="400" state="open" data-pin="6">
+          <layout rows="auto auto auto auto auto" gap="16">
+            <layout columns="1fr max-content" gap="8">
+              <tag label="P1 高" variant="danger"></tag>
+              <select state="filled" value="处理中" options="待处理,处理中,待用户回复,已解决,已关闭"></select>
+            </layout>
 
             <key-value data-pin="7">
               <kv-row label="用户" value="张小云 (zhang@co.com)"></kv-row>
@@ -68,175 +68,175 @@
               <kv-row label="标签" value="支付, Bug"></kv-row>
             </key-value>
 
-            <card-el title="工单内容" padding="12">
-              <empty-el title="工单正文区域" description="用户描述：支付时提示余额不足，但账户余额显示正常"></empty-el>
-            </card-el>
+            <card title="工单内容" padding="12">
+              <empty title="工单正文区域" description="用户描述：支付时提示余额不足，但账户余额显示正常"></empty>
+            </card>
 
-            <card-el title="回复历史 (3 条)" padding="12">
-              <timeline-el data-pin="8">
+            <card title="回复历史 (3 条)" padding="12">
+              <timeline data-pin="8">
                 <timeline-item label="用户提交工单" description="2026-06-12 09:14"></timeline-item>
                 <timeline-item label="L1 自动回复" description="2026-06-12 09:14 · 机器人"></timeline-item>
                 <timeline-item label="CS 李客服接单" description="2026-06-12 09:32 · 内部备注"></timeline-item>
-              </timeline-el>
-            </card-el>
+              </timeline>
+            </card>
 
-            <card-el title="回复" padding="12" data-pin="9">
-              <layout-el rows="auto auto" gap="10">
-                <segmented-el value="公开回复" options="公开回复,内部备注"></segmented-el>
-                <textarea-el placeholder="输入回复内容…" value="您好，已收到您的反馈，正在核查支付系统日志。" rows="4" state="filled"></textarea-el>
-                <layout-el columns="1fr max-content max-content" gap="8">
-                  <select-el state="collapsed" value="回复后置为'待用户回复'" options="回复后置为'待用户回复',回复后标记解决,仅保存草稿"></select-el>
-                  <button-el label="发送" variant="primary"></button-el>
-                </layout-el>
-              </layout-el>
-            </card-el>
-          </layout-el>
-        </drawer-el>
+            <card title="回复" padding="12" data-pin="9">
+              <layout rows="auto auto" gap="10">
+                <segmented value="公开回复" options="公开回复,内部备注"></segmented>
+                <textarea placeholder="输入回复内容…" value="您好，已收到您的反馈，正在核查支付系统日志。" rows="4" state="filled"></textarea>
+                <layout columns="1fr max-content max-content" gap="8">
+                  <select state="collapsed" value="回复后置为'待用户回复'" options="回复后置为'待用户回复',回复后标记解决,仅保存草稿"></select>
+                  <button label="发送" variant="primary"></button>
+                </layout>
+              </layout>
+            </card>
+          </layout>
+        </drawer>
 
-      </layout-el>
-    </viewport-el>
-  </main-view>
+      </layout>
+    </viewport>
+  </view>
 
-  <annotation-el id="1" label="全局导航">
+  <annotation id="1" label="全局导航">
     顶部导航固定，右侧铃铛图标显示实时通知 badge（WebSocket 推送）。
     全局搜索跨工单编号、标题、用户邮箱、内容关键词全文检索。
 
-    <annotation-el label="权限差异">
-      <enum-el>
+    <annotation label="权限差异">
+      <enum>
         <enum-item label="L1 客服" description="可见自己负责的 + 未分配工单；无删除权限（主快照视角）" />
         <enum-item label="L2 技术" description="可见转派给 L2 的工单；可查看账号日志" />
         <enum-item label="团队主管" description="可见团队所有工单；可批量重新分配；可看报表入口" />
         <enum-item label="超级管理员" description="全渠道全团队，含垃圾工单管理和系统配置入口" />
-      </enum-el>
-    </annotation-el>
-  </annotation-el>
+      </enum>
+    </annotation>
+  </annotation>
 
-  <annotation-el id="2" label="左侧导航分组">
+  <annotation id="2" label="左侧导航分组">
     上半部分为工单状态分组，下半部分为分配相关的快捷视图。
     badge 数字实时更新（WebSocket），状态变更后对应分组数字即时变化。
 
-    <annotation-el label="逾期工单定义">
+    <annotation label="逾期工单定义">
       工单从创建时刻起计算 SLA 时钟：P0=2h, P1=4h, P2=24h, P3=72h。
       超过 SLA 且未解决的工单进入"逾期工单"视图，并在工单行显示红色 SLA 倒计时。
-    </annotation-el>
-  </annotation-el>
+    </annotation>
+  </annotation>
 
-  <annotation-el id="3" label="筛选栏">
+  <annotation id="3" label="筛选栏">
     所有筛选条件写入 URL query，刷新后恢复。多条件取交集。
     渠道 Segmented 与其他筛选器正交叠加。
 
-    <annotation-el label="搜索 + 筛选组合边界">
-      <enum-el>
+    <annotation label="搜索 + 筛选组合边界">
+      <enum>
         <enum-item label="无筛选" description="显示全部待处理工单，按创建时间降序" />
         <enum-item label="有关键词" description="全文检索，结果按相关性排序，关键词高亮" />
         <enum-item label="筛选后 0 条" description="列表空态 + 清除筛选按钮" />
         <enum-item label="筛选后超出当前页" description="分页重置到第 1 页" />
-      </enum-el>
-    </annotation-el>
-  </annotation-el>
+      </enum>
+    </annotation>
+  </annotation>
 
-  <annotation-el id="4" label="批量操作栏">
+  <annotation id="4" label="批量操作栏">
     选中 ≥ 1 条时显示，否则不占位。
 
-    <annotation-el label="批量分配">
+    <annotation label="批量分配">
       弹出分配面板，选择客服成员或团队。分配后工单从"未分配"视图移出，
       被分配人收到站内通知。跨页选中时，批量分配作用于全部选中行，不受当前页限制。
-    </annotation-el>
+    </annotation>
 
-    <annotation-el label="合并工单">
+    <annotation label="合并工单">
       选中 2-5 条，选择主工单（保留编号），其余关闭并标记"已合并至 #xxx"。
       合并后原工单用户均收到通知。超过 5 条时合并按钮禁用，tooltip 说明限制。
-    </annotation-el>
+    </annotation>
 
-    <annotation-el label="权限边界">
-      <enum-el>
+    <annotation label="权限边界">
+      <enum>
         <enum-item label="L1 客服选中他人工单" description="批量分配禁用（无跨人权限），仅可添加标签" />
         <enum-item label="选中已关闭工单" description="批量标记解决禁用，tooltip 提示" />
-      </enum-el>
-    </annotation-el>
-  </annotation-el>
+      </enum>
+    </annotation>
+  </annotation>
 
-  <annotation-el id="5" label="工单列表表格">
-    <annotation-el label="行状态">
-      <enum-el>
+  <annotation id="5" label="工单列表表格">
+    <annotation label="行状态">
+      <enum>
         <enum-item label="未读" description="标题加粗，左侧蓝色竖线" />
         <enum-item label="已读" description="标准字重" />
         <enum-item label="已选中" description="浅蓝底色" />
         <enum-item label="逾期" description="SLA 列红色倒计时，行背景浅红" />
         <enum-item label="逾期+已选" description="浅红底色 + 蓝色选中覆盖（蓝色优先）" />
         <enum-item label="已关闭" description="整行字体灰色，复选框禁用" />
-      </enum-el>
-    </annotation-el>
+      </enum>
+    </annotation>
 
-    <annotation-el label="SLA 列">
+    <annotation label="SLA 列">
       正常：绿色剩余时间。警告（剩余 &lt; 25%）：橙色。逾期：红色负值（如 -1h 32min）。
       已解决/已关闭工单：SLA 列显示"—"。
-    </annotation-el>
+    </annotation>
 
-    <annotation-el label="列表异步状态">
-      <enum-el>
+    <annotation label="列表异步状态">
+      <enum>
         <enum-item label="loading" description="骨架屏，筛选栏禁用" />
         <enum-item label="loaded 主快照态" description="正常渲染" />
         <enum-item label="empty（无筛选）" description="提示'当前队列无工单'" />
         <enum-item label="empty（有筛选）" description="提示'无符合条件的工单'" />
         <enum-item label="error" description="toast + 重试，保留上次数据" />
-      </enum-el>
-    </annotation-el>
-  </annotation-el>
+      </enum>
+    </annotation>
+  </annotation>
 
-  <annotation-el id="6" label="工单详情抽屉">
+  <annotation id="6" label="工单详情抽屉">
     点击工单行展开右侧抽屉（pushes 列表区），URL 追加 `?ticket=ID` 支持分享。
     抽屉关闭后 URL 恢复，列表保持滚动位置。
 
-    <annotation-el label="抽屉状态">
-      <enum-el>
+    <annotation label="抽屉状态">
+      <enum>
         <enum-item label="已关闭" description="列表占满宽度，无抽屉" />
         <enum-item label="loading" description="抽屉内骨架屏" />
         <enum-item label="open（主快照态）" description="抽屉展开，列表压缩" />
         <enum-item label="open 且草稿" description="有未发送回复内容，关闭前弹确认保存草稿" />
-      </enum-el>
-    </annotation-el>
-  </annotation-el>
+      </enum>
+    </annotation>
+  </annotation>
 
-  <annotation-el id="7" label="工单元数据面板">
+  <annotation id="7" label="工单元数据面板">
     分配给字段支持内联更改：点击后展开成员搜索 popover。
     标签可多选，实时保存（PATCH /tickets/:id/tags），无需点击确认。
 
-    <annotation-el label="SLA 倒计时">
+    <annotation label="SLA 倒计时">
       剩余时间每分钟刷新（客户端 setInterval），不走接口，基于 ticket.created_at + 优先级计算。
       颜色阈值：绿色 > 50%，橙色 25-50%，红色 &lt; 25% 或已逾期。
-    </annotation-el>
-  </annotation-el>
+    </annotation>
+  </annotation>
 
-  <annotation-el id="8" label="回复时间线">
+  <annotation id="8" label="回复时间线">
     时间线展示工单全生命周期事件：用户消息、客服回复、内部备注（仅客服可见，蓝色背景区分）、状态变更、自动化规则触发。
     超过 20 条时折叠中间，显示"展开全部 N 条"。
-  </annotation-el>
+  </annotation>
 
-  <annotation-el id="9" label="回复编辑区">
-    <annotation-el label="回复类型">
-      <enum-el>
+  <annotation id="9" label="回复编辑区">
+    <annotation label="回复类型">
+      <enum>
         <enum-item label="公开回复" description="发送给用户邮件 + 平台内消息" />
         <enum-item label="内部备注" description="仅客服团队可见，蓝色左边框标记，不通知用户" />
-      </enum-el>
-    </annotation-el>
+      </enum>
+    </annotation>
 
-    <annotation-el label="发送后状态变更">
+    <annotation label="发送后状态变更">
       发送按钮旁的下拉决定发送后的工单状态：
       "待用户回复"（等对方确认）、"已解决"（直接关单）、"保存草稿"（不发送）。
       草稿自动保存（debounce 2s），刷新后恢复。
-    </annotation-el>
+    </annotation>
 
-    <annotation-el label="快捷回复模板">
+    <annotation label="快捷回复模板">
       输入 `/` 触发模板选择器（command palette 样式），匹配团队预设模板名称，
       选中后填充编辑区（不覆盖已有内容，追加在末尾）。
       模板管理入口在设置页，仅管理员可编辑。
-    </annotation-el>
+    </annotation>
 
-    <annotation-el label="附件上传">
+    <annotation label="附件上传">
       支持拖拽上传，最大 20MB/文件，最多 5 个附件，格式限 png/jpg/pdf/zip。
       上传中显示进度条（每个文件独立），失败单个文件可重试。
-    </annotation-el>
-  </annotation-el>
+    </annotation>
+  </annotation>
 
-</page-el>
+</page>

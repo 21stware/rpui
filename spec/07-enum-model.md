@@ -2,15 +2,15 @@
 
 ## 基础用法
 
-`<enum-el>` 是水平排列的状态卡片容器，每个 `<enum-item>` 表示一个互斥状态。
+`<enum>` 是水平排列的状态卡片容器，每个 `<enum-item>` 表示一个互斥状态。
 
 ```xml
-<enum-el>
+<enum>
   <enum-item label="待审核" description="提交后默认态，高亮黄色标签" />
   <enum-item label="审核中" description="审核员已认领，标签变蓝" />
   <enum-item label="已通过" description="绿色标签，操作区只保留归档按钮" />
   <enum-item label="已拒绝" description="红色标签，显示拒绝原因折叠块" />
-</enum-el>
+</enum>
 ```
 
 ## 自动编号
@@ -35,8 +35,8 @@
 
 ## 嵌套位置
 
-`<enum-el>` 可以放在：
-- 顶级 `<annotation-el>` 体内（描述该区域的整体状态族）
-- 嵌套 `<annotation-el>` 体内（描述子元素的状态族）
+`<enum>` 可以放在：
+- 顶级 `<annotation>` 体内（描述该区域的整体状态族）
+- 嵌套 `<annotation>` 体内（描述子元素的状态族）
 
-不要把 `<enum-el>` 放在 `<main-view>` 内。
+不要把 `<enum>` 放在 `<view>` 内。

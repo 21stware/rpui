@@ -2,40 +2,40 @@
 
 ## Pin 系统
 
-在 `<main-view>` 内的任意元素上添加 `data-pin="N"`，运行时自动渲染水滴形编号标记：
+在 `<view>` 内的任意元素上添加 `data-pin="N"`，运行时自动渲染水滴形编号标记：
 
 ```xml
-<navbar-el data-pin="1">...</navbar-el>
-<table-el data-pin="2">...</table-el>
+<navigator data-pin="1">...</navigator>
+<table data-pin="2">...</table>
 ```
 
 Pin 编号规则：
 - 从 1 开始，不跳号（1, 2, 3…）
-- 每个 `data-pin="N"` 必须有对应的顶级 `<annotation-el id="N">`
+- 每个 `data-pin="N"` 必须有对应的顶级 `<annotation id="N">`
 
 ## 顶级注释
 
 ```xml
-<annotation-el id="1" label="顶部导航">
+<annotation id="1" label="顶部导航">
   导航栏固定在顶部，高度 64px。包含 Logo、面包屑、全局搜索、通知入口和用户头像。
-</annotation-el>
+</annotation>
 ```
 
 `id` 与 `data-pin` 的值对应，运行时将注释渲染在右侧面板，并在 pin 和注释标题间建立深链接。
 
 ## 嵌套注释
 
-在注释内部嵌套 `<annotation-el>` 表达子区域的规格：
+在注释内部嵌套 `<annotation>` 表达子区域的规格：
 
 ```xml
-<annotation-el id="3" label="筛选栏">
+<annotation id="3" label="筛选栏">
   筛选栏固定在表格上方，展开态默认可见。
 
-  <annotation-el label="搜索框行为">
+  <annotation label="搜索框行为">
     默认态：显示 placeholder。聚焦：展示历史搜索。
     filled：显示清空按钮。
-  </annotation-el>
-</annotation-el>
+  </annotation>
+</annotation>
 ```
 
 ## Section 地址
@@ -61,7 +61,7 @@ Pin 编号规则：
 |------|----------|
 | L1 | 页面区域（导航、侧边栏、表格…） |
 | L2 | 区域内的元素或关注点 |
-| L3 | 状态族（用 `enum-el` 展开） |
+| L3 | 状态族（用 `enum` 展开） |
 | L4 | 单个状态规则 |
 | L5 | 边界/异常 |
 

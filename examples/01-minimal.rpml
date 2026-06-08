@@ -1,15 +1,15 @@
-<page-el title="最小示例" route="/minimal" description="一个最小合法的 RPML 文件，包含一个区域和一条注释。">
+<page title="最小示例" route="/minimal" description="一个最小合法的 RPML 文件，包含一个区域和一条注释。">
 
-  <main-view device="web" scale="0.8">
-    <viewport-el device="web">
-      <navbar-el height="56" data-pin="1">
-        <logo-el label="App"></logo-el>
-      </navbar-el>
-    </viewport-el>
-  </main-view>
+  <view device="web" scale="0.8">
+    <viewport device="web">
+      <navigator height="56" data-pin="1">
+        <logo label="App"></logo>
+      </navigator>
+    </viewport>
+  </view>
 
-  <annotation-el id="1" label="顶部导航">
+  <annotation id="1" label="顶部导航">
     固定顶栏，高度 56px，包含 Logo。
-  </annotation-el>
+  </annotation>
 
-</page-el>
+</page>

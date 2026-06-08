@@ -18,9 +18,9 @@ Apply this top-down to every pinned region. Stop when further splitting adds no 
 
 | Level | Element | Purpose |
 |-------|---------|---------|
-| L1 | `<annotation-el id="N">` (pinned) | Structural area of the page: navbar, sidebar, filter bar, table, drawer |
-| L2 | Nested `<annotation-el>` | Distinct responsibility inside the region: one column, a form field group, the bulk-action bar |
-| L3 | `<enum-el>` or nested annotation containing one | Mutually exclusive states for that element: default/focus/filled/error; collapsed/expanded |
+| L1 | `<annotation id="N">` (pinned) | Structural area of the page: navbar, sidebar, filter bar, table, drawer |
+| L2 | Nested `<annotation>` | Distinct responsibility inside the region: one column, a form field group, the bulk-action bar |
+| L3 | `<enum>` or nested annotation containing one | Mutually exclusive states for that element: default/focus/filled/error; collapsed/expanded |
 | L4 | `<enum-item>` + `description` | What each state means: trigger, threshold, transition, permission gate |
 | L5 | Deepest annotation/enum | Extremes and failure modes: 0/empty/overflow values, race conditions, permission denials |
 
@@ -41,20 +41,20 @@ A prototype meets the bar when a reviewer reading it has no remaining "but what 
 Concrete targets:
 - **8–10 top-level annotations**, one per meaningful pinned region.
 - **3–5 nesting levels** where the domain warrants it.
-- **Every conditional branch** in `<enum-el>` — states, permission variants, validation outcomes, async results.
+- **Every conditional branch** in `<enum>` — states, permission variants, validation outcomes, async results.
 - **Implementation-depth annotation bodies**: trigger conditions, data source, state-machine transitions, permission gates, validation rules, error handling, boundary values.
 
 Reference: `demo/golden.html` — 9 top-level annotations, 3–5 levels deep.
 
 ## 4. What NOT to do
 
-- Do not use `div`, `button`, `input`, or `table` for product UI. Use `rp-*` primitives only.
+- Do not use `div`, `button`, `input`, or `table` for product UI. Use RPML primitives only.
 - Do not add `onclick`, hover behavior, runtime focus, timers, API calls, or framework state.
 - Do not import external CSS, image CDNs, or icon CDNs. The runtime provides inline SVG icons.
 - Do not use `position:absolute` or `position:fixed` in snapshot content. RPUI owns pin positioning.
-- Do not place overlays (`modal-el`, `drawer-el`, `dropdown-el`, `popover-el`, `tooltip-el`, `toast-el`) in the main snapshot. Pin the trigger; render the overlay inside its annotation enum.
+- Do not place overlays (`modal`, `drawer`, `dropdown`, `popover`, `tooltip`, `toast`) in the main snapshot. Pin the trigger; render the overlay inside its annotation enum.
 - Do not stack mutually exclusive states (empty + loading + modal) side by side in the snapshot.
-- Do not use `proto-*` or `snap-*` for new work; those are compatibility aliases only.
+- Use bare RPML tags. Single-word elements have no suffix (`button`, `table`); compound names keep their hyphen (`list-item`, `table-row`); platform primitives use `ios-*` / `macos-*`.
 - Do not omit a plausible state because the input didn't mention it; infer and annotate.
 
 ## 5. Validation
@@ -66,8 +66,8 @@ bun run --cwd packages/validator cli <file.rpml>
 ```
 
 The validator checks:
-- Every `data-pin="N"` has a matching top-level `<annotation-el id="N">`.
+- Every `data-pin="N"` has a matching top-level `<annotation id="N">`.
 - Pin numbers are continuous from 1 with no gaps.
-- XSD structural constraints (page-el root, exactly one main-view, etc.).
+- XSD structural constraints (page root, exactly one view, etc.).
 
 Fix all reported errors before delivering the file.

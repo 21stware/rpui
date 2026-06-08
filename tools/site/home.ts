@@ -1,18 +1,18 @@
 import type { Ctx } from '../build-site.ts';
 
-const HERO_CODE = `<span class="t">&lt;page-el</span> <span class="a">title</span>=<span class="v">"用户管理"</span> <span class="a">route</span>=<span class="v">"/users"</span><span class="t">&gt;</span>
-  <span class="t">&lt;main-view</span> <span class="a">device</span>=<span class="v">"web"</span> <span class="a">scale</span>=<span class="v">"0.65"</span><span class="t">&gt;</span>
-    <span class="t">&lt;viewport-el</span> <span class="a">device</span>=<span class="v">"web"</span><span class="t">&gt;</span>
-      <span class="t">&lt;navbar-el</span> <span class="a">data-pin</span>=<span class="v">"1"</span><span class="t">&gt;</span>
-        <span class="t">&lt;search-el</span> <span class="a">state</span>=<span class="v">"filled"</span> <span class="a">value</span>=<span class="v">"张"</span><span class="t">/&gt;</span>
-      <span class="t">&lt;/navbar-el&gt;</span>
-      <span class="t">&lt;table-el</span> <span class="a">rows</span>=<span class="v">"8"</span> <span class="a">has-checkbox</span> <span class="a">data-pin</span>=<span class="v">"2"</span><span class="t">/&gt;</span>
-    <span class="t">&lt;/viewport-el&gt;</span>
-  <span class="t">&lt;/main-view&gt;</span>
+const HERO_CODE = `<span class="t">&lt;page</span> <span class="a">title</span>=<span class="v">"用户管理"</span> <span class="a">route</span>=<span class="v">"/users"</span><span class="t">&gt;</span>
+  <span class="t">&lt;view</span> <span class="a">device</span>=<span class="v">"web"</span> <span class="a">scale</span>=<span class="v">"0.65"</span><span class="t">&gt;</span>
+    <span class="t">&lt;viewport</span> <span class="a">device</span>=<span class="v">"web"</span><span class="t">&gt;</span>
+      <span class="t">&lt;navigator</span> <span class="a">data-pin</span>=<span class="v">"1"</span><span class="t">&gt;</span>
+        <span class="t">&lt;search</span> <span class="a">state</span>=<span class="v">"filled"</span> <span class="a">value</span>=<span class="v">"张"</span><span class="t">/&gt;</span>
+      <span class="t">&lt;/navigator&gt;</span>
+      <span class="t">&lt;table</span> <span class="a">rows</span>=<span class="v">"8"</span> <span class="a">has-checkbox</span> <span class="a">data-pin</span>=<span class="v">"2"</span><span class="t">/&gt;</span>
+    <span class="t">&lt;/viewport&gt;</span>
+  <span class="t">&lt;/view&gt;</span>
 
   <span class="c">&lt;!-- 每个 data-pin 配一条规格注释 --&gt;</span>
-  <span class="t">&lt;annotation-el</span> <span class="a">id</span>=<span class="v">"1"</span> <span class="a">label</span>=<span class="v">"顶部导航"</span><span class="t">&gt;</span>...<span class="t">&lt;/annotation-el&gt;</span>
-<span class="t">&lt;/page-el&gt;</span>`;
+  <span class="t">&lt;annotation</span> <span class="a">id</span>=<span class="v">"1"</span> <span class="a">label</span>=<span class="v">"顶部导航"</span><span class="t">&gt;</span>...<span class="t">&lt;/annotation&gt;</span>
+<span class="t">&lt;/page&gt;</span>`;
 
 function feat(ic: string, h: string, p: string): string {
   return `<div class="feat"><div class="ic">${ic}</div><h3>${h}</h3><p>${p}</p></div>`;
@@ -57,9 +57,9 @@ export function buildHome(ctx: Ctx): string {
 
 <div class="section-head" style="margin-top:80px"><h2>三步上手</h2><p>从一行导入到完整原型。</p></div>
 <section class="features" style="margin-top:24px">
-  ${feat('<b style="font-size:18px">1</b>', '导入运行时', '<code>&lt;script type="module" src="rpui.js"&gt;&lt;/script&gt;</code> —— 副作用注册全部 <code>rp-*</code> 自定义元素。')}
-  ${feat('<b style="font-size:18px">2</b>', '编写快照', '用 <code>rp-page</code> / <code>rp-main-view</code> / <code>rp-*</code> 原语搭主快照，<code>data-pin</code> 标记关键区域。')}
-  ${feat('<b style="font-size:18px">3</b>', '补全规格', '每个 pin 配 <code>rp-annotation</code>，用 <code>rp-enum</code> 穷举状态分支，写到实现深度。')}
+  ${feat('<b style="font-size:18px">1</b>', '导入运行时', '<code>&lt;script type="module" src="rpui.js"&gt;&lt;/script&gt;</code> —— 副作用注册全部自定义元素。')}
+  ${feat('<b style="font-size:18px">2</b>', '编写快照', '用 <code>page</code> / <code>view</code> / 各类原语搭主快照，<code>data-pin</code> 标记关键区域。')}
+  ${feat('<b style="font-size:18px">3</b>', '补全规格', '每个 pin 配 <code>annotation</code>，用 <code>enum</code> 穷举状态分支，写到实现深度。')}
 </section>
 
 <div style="text-align:center;padding:72px 28px 8px">

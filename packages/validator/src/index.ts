@@ -6,11 +6,13 @@ export interface ValidationError {
   severity: 'error' | 'warning';
 }
 
-/** Validate an RPML AST. Returns list of errors/warnings. */
+/** Validate an RPML AST. Returns list of errors/warnings.
+ *  The AST carries Web Component tag names (the parser rewrites language tags);
+ *  user-facing messages map them back to language names via toLangTag. */
 export function validate(root: RpmlNode): ValidationError[] {
   const errors: ValidationError[] = [];
   if (root.tag !== 'page-el') {
-    errors.push({ path: '/', message: 'Root element must be <page-el>', severity: 'error' });
+    errors.push({ path: '/', message: 'Root element must be <page>', severity: 'error' });
     return errors;
   }
   checkStructural(root, errors);
@@ -21,11 +23,11 @@ export function validate(root: RpmlNode): ValidationError[] {
 function checkStructural(root: RpmlNode, errors: ValidationError[]) {
   const mainViews = root.children.filter(c => c.tag === 'main-view');
   if (mainViews.length === 0)
-    errors.push({ path: '/page-el', message: 'Missing <main-view>', severity: 'error' });
+    errors.push({ path: '/page', message: 'Missing <view>', severity: 'error' });
   if (mainViews.length > 1)
-    errors.push({ path: '/page-el', message: 'Only one <main-view> allowed', severity: 'error' });
+    errors.push({ path: '/page', message: 'Only one <view> allowed', severity: 'error' });
   if (!root.attrs.title)
-    errors.push({ path: '/page-el', message: 'page-el missing title attribute', severity: 'warning' });
+    errors.push({ path: '/page', message: 'page missing title attribute', severity: 'warning' });
 }
 
 function checkPins(root: RpmlNode, errors: ValidationError[]) {
@@ -39,11 +41,11 @@ function checkPins(root: RpmlNode, errors: ValidationError[]) {
 
   for (const pin of pinIds) {
     if (!annotationIds.includes(pin))
-      errors.push({ path: `/main-view[data-pin="${pin}"]`, message: `data-pin="${pin}" has no matching <annotation-el id="${pin}">`, severity: 'error' });
+      errors.push({ path: `/view[data-pin="${pin}"]`, message: `data-pin="${pin}" has no matching <annotation id="${pin}">`, severity: 'error' });
   }
   for (const id of annotationIds) {
     if (!pinIds.includes(id))
-      errors.push({ path: `/annotation-el[id="${id}"]`, message: `Annotation id="${id}" has no matching data-pin="${id}" in main-view`, severity: 'warning' });
+      errors.push({ path: `/annotation[id="${id}"]`, message: `Annotation id="${id}" has no matching data-pin="${id}" in view`, severity: 'warning' });
   }
 }
 

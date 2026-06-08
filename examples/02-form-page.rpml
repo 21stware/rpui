@@ -1,77 +1,77 @@
-<page-el
+<page
   title="用户注册"
   route="/register"
   description="用户注册表单页，主快照为所有字段已填写、邮箱格式错误状态（客户端验证触发）。">
 
-  <main-view device="web" scale="0.75">
-    <viewport-el device="web">
-      <panel-el padding="40">
-        <layout-el rows="auto" gap="24">
+  <view device="web" scale="0.75">
+    <viewport device="web">
+      <panel padding="40">
+        <layout rows="auto" gap="24">
 
-          <layout-el rows="auto" gap="4">
-            <logo-el label="MyApp" size="32"></logo-el>
-          </layout-el>
+          <layout rows="auto" gap="4">
+            <logo label="MyApp" size="32"></logo>
+          </layout>
 
-          <form-el data-pin="1">
+          <form data-pin="1">
             <form-item label="用户名" required>
-              <input-el placeholder="3-20 个字符" value="oboo_dev" state="filled" />
+              <input placeholder="3-20 个字符" value="oboo_dev" state="filled" />
             </form-item>
             <form-item label="邮箱" required error="邮箱格式不正确">
-              <input-el placeholder="your@email.com" value="oboo@" state="error" />
+              <input placeholder="your@email.com" value="oboo@" state="error" />
             </form-item>
             <form-item label="密码" required>
-              <input-el placeholder="至少 8 位" value="••••••••" state="filled" />
+              <input placeholder="至少 8 位" value="••••••••" state="filled" />
             </form-item>
             <form-item label="确认密码" required>
-              <input-el placeholder="再次输入密码" value="••••••••" state="filled" />
+              <input placeholder="再次输入密码" value="••••••••" state="filled" />
             </form-item>
             <form-item label="角色">
-              <select-el options="普通用户,企业用户,开发者" value="普通用户" state="filled" />
+              <select options="普通用户,企业用户,开发者" value="普通用户" state="filled" />
             </form-item>
-            <button-el label="注册" variant="primary" state="default" />
-            <button-el label="已有账号？登录" variant="link" />
-          </form-el>
+            <button label="注册" variant="primary" state="default" />
+            <button label="已有账号？登录" variant="link" />
+          </form>
 
-        </layout-el>
-      </panel-el>
-    </viewport-el>
-  </main-view>
+        </layout>
+      </panel>
+    </viewport>
+  </view>
 
-  <annotation-el id="1" label="注册表单">
+  <annotation id="1" label="注册表单">
     表单提交前进行客户端字段验证，不调用接口。所有字段验证通过后 Submit 按钮才发请求。
 
-    <annotation-el label="用户名字段">
-      <enum-el>
+    <annotation label="用户名字段">
+      <enum>
         <enum-item label="默认" description="空输入，placeholder 可见" />
         <enum-item label="填写中" description="输入 1-2 字符，不触发验证" />
         <enum-item label="合法" description="3-20 字符，绿色勾图标" />
         <enum-item label="已占用" description="提交后服务端返回 409，红色 '用户名已存在'" />
         <enum-item label="格式错误" description="包含特殊字符，即时红色提示" />
-      </enum-el>
-    </annotation-el>
+      </enum>
+    </annotation>
 
-    <annotation-el label="邮箱字段">
-      <enum-el>
+    <annotation label="邮箱字段">
+      <enum>
         <enum-item label="默认" description="空" />
         <enum-item label="格式错误" description="失焦后校验，红色 '邮箱格式不正确'（主快照态）" />
         <enum-item label="合法" description="RFC 5322 基础格式通过" />
         <enum-item label="已注册" description="提交后服务端 409，'该邮箱已注册，去登录'" />
-      </enum-el>
-    </annotation-el>
+      </enum>
+    </annotation>
 
-    <annotation-el label="密码强度与确认">
+    <annotation label="密码强度与确认">
       密码最少 8 位。确认密码在失焦时与密码字段对比；不一致时红色 '两次密码不一致'。
       密码字段旁可选显示强度条（弱/中/强），实现层自行决定是否加入。
-    </annotation-el>
+    </annotation>
 
-    <annotation-el label="提交状态">
-      <enum-el>
+    <annotation label="提交状态">
+      <enum>
         <enum-item label="有验证错误" description="按钮禁用，错误字段高亮" />
         <enum-item label="提交中" description="按钮变 loading，禁用所有字段" />
         <enum-item label="成功" description="跳转 /onboarding，不在本页显示" />
         <enum-item label="服务端错误" description="按钮下方 alert 红色 toast，可重试" />
-      </enum-el>
-    </annotation-el>
-  </annotation-el>
+      </enum>
+    </annotation>
+  </annotation>
 
-</page-el>
+</page>

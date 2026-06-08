@@ -1,30 +1,23 @@
 #!/usr/bin/env bun
 // tools/check-spec-coverage.ts
-// Checks that every element registered in registry.ts has a spec/elements/**/*.md file.
+// Checks that every RPML language element has a spec/elements/**/*.md file.
 
 import { readdirSync, existsSync } from 'fs';
 import { resolve, join } from 'path';
+import { PRIMITIVES } from '../packages/parser/src/vocabulary';
 
 const ROOT = resolve(import.meta.dir, '..');
-const REGISTRY = Bun.file(join(ROOT, 'packages/renderer-web/src/registry.ts'));
-const text = await REGISTRY.text();
 
-// Extract all suffix strings from the pairs array
-const matches = text.matchAll(/\['([\w-]+)',\s*\w+Element\]/g);
-const suffixes = [...matches].map(m => m[1]);
-
-// Also add canvas elements
-const canvas = ['page', 'main-view', 'annotation', 'enum', 'enum-item'];
-
-const all = [...new Set([...canvas, ...suffixes])];
+// Canvas language tags + all primitive language names from the shared vocabulary.
+const canvas = ['page', 'view', 'annotation', 'enum', 'enum-item'];
+const all = [...new Set([...canvas, ...PRIMITIVES])];
 
 let missing = 0;
 for (const name of all) {
-  const tag = `rp-${name}`;
-  // Search recursively in spec/elements/
-  const found = findSpec(join(ROOT, 'spec/elements'), `${tag}.md`);
+  // Spec files are named after the language tag (e.g. button.md, view.md).
+  const found = findSpec(join(ROOT, 'spec/elements'), `${name}.md`);
   if (!found) {
-    console.log(`⚠ Missing spec: ${tag}`);
+    console.log(`⚠ Missing spec: ${name}`);
     missing++;
   }
 }

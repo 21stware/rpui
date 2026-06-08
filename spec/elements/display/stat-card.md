@@ -15,7 +15,7 @@
 
 ## 嵌套规则
 
-- 允许的父元素：`panel-el`、`layout-el`、`viewport-el`
+- 允许的父元素：`panel`、`layout`、`viewport`
 - 允许的子元素：无（自闭合）
 
 ## 示例

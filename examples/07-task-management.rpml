@@ -1,215 +1,215 @@
-<page-el
+<page
     title="项目任务管理"
     route="/projects/:id/tasks"
     description="SaaS 项目管理平台的任务看板页，展示任务列表、多维筛选、成员分配、状态流转和权限差异。主快照为项目管理员视角、有筛选展开、批量选中、抽屉打开、甘特图 Tab 未选状态。">
 
-    <main-view device="web" scale="0.62">
-      <viewport-el device="web">
-        <navbar-el height="64" data-pin="1">
-          <logo-el label="PM+"></logo-el>
-          <breadcrumb-el items="工作台,研发部,Q2 后台重构,任务列表"></breadcrumb-el>
-          <search-el state="filled" value="API" has-clear-button></search-el>
-          <button-el label="新建任务" variant="primary" icon="plus"></button-el>
-          <badge-el count="12" max="99"></badge-el>
-          <avatar-el size="32" initials="LY"></avatar-el>
-        </navbar-el>
+    <view device="web" scale="0.62">
+      <viewport device="web">
+        <navigator height="64" data-pin="1">
+          <logo label="PM+"></logo>
+          <breadcrumb items="工作台,研发部,Q2 后台重构,任务列表"></breadcrumb>
+          <search state="filled" value="API" has-clear-button></search>
+          <button label="新建任务" variant="primary" icon="plus"></button>
+          <badge count="12" max="99"></badge>
+          <avatar size="32" initials="LY"></avatar>
+        </navigator>
 
-        <layout-el columns="240px minmax(0,1fr)">
-          <sidebar-el width="240" data-pin="2">
-            <list-el>
+        <layout columns="240px minmax(0,1fr)">
+          <sidebar width="240" data-pin="2">
+            <list>
               <list-item label="全部项目" icon="layout-dashboard"></list-item>
               <list-item label="我负责的" icon="user" state="selected" badge="3"></list-item>
               <list-item label="我参与的" icon="users" badge="12"></list-item>
               <list-item label="已完成" icon="check"></list-item>
               <list-item label="归档项目" icon="archive"></list-item>
-            </list-el>
-          </sidebar-el>
+            </list>
+          </sidebar>
 
-          <panel-el padding="20" elevation="1">
-            <layout-el rows="auto auto auto auto" gap="16">
+          <panel padding="20" elevation="1">
+            <layout rows="auto auto auto auto" gap="16">
 
-              <layout-el columns="1fr max-content max-content" gap="12" data-pin="3">
-                <tabs-el active="任务列表">
-                  <tab-el label="任务列表" badge="38"></tab-el>
-                  <tab-el label="甘特图"></tab-el>
-                  <tab-el label="看板"></tab-el>
-                  <tab-el label="报告"></tab-el>
-                </tabs-el>
-                <button-el label="导出" variant="secondary" icon="file"></button-el>
-                <button-el label="项目设置" variant="ghost" icon="settings"></button-el>
-              </layout-el>
+              <layout columns="1fr max-content max-content" gap="12" data-pin="3">
+                <tabs active="任务列表">
+                  <tab label="任务列表" badge="38"></tab>
+                  <tab label="甘特图"></tab>
+                  <tab label="看板"></tab>
+                  <tab label="报告"></tab>
+                </tabs>
+                <button label="导出" variant="secondary" icon="file"></button>
+                <button label="项目设置" variant="ghost" icon="settings"></button>
+              </layout>
 
-              <layout-el columns="repeat(4, 1fr)" gap="12" data-pin="4">
+              <layout columns="repeat(4, 1fr)" gap="12" data-pin="4">
                 <stat-card label="总任务数" value="38" trend="up" change="+5 本周"></stat-card>
                 <stat-card label="进行中" value="14" trend="flat" change="4 人参与"></stat-card>
                 <stat-card label="已逾期" value="3" trend="down" change="需立即处理"></stat-card>
                 <stat-card label="本周完成" value="9" trend="up" change="+2 vs 上周"></stat-card>
-              </layout-el>
+              </layout>
 
-              <panel-el padding="14" elevation="0" data-pin="5">
-                <layout-el rows="auto auto auto" gap="12">
-                  <layout-el columns="minmax(0,1fr) repeat(5, max-content)" gap="10">
-                    <search-el state="filled" value="API" has-clear-button placeholder="搜索任务、负责人"></search-el>
-                    <select-el state="collapsed" value="进行中" options="全部状态,待开始,进行中,已完成,已逾期"></select-el>
-                    <select-el state="collapsed" value="全部优先级" options="全部优先级,P0 紧急,P1 高,P2 中,P3 低"></select-el>
+              <panel padding="14" elevation="0" data-pin="5">
+                <layout rows="auto auto auto" gap="12">
+                  <layout columns="minmax(0,1fr) repeat(5, max-content)" gap="10">
+                    <search state="filled" value="API" has-clear-button placeholder="搜索任务、负责人"></search>
+                    <select state="collapsed" value="进行中" options="全部状态,待开始,进行中,已完成,已逾期"></select>
+                    <select state="collapsed" value="全部优先级" options="全部优先级,P0 紧急,P1 高,P2 中,P3 低"></select>
                     <date-picker state="filled" value="2026-06-01"></date-picker>
-                    <avatar-el size="28" initials="LY"></avatar-el>
-                    <button-el label="清除" variant="link"></button-el>
-                  </layout-el>
+                    <avatar size="28" initials="LY"></avatar>
+                    <button label="清除" variant="link"></button>
+                  </layout>
                   <bulk-action-bar count="5" actions="转移,设置优先级,批量完成,删除"></bulk-action-bar>
-                  <table-el rows="7" columns="任务名称,负责人,优先级,截止日期,状态" has-checkbox has-action></table-el>
-                  <pagination-el total="38" current="1" page-size="10"></pagination-el>
-                </layout-el>
-              </panel-el>
+                  <table rows="7" columns="任务名称,负责人,优先级,截止日期,状态" has-checkbox has-action></table>
+                  <pagination total="38" current="1" page-size="10"></pagination>
+                </layout>
+              </panel>
 
-              <panel-el padding="16" elevation="1" data-pin="6">
-                <layout-el rows="auto auto" gap="14">
-                  <tabs-el active="成员">
-                    <tab-el label="成员" badge="8"></tab-el>
-                    <tab-el label="里程碑" badge="3"></tab-el>
-                    <tab-el label="关联文档"></tab-el>
-                  </tabs-el>
-                  <layout-el columns="repeat(4, minmax(0,1fr))" gap="10">
-                    <card-el title="李英" subtitle="前端工程师">
-                      <tag-el label="9 任务" color="orange"></tag-el>
-                    </card-el>
-                    <card-el title="张明" subtitle="后端工程师">
-                      <tag-el label="12 任务" color="orange"></tag-el>
-                    </card-el>
-                    <card-el title="王芳" subtitle="产品经理">
-                      <tag-el label="3 任务" color="green"></tag-el>
-                    </card-el>
-                    <card-el title="刘冬" subtitle="QA 工程师">
-                      <tag-el label="2 任务" color="green"></tag-el>
-                    </card-el>
-                  </layout-el>
-                </layout-el>
-              </panel-el>
+              <panel padding="16" elevation="1" data-pin="6">
+                <layout rows="auto auto" gap="14">
+                  <tabs active="成员">
+                    <tab label="成员" badge="8"></tab>
+                    <tab label="里程碑" badge="3"></tab>
+                    <tab label="关联文档"></tab>
+                  </tabs>
+                  <layout columns="repeat(4, minmax(0,1fr))" gap="10">
+                    <card title="李英" subtitle="前端工程师">
+                      <tag label="9 任务" color="orange"></tag>
+                    </card>
+                    <card title="张明" subtitle="后端工程师">
+                      <tag label="12 任务" color="orange"></tag>
+                    </card>
+                    <card title="王芳" subtitle="产品经理">
+                      <tag label="3 任务" color="green"></tag>
+                    </card>
+                    <card title="刘冬" subtitle="QA 工程师">
+                      <tag label="2 任务" color="green"></tag>
+                    </card>
+                  </layout>
+                </layout>
+              </panel>
 
-            </layout-el>
-          </panel-el>
-        </layout-el>
-      </viewport-el>
-    </main-view>
+            </layout>
+          </panel>
+        </layout>
+      </viewport>
+    </view>
 
-    <annotation-el id="1" label="顶部导航">
+    <annotation id="1" label="顶部导航">
       项目路径通过面包屑展示层级，全局搜索 state=filled 表示已输入关键词。管理员可见「新建任务」；只读成员不可见。
-      <enum-el>
+      <enum>
         <enum-item label="管理员" description="可新建任务、设置项目和导出数据。">
-          <navbar-el><logo-el label="PM+"></logo-el><button-el label="新建任务" variant="primary" icon="plus"></button-el><badge-el count="12"></badge-el><avatar-el initials="LY"></avatar-el></navbar-el>
+          <navigator><logo label="PM+"></logo><button label="新建任务" variant="primary" icon="plus"></button><badge count="12"></badge><avatar initials="LY"></avatar></navigator>
         </enum-item>
         <enum-item label="只读成员" description="无新建权限，不显示主操作按钮。">
-          <navbar-el><logo-el label="PM+"></logo-el><badge-el count="3"></badge-el><avatar-el initials="WF"></avatar-el></navbar-el>
+          <navigator><logo label="PM+"></logo><badge count="3"></badge><avatar initials="WF"></avatar></navigator>
         </enum-item>
-      </enum-el>
-      <annotation-el label="新建任务浮层">
+      </enum>
+      <annotation label="新建任务浮层">
         触发：点击「新建任务」打开浮层填写表单，仅管理员可见入口。
-        <enum-el>
-          <enum-item label="点击后：新建浮层"><modal-el title="新建任务" has-footer><form-el><form-item label="任务名称" required><input-el placeholder="一句话描述任务"></input-el></form-item><form-item label="优先级"><select-el state="collapsed" value="P2 中" options="P0 紧急,P1 高,P2 中,P3 低"></select-el></form-item></form-el></modal-el></enum-item>
-        </enum-el>
-      </annotation-el>
-    </annotation-el>
+        <enum>
+          <enum-item label="点击后：新建浮层"><modal title="新建任务" has-footer><form><form-item label="任务名称" required><input placeholder="一句话描述任务"></input></form-item><form-item label="优先级"><select state="collapsed" value="P2 中" options="P0 紧急,P1 高,P2 中,P3 低"></select></form-item></form></modal></enum-item>
+        </enum>
+      </annotation>
+    </annotation>
 
-    <annotation-el id="2" label="左侧项目导航">
+    <annotation id="2" label="左侧项目导航">
       固定宽度 240px，当前选中「我负责的」，高亮蓝色背景。角标显示未处理任务数。
-      <annotation-el label="角标规则">
+      <annotation label="角标规则">
         角标只显示未完成任务数量，完成状态不计入。
-        <enum-el>
+        <enum>
           <enum-item label="有未完成任务"><list-item label="我负责的" icon="user" badge="3" state="selected"></list-item></enum-item>
           <enum-item label="全部完成"><list-item label="我负责的" icon="user" state="selected"></list-item></enum-item>
-        </enum-el>
-      </annotation-el>
-    </annotation-el>
+        </enum>
+      </annotation>
+    </annotation>
 
-    <annotation-el id="3" label="视图切换与操作">
+    <annotation id="3" label="视图切换与操作">
       Tab 支持任务列表、甘特图、看板和报告四个视图，主快照默认展示「任务列表」。切换 Tab 不跳转路由，仅切换内容区。
-      <enum-el>
+      <enum>
         <enum-item label="任务列表 Tab">
-          <tabs-el active="任务列表"><tab-el label="任务列表" badge="38"></tab-el><tab-el label="甘特图"></tab-el><tab-el label="看板"></tab-el></tabs-el>
+          <tabs active="任务列表"><tab label="任务列表" badge="38"></tab><tab label="甘特图"></tab><tab label="看板"></tab></tabs>
         </enum-item>
         <enum-item label="甘特图 Tab">
-          <tabs-el active="甘特图"><tab-el label="任务列表" badge="38"></tab-el><tab-el label="甘特图"></tab-el><tab-el label="看板"></tab-el></tabs-el>
+          <tabs active="甘特图"><tab label="任务列表" badge="38"></tab><tab label="甘特图"></tab><tab label="看板"></tab></tabs>
         </enum-item>
-      </enum-el>
-    </annotation-el>
+      </enum>
+    </annotation>
 
-    <annotation-el id="4" label="统计卡片">
+    <annotation id="4" label="统计卡片">
       四个核心指标卡片：总任务、进行中、已逾期（red trend）、本周完成。逾期数 > 0 时变红色提醒。
-    </annotation-el>
+    </annotation>
 
-    <annotation-el id="5" label="筛选、批量操作与任务表格">
+    <annotation id="5" label="筛选、批量操作与任务表格">
       筛选区包含全文搜索、状态、优先级、截止日期、成员头像快速筛选；批量选中后出现批量操作栏。批量动作与列表异步态的浮层不画进主快照，在下方按触发展开。
-      <annotation-el label="筛选状态">
-        <enum-el>
-          <enum-item label="无筛选" description="默认状态，搜索框为空，所有选项恢复默认。"><search-el placeholder="搜索任务"></search-el></enum-item>
-          <enum-item label="已输入关键词" description="搜索框 filled 态，带清除按钮。"><search-el state="filled" value="API" has-clear-button></search-el></enum-item>
-          <enum-item label="状态下拉展开" description="点击触发，单选即过滤。"><select-el state="expanded" value="进行中" options="全部状态,待开始,进行中,已完成,已逾期"></select-el></enum-item>
-        </enum-el>
-      </annotation-el>
-      <annotation-el label="表格行状态">
-        <enum-el>
+      <annotation label="筛选状态">
+        <enum>
+          <enum-item label="无筛选" description="默认状态，搜索框为空，所有选项恢复默认。"><search placeholder="搜索任务"></search></enum-item>
+          <enum-item label="已输入关键词" description="搜索框 filled 态，带清除按钮。"><search state="filled" value="API" has-clear-button></search></enum-item>
+          <enum-item label="状态下拉展开" description="点击触发，单选即过滤。"><select state="expanded" value="进行中" options="全部状态,待开始,进行中,已完成,已逾期"></select></enum-item>
+        </enum>
+      </annotation>
+      <annotation label="表格行状态">
+        <enum>
           <enum-item label="正常行"><table-row state="default"></table-row></enum-item>
           <enum-item label="逾期行（高亮）"><table-row state="highlighted"></table-row></enum-item>
           <enum-item label="已选择行"><table-row state="selected"></table-row></enum-item>
           <enum-item label="已完成行（置灰）"><table-row state="disabled"></table-row></enum-item>
-        </enum-el>
-      </annotation-el>
-      <annotation-el label="批量删除与结果反馈">
+        </enum>
+      </annotation>
+      <annotation label="批量删除与结果反馈">
         触发：勾选 ≥1 行 → 点击批量栏「删除」→ 弹二次确认 → 执行后 Toast 反馈。
-        <enum-el>
-          <enum-item label="删除确认弹窗" description="不可逆，列出影响条数。"><modal-el title="删除任务确认" has-footer><alert-el type="error" title="此操作不可恢复" message="选中的 5 条任务将被永久删除。"></alert-el></modal-el></enum-item>
-          <enum-item label="成功 Toast" description="3s 自动消失，列表刷新。"><toast-el type="success" title="已删除 5 条任务"></toast-el></enum-item>
-          <enum-item label="失败 Toast" description="保留选中态便于重试。"><toast-el type="error" title="网络异常，请重试"></toast-el></enum-item>
-        </enum-el>
-      </annotation-el>
-      <annotation-el label="列表异步态">
+        <enum>
+          <enum-item label="删除确认弹窗" description="不可逆，列出影响条数。"><modal title="删除任务确认" has-footer><alert type="error" title="此操作不可恢复" message="选中的 5 条任务将被永久删除。"></alert></modal></enum-item>
+          <enum-item label="成功 Toast" description="3s 自动消失，列表刷新。"><toast type="success" title="已删除 5 条任务"></toast></enum-item>
+          <enum-item label="失败 Toast" description="保留选中态便于重试。"><toast type="error" title="网络异常，请重试"></toast></enum-item>
+        </enum>
+      </annotation>
+      <annotation label="列表异步态">
         触发：切换筛选/刷新或加载失败时替换表格区。
-        <enum-el>
-          <enum-item label="加载中"><loading-el rows="5"></loading-el></enum-item>
-          <enum-item label="无匹配结果"><empty-el label="暂无匹配任务" description="调整筛选条件后重试" has-action></empty-el></enum-item>
-        </enum-el>
-      </annotation-el>
-    </annotation-el>
+        <enum>
+          <enum-item label="加载中"><loading rows="5"></loading></enum-item>
+          <enum-item label="无匹配结果"><empty label="暂无匹配任务" description="调整筛选条件后重试" has-action></empty></enum-item>
+        </enum>
+      </annotation>
+    </annotation>
 
-    <annotation-el id="6" label="成员看板与任务详情抽屉">
+    <annotation id="6" label="成员看板与任务详情抽屉">
       成员卡片展示每人负责的任务数。点击任意成员或任务行打开右侧详情抽屉。抽屉是浮层，不画进主快照——下方展示打开态，并在抽屉切片上用 pin 标注需要进一步解释的子区域。
-      <annotation-el label="详情抽屉（行/卡片点击触发）">
+      <annotation label="详情抽屉（行/卡片点击触发）">
         触发：点击成员卡片或任务行。抽屉内的 SLA 字段与底部操作组带 pin，分别对应下面的子注释。
-        <drawer-el title="任务详情" width="360">
-          <form-el>
-            <form-item label="任务名称" required><input-el state="filled" value="修复分页接口 500 错误"></input-el></form-item>
-            <form-item label="负责人"><select-el state="collapsed" value="张明" options="李英,张明,王芳,刘冬"></select-el></form-item>
+        <drawer title="任务详情" width="360">
+          <form>
+            <form-item label="任务名称" required><input state="filled" value="修复分页接口 500 错误"></input></form-item>
+            <form-item label="负责人"><select state="collapsed" value="张明" options="李英,张明,王芳,刘冬"></select></form-item>
             <form-item label="截止日期" data-pin="1"><date-picker state="filled" value="2026-06-15"></date-picker></form-item>
-            <form-item label="任务描述"><textarea-el state="filled" rows="3" value="数据量超过 1000 条时偶发 500，需排查 SQL 慢查询与连接池。"></textarea-el></form-item>
-          </form-el>
+            <form-item label="任务描述"><textarea state="filled" rows="3" value="数据量超过 1000 条时偶发 500，需排查 SQL 慢查询与连接池。"></textarea></form-item>
+          </form>
           <button-group data-pin="2">
-            <button-el label="取消"></button-el>
-            <button-el label="保存" variant="primary"></button-el>
+            <button label="取消"></button>
+            <button label="保存" variant="primary"></button>
           </button-group>
-        </drawer-el>
-        <annotation-el label="截止日期与逾期">
+        </drawer>
+        <annotation label="截止日期与逾期">
           截止日期可改；距今 ≤3 天且进度 <50% 触发逾期风险提示。
-          <enum-el>
+          <enum>
             <enum-item label="正常"><date-picker state="filled" value="2026-07-01"></date-picker></enum-item>
             <enum-item label="逾期风险" description="字段下方红色提示。"><date-picker state="error" value="2026-06-15"></date-picker></enum-item>
-          </enum-el>
-        </annotation-el>
-        <annotation-el label="保存校验">
+          </enum>
+        </annotation>
+        <annotation label="保存校验">
           点「保存」时任务名称必填，为空报错。
-          <enum-el>
-            <enum-item label="校验失败"><form-item label="任务名称" required error="任务名称不能为空"><input-el state="error" placeholder="请输入任务名称"></input-el></form-item></enum-item>
-            <enum-item label="保存成功"><toast-el type="success" title="任务已更新"></toast-el></enum-item>
-          </enum-el>
-        </annotation-el>
-      </annotation-el>
-    </annotation-el>
+          <enum>
+            <enum-item label="校验失败"><form-item label="任务名称" required error="任务名称不能为空"><input state="error" placeholder="请输入任务名称"></input></form-item></enum-item>
+            <enum-item label="保存成功"><toast type="success" title="任务已更新"></toast></enum-item>
+          </enum>
+        </annotation>
+      </annotation>
+    </annotation>
 
-    <annotation-el id="7" label="成员权限矩阵">
+    <annotation id="7" label="成员权限矩阵">
       跨区域横切关注点（无 pin）。三类角色能力差异需显式说明，供研发实现 RBAC、QA 设计权限用例。
-      <enum-el>
-        <enum-item label="管理员" description="可新建/编辑/删除任务、改优先级、批量操作、项目设置。"><card-el title="管理员" subtitle="项目负责人"><tag-el label="全量读写" color="orange"></tag-el></card-el></enum-item>
-        <enum-item label="成员" description="可编辑分配给自己的任务、更新进度；不可删除他人任务。"><card-el title="成员" subtitle="任务执行人"><tag-el label="读写本人" color="green"></tag-el></card-el></enum-item>
-        <enum-item label="只读" description="只能查看与导出，所有写操作与批量栏隐藏。"><card-el title="只读成员" subtitle="干系人"><tag-el label="只读" color="red"></tag-el></card-el></enum-item>
-      </enum-el>
-    </annotation-el>
-  </page-el>
+      <enum>
+        <enum-item label="管理员" description="可新建/编辑/删除任务、改优先级、批量操作、项目设置。"><card title="管理员" subtitle="项目负责人"><tag label="全量读写" color="orange"></tag></card></enum-item>
+        <enum-item label="成员" description="可编辑分配给自己的任务、更新进度；不可删除他人任务。"><card title="成员" subtitle="任务执行人"><tag label="读写本人" color="green"></tag></card></enum-item>
+        <enum-item label="只读" description="只能查看与导出，所有写操作与批量栏隐藏。"><card title="只读成员" subtitle="干系人"><tag label="只读" color="red"></tag></card></enum-item>
+      </enum>
+    </annotation>
+  </page>

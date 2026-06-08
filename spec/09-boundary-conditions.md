@@ -35,14 +35,14 @@
 
 ## 声明方式
 
-边界条件放在 L4–L5 层的 `enum-item` 或深层 `annotation-el` 中：
+边界条件放在 L4–L5 层的 `enum-item` 或深层 `annotation` 中：
 
 ```xml
-<annotation-el label="批量删除边界">
-  <enum-el>
+<annotation label="批量删除边界">
+  <enum>
     <enum-item label="全选后删除" description="含当前页外的已选条目，弹窗确认数量" />
     <enum-item label="含已锁定条目" description="跳过锁定项，完成后提示跳过数量" />
     <enum-item label="网络中断" description="乐观更新回滚，toast 显示失败数量" />
-  </enum-el>
-</annotation-el>
+  </enum>
+</annotation>
 ```

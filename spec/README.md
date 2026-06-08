@@ -1,6 +1,6 @@
 # RPML 语言规格 — 索引
 
-RPML（Rapid Prototype Markup Language）是 RPUI 的语言形式化。`.rpml` 是纯标记文件，根元素为 `<page-el>`，无需 HTML 包装。
+RPML（Rapid Prototype Markup Language）是 RPUI 的语言形式化。`.rpml` 是纯标记文件，根元素为 `<page>`，无需 HTML 包装。
 
 | 编号 | 文档 | 主题 |
 |------|------|------|

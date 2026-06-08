@@ -1,4 +1,5 @@
 import { define } from './core/dom';
+import { toComponentTag } from 'rpml-parser';
 import { RpAnnotation, RpEnum, RpEnumItem } from './canvas/annotation';
 import { RpMainView } from './canvas/main-view';
 import { RpPage } from './canvas/page';
@@ -10,8 +11,7 @@ import { IosActionSheetElement, IosAlertElement, IosButtonElement, IosListElemen
 import { MacDisclosureElement, MacMenubarElement, MacPopoverElement, MacSegmentedElement, MacSheetElement, MacSidebarElement, MacSourceItemElement, MacStepperElement, MacTableElement, MacToolbarElement, MacWindowElement } from './primitives/macos';
 import { AgentOutputElement, AssistantMessageElement, ChatElement, CitationElement, ComposerElement, MessageActionsElement, ReasoningElement, SuggestionsElement, SystemMessageElement, TokenUsageElement, ToolCallElement, TypingElement, UserMessageElement } from './primitives/agent';
 
-/** Tag name: compound names used bare (e.g. main-view), single-word names get -el suffix. */
-function tag(s: string): string { return s.includes('-') ? s : `${s}-el`; }
+/** Map a language tag to its Web Component tag via the shared vocabulary. */
 
 export function registerAll() {
   define('page-el', RpPage);
@@ -21,7 +21,7 @@ export function registerAll() {
   define('enum-item', RpEnumItem);
   const pairs: Array<[string, CustomElementConstructor]> = [
     // layout
-    ['viewport', ViewportElement], ['layout', LayoutElement], ['panel', PanelElement], ['navbar', NavbarElement], ['sidebar', SidebarElement], ['logo', LogoElement], ['split-pane', SplitPaneElement], ['divider', DividerElement], ['spacer', SpacerElement],
+    ['viewport', ViewportElement], ['layout', LayoutElement], ['panel', PanelElement], ['navigator', NavbarElement], ['sidebar', SidebarElement], ['logo', LogoElement], ['split-pane', SplitPaneElement], ['divider', DividerElement], ['spacer', SpacerElement],
     // controls
     ['search', FieldElement], ['input', FieldElement], ['textarea', TextareaElement], ['select', SelectElement], ['button', ButtonElement], ['button-group', GenericElement], ['checkbox', CheckboxElement], ['radio', RadioElement], ['toggle', ToggleElement], ['form', FormElement], ['form-item', FormItemElement], ['date-picker', DatePickerElement], ['upload', UploadElement], ['image-placeholder', ImagePlaceholderElement], ['progress', ProgressElement], ['slider', SliderElement], ['range', RangeElement], ['number-input', NumberInputElement], ['rating', RatingElement], ['pin-input', PinInputElement], ['color-swatch', ColorSwatchElement], ['autocomplete', AutocompleteElement],
     // navigation
@@ -35,5 +35,11 @@ export function registerAll() {
     // agent / conversational UI
     ['chat', ChatElement], ['user-message', UserMessageElement], ['assistant-message', AssistantMessageElement], ['system-message', SystemMessageElement], ['tool-call', ToolCallElement], ['agent-output', AgentOutputElement], ['reasoning', ReasoningElement], ['message-actions', MessageActionsElement], ['suggestions', SuggestionsElement], ['typing', TypingElement], ['composer', ComposerElement], ['citation', CitationElement], ['token-usage', TokenUsageElement]
   ];
-  for (const [suffix, ctor] of pairs) { define(tag(suffix), ctor); }
+  // Guard against vocabulary drift: every primitive must be in the shared map.
+  // (A miss would silently register under the wrong tag via identity fallback.)
+  for (const [suffix] of pairs) {
+    if (toComponentTag(suffix) === suffix && !suffix.includes('-'))
+      console.warn(`[rpui] registry tag "${suffix}" missing from RPML vocabulary`);
+  }
+  for (const [suffix, ctor] of pairs) { define(toComponentTag(suffix), ctor); }
 }

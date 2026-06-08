@@ -42,6 +42,7 @@ export function buildComponents(ctx: Ctx): string {
 
   const script = `<script type="module">
 import { COMPONENTS } from './components.js';
+import { rewriteTags } from './dist/rpui.js';
 const listEl=document.getElementById('cx-list'),mainEl=document.getElementById('cx-main'),
   searchEl=document.getElementById('cx-search'),countEl=document.getElementById('cx-count');
 let active=COMPONENTS[0]?.name;
@@ -64,7 +65,7 @@ function renderMain(){
   if(!c){mainEl.innerHTML='<div class="cx-count">选择左侧组件</div>';return;}
   const rows=c.attrs.map(([a,d])=>'<tr><td>'+esc(a)+'</td><td>'+esc(d)+'</td></tr>').join('');
   mainEl.innerHTML='<h1 class="cx-title">'+esc(c.name)+'</h1><span class="cx-tag">'+esc(c.group)+'</span>'
-    +'<div class="cx-card"><div class="cx-chead">渲染预览</div><div class="cx-render">'+c.html+'</div></div>'
+    +'<div class="cx-card"><div class="cx-chead">渲染预览</div><div class="cx-render">'+rewriteTags(c.html)+'</div></div>'
     +'<div class="cx-card"><div class="cx-chead">属性</div><table class="cx-attrs"><thead><tr><th>属性</th><th>说明</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
     +'<div class="cx-card"><div class="cx-chead">源码</div><pre class="cx-code">'+esc(c.html)+'</pre></div>';
 }

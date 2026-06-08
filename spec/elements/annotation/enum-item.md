@@ -2,7 +2,7 @@
 
 **分类**：annotation
 
-**用途**：`enum-el` 中的单个状态卡片，承载一种 UI 状态或变体的快照和说明。
+**用途**：`enum` 中的单个状态卡片，承载一种 UI 状态或变体的快照和说明。
 
 ## 属性
 
@@ -13,22 +13,22 @@
 
 ## 嵌套规则
 
-- 允许的父元素：`enum-el`（必须）
-- 允许的子元素：任意 `rp-*` 快照原语
+- 允许的父元素：`enum`（必须）
+- 允许的子元素：任意 RPML 快照原语
 
 运行时自动为每个 `enum-item` 编号（黑色方块徽章 1、2、3…），注释正文可通过"状态 2"引用。
 
 ## 示例
 
 ```html
-<enum-el>
+<enum>
   <enum-item label="只读" description="非管理员仅可查看，操作按钮隐藏。">
-    <table-el rows="3" columns="姓名,邮箱,角色"></table-el>
+    <table rows="3" columns="姓名,邮箱,角色"></table>
   </enum-item>
   <enum-item label="管理员" description="可编辑和删除行。">
-    <table-el rows="3" columns="姓名,邮箱,角色" has-action></table-el>
+    <table rows="3" columns="姓名,邮箱,角色" has-action></table>
   </enum-item>
-</enum-el>
+</enum>
 ```
 
 ## ARIA 语义参考

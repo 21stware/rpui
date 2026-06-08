@@ -69,11 +69,20 @@ Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages
   - `vite.gallery.config.ts` → `gallery.js`, a fully self-contained bundle (runtime + parser + gallery chrome, no shared chunks) so the compiler can inline it as one `<script>`.
 - `packages/renderer-web/src/rpui.ts` is the public side-effect entry. Do not hand-edit `dist/`.
 - After building, sync root `dist/` manually: `cp packages/renderer-web/dist/*.js dist/` (CI does this automatically).
-- `rpml-parser` / `rpml-validator` export from `dist/` with `.d.ts`; `renderer-web` depends on `rpml-parser` (workspace:*) so Bun symlinks it for tsc/vite resolution.
+- `rpml-validator` exports from `dist/` with `.d.ts`; `rpml-parser` exports directly from `src/` (all export conditions point at `src/index.ts`) so no pre-build is needed. `renderer-web` depends on `rpml-parser` (workspace:*) so Bun symlinks it for tsc/vite resolution.
+
+## RPML language vs renderer tags
+
+RPML the **language** uses clean, curated tag names (`page`, `view`, `navigator`, `button`, …). The **renderer** registers Web Component tags, which must contain a hyphen (HTML custom-element requirement) and avoid colliding with native HTML (`button`, `table`, `form`). `packages/parser/src/vocabulary.ts` is the single source of truth bridging the two:
+
+- `LANG_TO_COMPONENT` / `COMPONENT_TO_LANG` — the bidirectional map (e.g. `page`↔`page-el`, `view`↔`main-view`, `navigator`↔`navbar-el`; most primitives just gain/drop an `-el` suffix; compounds like `split-pane` are identical on both sides).
+- `toComponentTag` / `toLangTag` — identity for anything unmapped (native HTML, comments).
+
+The parser applies the rewrite on the source string (`rewriteTags`, run after `expandSelfClosing`) inside `parse`/`parseToPage`/`parseNode`, so the renderer, CSS, registry, and validator all keep operating on component tags. `registry.ts` registers via `toComponentTag`; the validator maps messages back to language names via `toLangTag`.
 
 ## RPML file format
 
-`.rpml` files are **HTML-like markup** (parsed as HTML, not strict XML — boolean attrs and bare `&` allowed; self-closing leaves are normalized by `expandSelfClosing`). Root element `<page-el>`, **no HTML wrapper**. Load at runtime with:
+`.rpml` files are **HTML-like markup** (parsed as HTML, not strict XML — boolean attrs and bare `&` allowed; self-closing leaves are normalized by `expandSelfClosing`). Root element `<page>`, **no HTML wrapper**. Load at runtime with:
 
 ```html
 <script type="module" src="dist/rpml-loader.js"></script>
@@ -97,21 +106,21 @@ Runtime source lives in `packages/renderer-web/src/`, bundled into one browser f
 
 - `src/core/` — inline icons, runtime CSS injection, DOM/attribute helpers, device sizing helpers.
 - `src/canvas/` — `RpPage`, `RpMainView`, `RpAnnotation`, `RpEnum`, and `RpEnumItem`.
-- `src/primitives/` — snapshot primitive component groups: `layout.ts`, `controls.ts`, `navigation.ts`, `data-display.ts` (general web `rp-*`), plus `ios.ts` (`rp-ios-*`, Apple HIG iOS) and `macos.ts` (`rp-macos-*`, Apple HIG macOS).
-- `src/registry.ts` — central custom-element registration and alias mapping (~109 suffixes, each registered as both `rp-*` and `snap-*`).
+- `src/primitives/` — snapshot primitive component groups: `layout.ts`, `controls.ts`, `navigation.ts`, `data-display.ts` (general web primitives), plus `ios.ts` (`ios-*`, Apple HIG iOS) and `macos.ts` (`macos-*`, Apple HIG macOS).
+- `src/registry.ts` — central custom-element registration; maps RPML language tags to Web Component tags via `toComponentTag` from `rpml-parser`.
 
 The runtime is a client-side Web Components implementation that:
 
 1. injects one shared global stylesheet (`rpui-runtime-style`),
 2. defines custom elements for the page shell, annotations, enums, and snapshot primitives,
 3. uses light DOM mutation/reparenting rather than Shadow DOM,
-4. registers current `rp-*` tags and compatibility aliases.
+4. registers the Web Component tags that the RPML vocabulary maps onto.
 
 Key runtime pieces:
 
 - Icon system: `iconPaths` and `icon()` render Lucide-style inline SVG without CDN dependencies.
-- Style system: a large runtime CSS string is injected once by `injectStyle()` and applies globally to `rp-*`, `snap-*`, and `proto-*` aliases where relevant.
-- Registration: `registerAll()` centralizes custom-element registration. It defines `rp-*` and `proto-*` aliases for page/annotation primitives, and registers snapshot primitives under both `rp-*` and `snap-*` names.
+- Style system: a large runtime CSS string is injected once by `injectStyle()` and applies globally to the registered component tags.
+- Registration: `registerAll()` centralizes custom-element registration, resolving each RPML language name to its component tag through the shared `rpml-parser` vocabulary.
 - Defensive registration: `define()` avoids redefining a custom element if it is already registered.
 - Attribute helpers: `attr()`, `intAttr()`, and `csv()` keep rendering attribute-driven.
 - Idempotent rendering: many `connectedCallback()` methods set `this.dataset.rpReady = 'true'` to avoid duplicate DOM generation after reconnects.
@@ -128,15 +137,15 @@ Important custom elements:
 
 When creating or editing prototype HTML, follow `SKILL.md` and `llms.txt`:
 
-- Use `rp-*` tags for new work. `proto-*` and `snap-*` exist for compatibility.
-- Use `<page-el>` as the root and exactly one `<main-view>` per prototype page.
-- Prefer `<main-view device="web|ipad|mobile" scale="...">` and matching `<viewport-el device="...">` for new prototypes. Device presets are fixed-width and auto-height by default; explicit numeric `height` opts into legacy fixed-height clipping.
-- Build the main snapshot inside `<main-view>` using `rp-*` snapshot primitives, typically with an `<viewport-el>` child.
-- Add `data-pin="N"` to meaningful regions inside `<main-view>`. Number pins from 1 without gaps.
-- Every `data-pin="N"` must have a matching top-level `<annotation-el id="N" label="...">`.
-- Keep annotations compact; use nested `<annotation-el>` only when a rule belongs to a smaller sub-region.
-- Use `<enum-el>` and `<enum-item label="...">` to document conditional states and variants.
-- Do not use direct HTML UI elements such as `div`, `button`, `input`, or `table` to represent product UI in prototypes; use `rp-*` primitives instead. Basic text in annotations is fine.
+- Use the bare RPML language tags (`page`, `view`, `button`, `navigator`, …). The parser maps them to the renderer's Web Component tags; never write the underlying component tags (`page-el`, `main-view`) directly.
+- Use `<page>` as the root and exactly one `<view>` per prototype page.
+- Prefer `<view device="web|ipad|mobile" scale="...">` and matching `<viewport device="...">` for new prototypes. Device presets are fixed-width and auto-height by default; explicit numeric `height` opts into legacy fixed-height clipping.
+- Build the main snapshot inside `<view>` using RPML snapshot primitives, typically with a `<viewport>` child.
+- Add `data-pin="N"` to meaningful regions inside `<view>`. Number pins from 1 without gaps.
+- Every `data-pin="N"` must have a matching top-level `<annotation id="N" label="...">`.
+- Keep annotations compact; use nested `<annotation>` only when a rule belongs to a smaller sub-region.
+- Use `<enum>` and `<enum-item label="...">` to document conditional states and variants.
+- Do not use direct HTML UI elements such as `div`, `button`, `input`, or `table` to represent product UI in prototypes; use RPML primitives instead. Basic text in annotations is fine.
 - Do not add interactive JavaScript, `onclick`, hover behavior, runtime focus, timers, API calls, external CSS, image CDNs, or icon CDNs to prototypes.
 - Do not use `position:absolute` or `position:fixed` in snapshot content; RPUI owns pin positioning.
 

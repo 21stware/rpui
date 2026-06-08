@@ -53,6 +53,7 @@
 
   <script type="module">
     import { COMPONENTS } from './components.js';
+    import { rewriteTags } from '/packages/parser/src/index.ts';
 
     const listEl = document.getElementById('px-list');
     const mainEl = document.getElementById('px-main');
@@ -88,7 +89,7 @@
       mainEl.innerHTML =
         '<h2 class="px-title">' + escapeHtml(c.name) + '</h2>' +
         '<span class="px-group-tag">' + escapeHtml(c.group) + '</span>' +
-        '<div class="px-card"><div class="px-card-head">渲染预览</div><div class="px-render">' + c.html + '</div></div>' +
+        '<div class="px-card"><div class="px-card-head">渲染预览</div><div class="px-render">' + rewriteTags(c.html) + '</div></div>' +
         '<div class="px-card"><div class="px-card-head">属性</div><table class="px-attrs"><thead><tr><th>属性</th><th>说明</th></tr></thead><tbody>' + attrsRows + '</tbody></table></div>' +
         '<div class="px-card"><div class="px-card-head">源码</div><pre class="px-code">' + escapeHtml(c.html) + '</pre></div>';
     }

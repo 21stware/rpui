@@ -1,33 +1,33 @@
-<page-el
+<page
     title="即时消息"
     route="/chat"
     description="移动端即时通讯 App 的消息列表页，涵盖会话列表、搜索、通知权限、已读未读状态、群聊与单聊区分、AI 助手入口和置顶会话逻辑。主快照为有新消息、搜索聚焦、通知弹层可见状态。">
 
-    <main-view device="mobile" scale="0.9">
-      <viewport-el device="mobile">
-        <navbar-el height="56" data-pin="1">
-          <logo-el label="IM" size="40"></logo-el>
-          <search-el state="focus" placeholder="搜索聊天、联系人" has-clear-button></search-el>
-          <badge-el count="8" max="99"></badge-el>
-          <avatar-el size="32" initials="WZ"></avatar-el>
-        </navbar-el>
+    <view device="mobile" scale="0.9">
+      <viewport device="mobile">
+        <navigator height="56" data-pin="1">
+          <logo label="IM" size="40"></logo>
+          <search state="focus" placeholder="搜索聊天、联系人" has-clear-button></search>
+          <badge count="8" max="99"></badge>
+          <avatar size="32" initials="WZ"></avatar>
+        </navigator>
 
-        <layout-el rows="auto auto 1fr auto">
-          <panel-el padding="10" data-pin="2">
-            <layout-el columns="repeat(4, 1fr)" gap="8">
-              <button-el label="消息" variant="primary" size="sm" icon="message-square"></button-el>
-              <button-el label="通讯录" variant="ghost" size="sm" icon="users"></button-el>
-              <button-el label="AI 助手" variant="ghost" size="sm" icon="shield"></button-el>
-              <button-el label="更多" variant="ghost" size="sm" icon="settings"></button-el>
-            </layout-el>
-          </panel-el>
+        <layout rows="auto auto 1fr auto">
+          <panel padding="10" data-pin="2">
+            <layout columns="repeat(4, 1fr)" gap="8">
+              <button label="消息" variant="primary" size="sm" icon="message-square"></button>
+              <button label="通讯录" variant="ghost" size="sm" icon="users"></button>
+              <button label="AI 助手" variant="ghost" size="sm" icon="shield"></button>
+              <button label="更多" variant="ghost" size="sm" icon="settings"></button>
+            </layout>
+          </panel>
 
-          <panel-el padding="10" data-pin="3">
-            <alert-el type="info" title="开启通知权限" message="允许后可即时接收新消息提醒" closable></alert-el>
-          </panel-el>
+          <panel padding="10" data-pin="3">
+            <alert type="info" title="开启通知权限" message="允许后可即时接收新消息提醒" closable></alert>
+          </panel>
 
-          <panel-el padding="0" data-pin="4">
-            <list-el>
+          <panel padding="0" data-pin="4">
+            <list>
               <list-item label="产品 · 王总 📌" icon="message-square" badge="5" state="selected"></list-item>
               <list-item label="张三" icon="user" badge="2"></list-item>
               <list-item label="研发群 (38人)" icon="users" badge="99+"></list-item>
@@ -36,67 +36,67 @@
               <list-item label="设计评审群" icon="users" badge="1"></list-item>
               <list-item label="运营 · 周报" icon="message-square"></list-item>
               <list-item label="安全通知" icon="bell"></list-item>
-            </list-el>
-          </panel-el>
+            </list>
+          </panel>
 
-          <panel-el padding="0" data-pin="5">
-            <layout-el columns="repeat(4, 1fr)" gap="0">
-              <button-el label="消息" variant="primary" size="sm" icon="inbox"></button-el>
-              <button-el label="通讯录" variant="ghost" size="sm" icon="users"></button-el>
-              <button-el label="发现" variant="ghost" size="sm" icon="search"></button-el>
-              <button-el label="我的" variant="ghost" size="sm" icon="user"></button-el>
-            </layout-el>
-          </panel-el>
-        </layout-el>
-      </viewport-el>
-    </main-view>
+          <panel padding="0" data-pin="5">
+            <layout columns="repeat(4, 1fr)" gap="0">
+              <button label="消息" variant="primary" size="sm" icon="inbox"></button>
+              <button label="通讯录" variant="ghost" size="sm" icon="users"></button>
+              <button label="发现" variant="ghost" size="sm" icon="search"></button>
+              <button label="我的" variant="ghost" size="sm" icon="user"></button>
+            </layout>
+          </panel>
+        </layout>
+      </viewport>
+    </view>
 
-    <annotation-el id="1" label="顶部搜索与头像">
+    <annotation id="1" label="顶部搜索与头像">
       搜索框在主快照中为 focus 态，表示用户已点击准备输入。Logo 为品牌标识。通知角标显示未读汇总数。
-      <enum-el>
-        <enum-item label="默认态" description="用户未进行任何搜索操作。"><search-el placeholder="搜索聊天、联系人"></search-el></enum-item>
-        <enum-item label="输入中" description="已有输入关键词，出现清除按钮。"><search-el state="filled" value="王总" has-clear-button></search-el></enum-item>
-        <enum-item label="无结果"><empty-el label="未找到相关内容" description="换个关键词试试"></empty-el></enum-item>
-      </enum-el>
-    </annotation-el>
+      <enum>
+        <enum-item label="默认态" description="用户未进行任何搜索操作。"><search placeholder="搜索聊天、联系人"></search></enum-item>
+        <enum-item label="输入中" description="已有输入关键词，出现清除按钮。"><search state="filled" value="王总" has-clear-button></search></enum-item>
+        <enum-item label="无结果"><empty label="未找到相关内容" description="换个关键词试试"></empty></enum-item>
+      </enum>
+    </annotation>
 
-    <annotation-el id="2" label="快捷功能区">
+    <annotation id="2" label="快捷功能区">
       四宫格快捷入口，当前选中「消息」为 primary 态，其余为 ghost 态。未来可扩展为可配置顺序。
-    </annotation-el>
+    </annotation>
 
-    <annotation-el id="3" label="通知权限横幅">
+    <annotation id="3" label="通知权限横幅">
       首次打开或授权被拒绝后展示，用户可点击关闭按钮忽略。通知内容取决于系统推送是否授权。
-      <enum-el>
-        <enum-item label="未授权时可见" description="状态持久展示直到用户关闭或授权。"><alert-el type="info" title="开启通知权限" message="允许后可即时接收新消息提醒" closable></alert-el></enum-item>
-        <enum-item label="已授权时隐藏"><empty-el label="无横幅" description="横幅已关闭，不占据界面空间"></empty-el></enum-item>
-      </enum-el>
-    </annotation-el>
+      <enum>
+        <enum-item label="未授权时可见" description="状态持久展示直到用户关闭或授权。"><alert type="info" title="开启通知权限" message="允许后可即时接收新消息提醒" closable></alert></enum-item>
+        <enum-item label="已授权时隐藏"><empty label="无横幅" description="横幅已关闭，不占据界面空间"></empty></enum-item>
+      </enum>
+    </annotation>
 
-    <annotation-el id="4" label="会话列表">
+    <annotation id="4" label="会话列表">
       置顶会话（📌）固定在顶部，角标显示未读消息数，99+ 封顶。单聊头像使用 user 图标，群聊使用 users 图标。AI 助手是系统特殊会话，独占一个图标。
-      <annotation-el label="未读状态规则">
-        <enum-el>
+      <annotation label="未读状态规则">
+        <enum>
           <enum-item label="未读（有角标）" description="展示红色角标，超过 99 显示 99+。"><list-item label="研发群" icon="users" badge="99+"></list-item></enum-item>
           <enum-item label="已读（无角标）"><list-item label="李四" icon="user"></list-item></enum-item>
           <enum-item label="置顶会话" description="📌 前缀标识，且排列始终在列表最上方。"><list-item label="产品 · 王总 📌" icon="message-square" badge="5" state="selected"></list-item></enum-item>
           <enum-item label="勿扰模式" description="角标变灰，不高亮。"><list-item label="运营 · 周报" icon="message-square" state="disabled"></list-item></enum-item>
-        </enum-el>
-      </annotation-el>
-      <annotation-el label="会话列表加载态">
-        <enum-el>
-          <enum-item label="首次加载骨架屏"><loading-el rows="5"></loading-el></enum-item>
-          <enum-item label="空会话列表" description="新用户或清空后展示。"><empty-el label="暂无会话" description="开始聊天吧" has-action></empty-el></enum-item>
-          <enum-item label="加载失败"><alert-el type="error" title="消息加载失败" message="请检查网络后重试"></alert-el></enum-item>
-        </enum-el>
-      </annotation-el>
-    </annotation-el>
+        </enum>
+      </annotation>
+      <annotation label="会话列表加载态">
+        <enum>
+          <enum-item label="首次加载骨架屏"><loading rows="5"></loading></enum-item>
+          <enum-item label="空会话列表" description="新用户或清空后展示。"><empty label="暂无会话" description="开始聊天吧" has-action></empty></enum-item>
+          <enum-item label="加载失败"><alert type="error" title="消息加载失败" message="请检查网络后重试"></alert></enum-item>
+        </enum>
+      </annotation>
+    </annotation>
 
-    <annotation-el id="5" label="底部 Tab 导航">
+    <annotation id="5" label="底部 Tab 导航">
       固定底栏，包含消息、通讯录、发现、我的四个 Tab。消息 Tab 为选中状态。底栏在 iOS Safe Area 以上。
-      <enum-el>
-        <enum-item label="消息 Tab 选中" description="primary 蓝色，代表当前活跃 Tab。"><button-el label="消息" variant="primary" size="sm" icon="inbox"></button-el></enum-item>
-        <enum-item label="其他 Tab 未选中"><button-el label="通讯录" variant="ghost" size="sm" icon="users"></button-el></enum-item>
-        <enum-item label="带红点" description="Tab 图标右上角有未读系统通知时展示。"><badge-el count="3"></badge-el></enum-item>
-      </enum-el>
-    </annotation-el>
-  </page-el>
+      <enum>
+        <enum-item label="消息 Tab 选中" description="primary 蓝色，代表当前活跃 Tab。"><button label="消息" variant="primary" size="sm" icon="inbox"></button></enum-item>
+        <enum-item label="其他 Tab 未选中"><button label="通讯录" variant="ghost" size="sm" icon="users"></button></enum-item>
+        <enum-item label="带红点" description="Tab 图标右上角有未读系统通知时展示。"><badge count="3"></badge></enum-item>
+      </enum>
+    </annotation>
+  </page>

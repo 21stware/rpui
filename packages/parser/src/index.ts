@@ -12,6 +12,9 @@
  *  Everything else uses parse.
  */
 
+import { toComponentTag } from './vocabulary';
+export { LANG_TO_COMPONENT, COMPONENT_TO_LANG, toComponentTag, toLangTag, PRIMITIVES } from './vocabulary';
+
 export interface RpmlNode {
   tag: string;
   attrs: Record<string, string>;
@@ -19,7 +22,7 @@ export interface RpmlNode {
   text?: string;
 }
 
-/** Expand self-closing custom-element tags (`<rp-x ... />`) into explicit
+/** Expand self-closing custom-element tags (`<button ... />`) into explicit
  *  open+close pairs before HTML injection.
  *  The HTML parser ignores `/>` on custom elements; quoted attribute values
  *  (which may contain `/>`) are preserved verbatim. */
@@ -30,12 +33,31 @@ export function expandSelfClosing(source: string): string {
   );
 }
 
+/** Rewrite RPML *language* tag names to their Web Component tag names.
+ *  Matches a complete opening/closing tag and rewrites only the tag NAME.
+ *  The attribute portion is consumed with quoted-string awareness, so a literal
+ *  `<tag` inside an attribute value (e.g. label="use <button>") is never seen as
+ *  a tag start. Native HTML tags and comments (`<!--`) fall through unchanged.
+ *  Run AFTER expandSelfClosing so every tag is a well-formed `<...>` pair. */
+export function rewriteTags(source: string): string {
+  return source.replace(
+    /<(\/?)([a-zA-Z][\w:-]*)((?:"[^"]*"|'[^']*'|[^>])*)>/g,
+    (_m, slash: string, tag: string, rest: string) => `<${slash}${toComponentTag(tag)}${rest}>`
+  );
+}
+
+/** Normalize RPML source for parsing: expand self-closing tags, then map
+ *  language tag names onto Web Component tag names. */
+export function normalize(source: string): string {
+  return rewriteTags(expandSelfClosing(source.trim()));
+}
+
 /** Parse a .rpml string into an AST via browser DOMParser.
  *  Requires a browser environment (DOMParser available). */
 export function parse(source: string): RpmlNode {
-  const doc = new DOMParser().parseFromString(expandSelfClosing(source.trim()), 'text/html');
+  const doc = new DOMParser().parseFromString(normalize(source), 'text/html');
   const root = doc.body.querySelector('page-el') ?? doc.body.firstElementChild;
-  if (!root) throw new Error('RPML parse error: no <page-el> root element found');
+  if (!root) throw new Error('RPML parse error: no <page> root element found');
   return domToAst(root);
 }
 
@@ -53,13 +75,14 @@ function domToAst(el: Element): RpmlNode {
 }
 
 /** Parse a .rpml string into a DOM Element using the live document's HTML parser.
- *  Requires a browser environment. Custom elements upgrade against the live
- *  registry — identical to inlining <page-el> in a .html file. */
+ *  Requires a browser environment. Language tags are rewritten to component tags
+ *  first; custom elements then upgrade against the live registry — identical to
+ *  inlining the component-tag markup in a .html file. */
 export function parseToPage(source: string): Element {
   const holder = document.createElement('div');
-  holder.innerHTML = expandSelfClosing(source.trim());
+  holder.innerHTML = normalize(source);
   const root = holder.querySelector('page-el') ?? holder.firstElementChild;
-  if (!root) throw new Error('RPML parse error: no <page-el> root element found');
+  if (!root) throw new Error('RPML parse error: no <page> root element found');
   return root;
 }
 
@@ -76,7 +99,7 @@ export function astToDom(node: RpmlNode): Element {
  *  Works in any JS environment (Bun, Node, browsers) — no DOMParser needed.
  *  Used by validator CLI and VS Code extension. */
 export function parseNode(source: string): RpmlNode {
-  const norm = expandSelfClosing(source.trim());
+  const norm = normalize(source);
   const stack: RpmlNode[] = [];
   let root: RpmlNode | null = null;
   const tagRe = /<([/]?)([a-zA-Z][\w:-]*)([^>]*)>/g;

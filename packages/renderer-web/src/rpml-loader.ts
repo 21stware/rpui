@@ -1,5 +1,4 @@
-import { registerAll } from './rpui';
-import { parseToPage } from 'rpml-parser';
+import { registerAll, parseToPage } from './rpui';
 
 export { parseToPage };
 registerAll();

@@ -11,7 +11,7 @@ export function buildApi(ctx: Ctx): string {
   const body = `
 <div class="page-intro">
   <h1>API &amp; CLI</h1>
-  <p>monorepo 各包的导出、命令行工具用法，以及全部 <code>rp-*</code> 元素索引。</p>
+  <p>monorepo 各包的导出、命令行工具用法，以及全部 RPML 元素索引。</p>
 </div>
 
 <div class="wrap prose" style="padding-top:32px">
@@ -20,7 +20,7 @@ export function buildApi(ctx: Ctx): string {
 <table>
 <thead><tr><th>包</th><th>说明</th><th>导出</th></tr></thead>
 <tbody>
-<tr><td><code>@bracken/rpui</code></td><td>Web Components 运行时（渲染器）</td><td><code>registerAll()</code> · 副作用注册全部 <code>rp-*</code></td></tr>
+<tr><td><code>@bracken/rpui</code></td><td>Web Components 运行时（渲染器）</td><td><code>registerAll()</code> · 副作用注册全部自定义元素</td></tr>
 <tr><td><code>rpml-parser</code></td><td>.rpml → AST / DOM</td><td><code>parse</code> · <code>parseNode</code> · <code>parseToPage</code> · <code>astToDom</code> · <code>expandSelfClosing</code> · <code>RpmlNode</code></td></tr>
 <tr><td><code>rpml-validator</code></td><td>结构 + 语义校验</td><td><code>validate(ast)</code> → <code>ValidationError[]</code></td></tr>
 <tr><td><code>rpml-compiler</code></td><td>目录 → 单 HTML</td><td><code>collectRpml(dir)</code> · <code>compileDocs(docs)</code></td></tr>
@@ -31,7 +31,7 @@ export function buildApi(ctx: Ctx): string {
 <p>三种方式把 <code>.rpml</code> 渲染到页面：</p>
 <h3>1. 内联标记</h3>
 <pre class="code" data-lang="html"><code>&lt;script type="module" src="dist/rpui.js"&gt;&lt;/script&gt;
-&lt;page-el title="..."&gt; ... &lt;/page-el&gt;</code></pre>
+&lt;page title="..."&gt; ... &lt;/page&gt;</code></pre>
 <h3>2. 加载器元素</h3>
 <pre class="code" data-lang="html"><code>&lt;script type="module" src="dist/rpml-loader.js"&gt;&lt;/script&gt;
 &lt;rpml-app src="./page.rpml"&gt;&lt;/rpml-app&gt;
@@ -74,7 +74,7 @@ bun run compile examples -o examples.html</code></pre>
 <p><a href="demo/viewer.html" target="_blank" rel="noopener">demo/viewer.html</a> 支持三种加载：URL 参数 <code>?rpml=</code>、拖拽单个 <code>.rpml</code>、拖拽<strong>文件夹</strong>构建带侧边栏的文档集（按文件路径生成导航树，hash 路由，<code>index.rpml</code> 作默认主页）。</p>
 
 <h2 id="elements">元素索引</h2>
-<p>全部 <code>rp-*</code> 元素一句话索引。完整属性见<a href="components.html">组件</a>页与 <a href="${ctx.REPO}/tree/main/spec/elements" target="_blank" rel="noopener">spec/elements</a>。</p>
+<p>全部 RPML 元素一句话索引。完整属性见<a href="components.html">组件</a>页与 <a href="${ctx.REPO}/tree/main/spec/elements" target="_blank" rel="noopener">spec/elements</a>。</p>
 ${elementIndex}
 
 </div>`;

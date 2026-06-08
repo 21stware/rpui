@@ -10,16 +10,16 @@
 
 ## 嵌套规则
 
-- 允许的父元素：`panel-el`、`navbar-el`、`viewport-el`、任意 `rp-*` 容器
-- 允许的子元素：`button-el`
+- 允许的父元素：`panel`、`navigator`、`viewport`、任意 RPML 容器
+- 允许的子元素：`button`
 
 ## 示例
 
 ```html
 <button-group>
-  <button-el label="编辑" variant="secondary" icon="pencil"></button-el>
-  <button-el label="复制" variant="secondary" icon="copy"></button-el>
-  <button-el label="删除" variant="danger" icon="trash"></button-el>
+  <button label="编辑" variant="secondary" icon="pencil"></button>
+  <button label="复制" variant="secondary" icon="copy"></button>
+  <button label="删除" variant="danger" icon="trash"></button>
 </button-group>
 ```
 

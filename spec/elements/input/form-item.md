@@ -15,14 +15,14 @@
 
 ## 嵌套规则
 
-- 允许的父元素：`form-el`（必须）
-- 允许的子元素：恰好一个输入原语：`input-el`、`textarea-el`、`select-el`、`date-picker`、`toggle-el` 等
+- 允许的父元素：`form`（必须）
+- 允许的子元素：恰好一个输入原语：`input`、`textarea`、`select`、`date-picker`、`toggle` 等
 
 ## 示例
 
 ```html
 <form-item label="邮箱" required error="请输入有效的邮箱地址">
-  <input-el placeholder="请输入邮箱" state="error"></input-el>
+  <input placeholder="请输入邮箱" state="error"></input>
 </form-item>
 ```
 

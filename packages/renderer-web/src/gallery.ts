@@ -51,9 +51,9 @@ function injectChrome() {
   document.head.appendChild(s);
 }
 
-/** Pull the `title` attribute off the root <page-el ...> without full parsing. */
+/** Pull the `title` attribute off the root <page ...> without full parsing. */
 function docTitle(source: string, fallback: string): string {
-  const m = source.match(/<page-el\b[^>]*\btitle="([^"]*)"/i);
+  const m = source.match(/<page\b[^>]*\btitle="([^"]*)"/i);
   return m?.[1] || fallback;
 }
 

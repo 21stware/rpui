@@ -13,7 +13,7 @@
 
 ## 嵌套规则
 
-- 允许的父元素：`form-item`、`panel-el`、`viewport-el`
+- 允许的父元素：`form-item`、`panel`、`viewport`
 - 允许的子元素：无（自闭合）
 
 ## 示例

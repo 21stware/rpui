@@ -2,27 +2,22 @@
 
 ## 文件格式
 
-`.rpml` 文件是 **类 HTML 的标记**，UTF-8 编码，根元素为 `<page-el>`。不需要 `<?xml?>` 声明，不需要 `<html>/<head>/<body>` 包装。
+`.rpml` 文件是 **类 HTML 的标记**，UTF-8 编码，根元素为 `<page>`。不需要 `<?xml?>` 声明，不需要 `<html>/<head>/<body>` 包装。
 
 渲染器按 **HTML 规则**解析（而非严格 XML），因此：
 - 布尔属性可省略值：`required`、`has-action`、`has-clear-button` 合法。
 - 文本中的裸 `&` 不需要转义（但 `&amp;`/`&lt;`/`&gt;` 仍被识别）。
-- 自闭合写法 `<button-el />` 与显式闭合 `<button-el></button-el>` 均可。
+- 自闭合写法 `<button />` 与显式闭合 `<button></button>` 均可。
 
 ```html
-<page-el title="页面标题" route="/route" description="说明">
+<page title="页面标题" route="/route" description="说明">
   ...
-</page-el>
+</page>
 ```
 
 ## 标签命名
 
-所有 RPML 元素使用 `rp-` 前缀（kebab-case，小写）。兼容别名：
-
-- `snap-*` — 快照原语的别名（等价于 `rp-*`）
-- `proto-*` — 画布元素的早期别名
-
-新文档始终使用 `rp-*`。
+所有 RPML 元素使用简洁的裸标签名（kebab-case，小写），例如 `page`、`view`、`button`、`table`。单词标签直接使用名称本身；复合名称保留连字符，例如 `list-item`、`table-row`、`enum-item`。平台原语使用 `ios-*` / `macos-*` 前缀。
 
 ## 属性
 
@@ -39,11 +34,11 @@
 
 ## 嵌套规则
 
-- `<page-el>` 是唯一合法的根元素。
-- `<main-view>` 必须是 `<page-el>` 的直接子元素，且恰好一个。
-- 快照原语（`viewport-el` 及其内部元素）嵌套在 `<main-view>` 内。
-- `<annotation-el id="N">` 是 `<page-el>` 的直接子元素（顶级注释）。
-- 嵌套注释写在另一个 `<annotation-el>` 内部。
+- `<page>` 是唯一合法的根元素。
+- `<view>` 必须是 `<page>` 的直接子元素，且恰好一个。
+- 快照原语（`viewport` 及其内部元素）嵌套在 `<view>` 内。
+- `<annotation id="N">` 是 `<page>` 的直接子元素（顶级注释）。
+- 嵌套注释写在另一个 `<annotation>` 内部。
 
 ## 文本内容
 

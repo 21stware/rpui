@@ -19,44 +19,41 @@ RPUI has two layers:
 1. Canvas layer: page shell, main snapshot view, numbered pins, annotations, nested annotations, and state enums.
 2. Snapshot Primitive layer: static UI building blocks for product UI snapshots and annotation slices.
 
-Use `rp-*` tags for new work. Compatibility aliases are available:
-
-- `proto-*` aliases exist for canvas tags.
-- `snap-*` aliases exist for snapshot primitive tags.
+RPML is the authoring language. Its tags are clean single words (`page`, `view`, `button`, `navigator`); the runtime maps them onto Web Component tag names. Write the language tags below — do not write the underlying component tags.
 
 ## Canvas tags
 
 ```html
-<page-el title="页面标题" route="/route" description="页面说明">
-  <main-view device="web" scale="0.65">
-    <viewport-el device="web">
-      <!-- fixed-width, auto-height main snapshot built with rp-* primitives -->
-    </viewport-el>
-  </main-view>
+<page title="页面标题" route="/route" description="页面说明">
+  <view device="web" scale="0.65">
+    <viewport device="web">
+      <!-- fixed-width, auto-height main snapshot built with primitives -->
+    </viewport>
+  </view>
 
-  <annotation-el id="1" label="区域说明">...</annotation-el>
-</page-el>
+  <annotation id="1" label="区域说明">...</annotation>
+</page>
 ```
 
 Tags:
 
-- `<page-el title="..." route="..." description="...">` — root document canvas. It keeps the title/main snapshot on the left and moves top-level annotations to the right-side scroll pane.
-- `<main-view device="web|ipad|mobile" width="..." height="auto|900" scale="0.65">` — scaled main snapshot frame. Device presets are fixed width with auto height unless a numeric `height` is provided.
-- `<viewport-el device="web|ipad|mobile" width="..." height="auto|900">` — snapshot viewport. Use the same `device` as the main view for clarity.
-- `<annotation-el id="1" label="...">` — top-level annotation linked to `data-pin="1"`; rendered in the right annotation pane.
-- `<annotation-el label="...">` — nested annotation; no `id` required.
-- `<enum-el>` — horizontal state/variant container.
+- `<page title="..." route="..." description="...">` — root document canvas. It keeps the title/main snapshot on the left and moves top-level annotations to the right-side scroll pane.
+- `<view device="web|ipad|mobile" width="..." height="auto|900" scale="0.65">` — scaled main snapshot frame. Device presets are fixed width with auto height unless a numeric `height` is provided.
+- `<viewport device="web|ipad|mobile" width="..." height="auto|900">` — snapshot viewport. Use the same `device` as the view for clarity.
+- `<annotation id="1" label="...">` — top-level annotation linked to `data-pin="1"`; rendered in the right annotation pane.
+- `<annotation label="...">` — nested annotation; no `id` required.
+- `<enum>` — horizontal state/variant container.
 - `<enum-item label="..." description="...">` — one explicit state/variant card with optional short description.
 
 ## Pin rule
 
-Inside `<main-view>`, add `data-pin="N"` to meaningful regions. Number pins from 1 without gaps.
+Inside `<view>`, add `data-pin="N"` to meaningful regions. Number pins from 1 without gaps.
 
 Every `data-pin="N"` must have a matching top-level annotation:
 
 ```html
-<navbar-el data-pin="1">...</navbar-el>
-<annotation-el id="1" label="顶部导航">...</annotation-el>
+<navigator data-pin="1">...</navigator>
+<annotation id="1" label="顶部导航">...</annotation>
 ```
 
 RPUI renders water-drop pins automatically. Never write pin DOM manually.
@@ -67,7 +64,7 @@ The runtime makes the canvas navigable. Authors do not write any of these attrib
 
 - Every annotation gets a `data-rp-section` path. Top-level annotations use their `id` (e.g. `3`); nested annotations use the parent path plus their 1-based position among annotation siblings (e.g. `3-2`, `3-2-1`). This supports up to 3–5 levels of nesting.
 - Every annotation renders a marker showing its **local index** (the last path segment): top-level = blue water-drop with the id; nested depth 1 = purple circle; nested depth ≥2 = green triangle. A nested annotation at `3-2` is marked `2`, at `3-2-1` is marked `1` — local to its parent, not the full path.
-- To explain a UI slice that is rendered inside an annotation, nest another `<annotation-el>` around/after it. The nested annotation gets its own numbered circle/triangle marker and its body indents one level: `main view → ⬤ annotation 3 → UI slice → ① nested annotation → detail`.
+- To explain a UI slice that is rendered inside an annotation, nest another `<annotation>` around/after it. The nested annotation gets its own numbered circle/triangle marker and its body indents one level: `view → ⬤ annotation 3 → UI slice → ① nested annotation → detail`.
 - Clicking a pin in the main snapshot, or clicking an annotation title, updates the URL to `?section=<path>` and scrolls/focuses the matching annotation with a dashed-outline highlight.
 - Loading a URL with `?section=3-2-1` focuses that nested annotation on load (reverse deep link).
 - Each `<enum-item>` is auto-numbered with a black square index badge (1, 2, 3…), so annotation prose can reference "state 2" unambiguously.
@@ -81,115 +78,115 @@ Keep annotation and enum-item sibling order intentional and stable: the generate
 - Do not use `onclick`, hover behavior, runtime focus, timers, API calls, or framework state.
 - Do not use external images; use `<image-placeholder>`.
 - Do not use `position:absolute` or `position:fixed` in snapshot content. RPUI owns pin positioning.
-- Do not use raw `div`, `button`, `input`, or `table` to represent product UI. Use `rp-*` primitives.
+- Do not use raw `div`, `button`, `input`, or `table` to represent product UI. Use RPML primitives.
 - Basic text and simple inline HTML are allowed inside annotations.
 - Top-level annotations render automatically in the right-side annotation pane. Do not manually create annotation pane wrappers.
 - The title/route/description and main snapshot stay visible on the left while the annotation pane scrolls independently on both axes.
 - Keep annotations compact and document-flow oriented. Do not stretch annotation content to full width.
 - Choose a device preset for new prototypes: `web` (1440px), `ipad` (834px), or `mobile` (390px). Presets use fixed width and auto height unless a numeric height is provided.
 - In the main snapshot, keep selects collapsed; show their expanded list in an annotation enum.
-- Overlays and transient feedback — `modal-el`, `drawer-el`, `dropdown-el`, `popover-el`, `tooltip-el`, `toast-el` — are interaction results, not page regions. Do not place them in the main snapshot. Instead: pin the trigger element (button/row/field), state the trigger condition in the annotation, and render the overlay inside that annotation (usually in an `<enum-el>`). Never stack mutually exclusive overlays/states side by side in the snapshot. A permanently docked side panel may stay open in the snapshot, but document its open/close trigger anyway.
-- Use `<enum-el>` for state families, permission variants, hidden interaction results, and validation branches. Use `enum-item description="..."` for a short clarification of a state.
+- Overlays and transient feedback — `modal`, `drawer`, `dropdown`, `popover`, `tooltip`, `toast` — are interaction results, not page regions. Do not place them in the main snapshot. Instead: pin the trigger element (button/row/field), state the trigger condition in the annotation, and render the overlay inside that annotation (usually in an `<enum>`). Never stack mutually exclusive overlays/states side by side in the snapshot. A permanently docked side panel may stay open in the snapshot, but document its open/close trigger anyway.
+- Use `<enum>` for state families, permission variants, hidden interaction results, and validation branches. Use `enum-item description="..."` for a short clarification of a state.
 
 ## Snapshot primitives
 
 ### Containers
 
-- `<viewport-el device="web|ipad|mobile" width="1440" height="auto|900">` — fixed-width snapshot viewport; presets default to auto height.
-- `<layout-el columns="260px 1fr" rows="auto" gap="16">` — CSS grid container.
-- `<panel-el padding="24" elevation="1|2">` — white panel/card shell.
-- `<card-el title="..." subtitle="..." has-image has-footer>` — content card.
-- `<modal-el width="480" title="..." has-footer>` — static opened modal.
-- `<drawer-el side="left|right" width="360" title="...">` — static opened drawer.
-- `<dropdown-el width="300" title="...">` — static opened dropdown.
-- `<popover-el width="300" title="...">` — static opened popover.
-- `<tooltip-el text="..." position="top|bottom|left|right">` — visible tooltip bubble.
+- `<viewport device="web|ipad|mobile" width="1440" height="auto|900">` — fixed-width snapshot viewport; presets default to auto height.
+- `<layout columns="260px 1fr" rows="auto" gap="16">` — CSS grid container.
+- `<panel padding="24" elevation="1|2">` — white panel/card shell.
+- `<card title="..." subtitle="..." has-image has-footer>` — content card.
+- `<modal width="480" title="..." has-footer>` — static opened modal.
+- `<drawer side="left|right" width="360" title="...">` — static opened drawer.
+- `<dropdown width="300" title="...">` — static opened dropdown.
+- `<popover width="300" title="...">` — static opened popover.
+- `<tooltip text="..." position="top|bottom|left|right">` — visible tooltip bubble.
 
 ### Navigation
 
-- `<navbar-el height="64">` — top navigation container.
-- `<sidebar-el width="260" collapsed>` — side navigation container.
-- `<logo-el size="82" label="LOGO">` — logo placeholder.
-- `<list-el items="4" state="first-selected">` — generated list when no children are provided.
+- `<navigator height="64">` — top navigation container.
+- `<sidebar width="260" collapsed>` — side navigation container.
+- `<logo size="82" label="LOGO">` — logo placeholder.
+- `<list items="4" state="first-selected">` — generated list when no children are provided.
 - `<list-item label="..." icon="inbox" badge="12" state="default|selected|disabled">`.
-- `<tabs-el active="0">` with `<tab-el label="全部" badge="12">`; `active` can be index or label.
-- `<breadcrumb-el items="首页,设置,用户管理">`.
-- `<pagination-el total="128" current="2" page-size="20">`.
-- `<steps-el steps="填写信息,确认,完成" active="1">`.
+- `<tabs active="0">` with `<tab label="全部" badge="12">`; `active` can be index or label.
+- `<breadcrumb items="首页,设置,用户管理">`.
+- `<pagination total="128" current="2" page-size="20">`.
+- `<steps steps="填写信息,确认,完成" active="1">`.
 
 ### Data and content display
 
-- `<table-el rows="6" columns="发件人,消息预览,时间,状态" has-checkbox has-action>` — generated static table. Cell text is sampled by the runtime from the column names, so you cannot specify exact cell values; describe precise data in the annotation instead.
+- `<table rows="6" columns="发件人,消息预览,时间,状态" has-checkbox has-action>` — generated static table. Cell text is sampled by the runtime from the column names, so you cannot specify exact cell values; describe precise data in the annotation instead.
 - `<table-row state="default|selected|unread|highlighted|disabled">` — standalone row slice.
 - `<bulk-action-bar count="3" actions="标为已读,归档,删除">`.
-- `<empty-el label="暂无数据" description="..." has-action>`.
-- `<loading-el rows="4" kind="skeleton|spinner">` (`style="spinner"` also works for compatibility).
+- `<empty label="暂无数据" description="..." has-action>`.
+- `<loading rows="4" kind="skeleton|spinner">` (`style="spinner"` also works for compatibility).
 - `<image-placeholder width="160" height="100" label="Image">`.
-- `<avatar-el size="32" initials="OC">`.
-- `<badge-el count="120" max="99">`.
-- `<tag-el label="已启用" color="green|orange|red" closable>`.
+- `<avatar size="32" initials="OC">`.
+- `<badge count="120" max="99">`.
+- `<tag label="已启用" color="green|orange|red" closable>`.
 - `<stat-card label="活跃用户" value="12,480" trend="up|down|flat" change="+12%">`.
 
 ### Forms and controls
 
 All form states are explicit through attributes; there is no runtime focus or input behavior.
 
-- `<search-el state="default|focus|filled|error|disabled" placeholder="..." value="..." has-clear-button>`.
-- `<input-el state="default|focus|filled|error|disabled" label="..." placeholder="..." value="..." has-clear-button error-message="...">`.
-- `<textarea-el state="default|focus|filled|error|disabled" rows="3" placeholder="..." value="...">`.
-- `<select-el state="collapsed|expanded|disabled" label="..." value="..." options="A,B,C">`.
+- `<search state="default|focus|filled|error|disabled" placeholder="..." value="..." has-clear-button>`.
+- `<input state="default|focus|filled|error|disabled" label="..." placeholder="..." value="..." has-clear-button error-message="...">`.
+- `<textarea state="default|focus|filled|error|disabled" rows="3" placeholder="..." value="...">`.
+- `<select state="collapsed|expanded|disabled" label="..." value="..." options="A,B,C">`.
 - `<date-picker state="default|focus|filled|error|disabled" value="2026-06-07">`.
-- `<checkbox-el state="unchecked|checked|indeterminate|disabled" label="...">`.
-- `<radio-el state="unchecked|checked|disabled" label="...">`.
-- `<toggle-el state="on|off|disabled" label="...">`.
-- `<button-el label="..." variant="primary|secondary|ghost|danger|link" state="default|disabled|loading" icon="plus" size="sm|md|lg">`.
+- `<checkbox state="unchecked|checked|indeterminate|disabled" label="...">`.
+- `<radio state="unchecked|checked|disabled" label="...">`.
+- `<toggle state="on|off|disabled" label="...">`.
+- `<button label="..." variant="primary|secondary|ghost|danger|link" state="default|disabled|loading" icon="plus" size="sm|md|lg">`.
 - `<button-group>...</button-group>`.
-- `<form-el layout="vertical|horizontal">`.
+- `<form layout="vertical|horizontal">`.
 - `<form-item label="..." required error="...">...</form-item>`.
-- `<upload-el state="empty|has-file|uploading" file="document.pdf" progress="60">`.
+- `<upload state="empty|has-file|uploading" file="document.pdf" progress="60">`.
 
 ### Feedback
 
-- `<alert-el type="info|success|warning|error" title="..." message="..." closable>`.
-- `<toast-el type="info|success|warning|error" title="..." message="..." closable>`.
-- `<banner-el type="info|success|warning|error" title="..." message="..." has-action closable>` — full-width page banner.
-- `<progress-el value="40" kind="bar|circle" status="success|error">`.
-- `<skeleton-el shape="line|block|card|list|avatar">` — loading placeholder.
-- `<countdown-el value="02:45:18">` — time-remaining chip.
-- `<result-el status="success|error|empty" title="..." description="..." has-action>` — full-page result.
+- `<alert type="info|success|warning|error" title="..." message="..." closable>`.
+- `<toast type="info|success|warning|error" title="..." message="..." closable>`.
+- `<banner type="info|success|warning|error" title="..." message="..." has-action closable>` — full-width page banner.
+- `<progress value="40" kind="bar|circle" status="success|error">`.
+- `<skeleton shape="line|block|card|list|avatar">` — loading placeholder.
+- `<countdown value="02:45:18">` — time-remaining chip.
+- `<result status="success|error|empty" title="..." description="..." has-action>` — full-page result.
 
 ### Data input (additional)
 
-- `<slider-el value="60" min="0" max="100" label="..." show-value>`.
-- `<range-el low="20" high="70" min="0" max="100">` — dual-thumb range.
+- `<slider value="60" min="0" max="100" label="..." show-value>`.
+- `<range low="20" high="70" min="0" max="100">` — dual-thumb range.
 - `<number-input value="42">` — input with +/- steppers.
-- `<rating-el value="3" max="5">` — star rating.
+- `<rating value="3" max="5">` — star rating.
 - `<pin-input length="4" value="12">` — OTP/PIN cells.
 - `<color-swatch value="#2563eb" label="...">`.
-- `<autocomplete-el value="..." placeholder="..." options="A,B,C" open>`.
+- `<autocomplete value="..." placeholder="..." options="A,B,C" open>`.
 
 ### Data display (additional)
 
-- `<tree-el>` + `<tree-item label="..." icon="..." level="0" expanded|collapsed state="selected">`.
-- `<timeline-el>` + `<timeline-item label="..." time="..." state="default|active|done|error">`.
-- `<calendar-el month="2026 年 6 月" selected="15">` — month grid.
-- `<kanban-el>` + `<kanban-column title="..." count="3">` + `<kanban-card label="..." tag="...">`.
+- `<tree>` + `<tree-item label="..." icon="..." level="0" expanded|collapsed state="selected">`.
+- `<timeline>` + `<timeline-item label="..." time="..." state="default|active|done|error">`.
+- `<calendar month="2026 年 6 月" selected="15">` — month grid.
+- `<kanban>` + `<kanban-column title="..." count="3">` + `<kanban-card label="..." tag="...">`.
 - `<code-block lang="ts" lines="5">` — code placeholder with line numbers.
-- `<diff-el rows="4">` — added/removed/context lines.
+- `<diff rows="4">` — added/removed/context lines.
 - `<image-grid count="6" columns="3">`.
 - `<key-value>` + `<kv-row label="..." value="...">` — description list.
-- `<accordion-el>` + `<accordion-item label="..." expanded>`.
-- `<chip-el label="..." icon="..." closable>` — compact token.
+- `<accordion>` + `<accordion-item label="..." expanded>`.
+- `<chip label="..." icon="..." closable>` — compact token.
 
 ### Navigation & layout (additional)
 
-- `<segmented-el options="日,周,月" active="1">`.
-- `<menu-el>` + `<menu-item label="..." icon="..." shortcut="⌘O" state="disabled">`.
+- `<segmented options="日,周,月" active="1">`.
+- `<menu>` + `<menu-item label="..." icon="..." shortcut="⌘O" state="disabled">`.
 - `<context-menu items="复制,重命名,删除">`.
 - `<command-palette query="..." results="A,B,C">`.
-- `<toc-el items="概述,安装,用法">` — table of contents.
-- `<kbd-el keys="⌘,K">` — keyboard shortcut chips.
-- `<split-pane columns="1fr 1fr">`, `<divider-el vertical>`, `<spacer-el size="16">`.
+- `<toc items="概述,安装,用法">` — table of contents.
+- `<kbd keys="⌘,K">` — keyboard shortcut chips.
+- `<split-pane columns="1fr 1fr">`, `<divider vertical>`, `<spacer size="16">`.
 
 ### Enterprise / SaaS
 
@@ -199,7 +196,7 @@ All form states are explicit through attributes; there is no runtime focus or in
 - `<audit-row actor="..." action="..." time="...">`.
 - `<workflow-node label="..." state="default|active|done|error">`.
 
-### iOS platform (`rp-ios-*`, use with device="mobile")
+### iOS platform (`ios-*`, use with device="mobile")
 
 - `<ios-navbar title="..." large back="返回" trailing="编辑">`.
 - `<ios-tabbar items="A,B,C" icons="home,search,user" active="0">`.
@@ -209,7 +206,7 @@ All form states are explicit through attributes; there is no runtime focus or in
 - `<ios-switch label="...">`, `<ios-segmented options="A,B" active="0">`.
 - `<ios-button label="..." variant="filled|tinted|plain">`, `<ios-search>`, `<ios-stepper>`.
 
-### macOS platform (`rp-macos-*`, use with device="web")
+### macOS platform (`macos-*`, use with device="web")
 
 - `<macos-window title="...">` — window chrome with traffic lights.
 - `<macos-menubar items="文件,编辑,显示">`, `<macos-toolbar>`.
@@ -223,18 +220,18 @@ All form states are explicit through attributes; there is no runtime focus or in
 
 For chat, copilot, and agent prototypes:
 
-- `<chat-el>` — conversation container; wraps the message stream.
+- `<chat>` — conversation container; wraps the message stream.
 - `<user-message text="..." initials="我">` — right-aligned user bubble (text attr or rich children).
 - `<assistant-message name="助手" text="...">` — left-aligned assistant message; children render as rich content (can contain tool-call/output/citation).
 - `<system-message text="...">` — centered system/context note.
 - `<tool-call name="search" state="running|done|error" args="...">` — tool/function call card with status.
 - `<agent-output kind="text|code|terminal" label="..." text="...">` — command/code/tool output block.
-- `<reasoning-el expanded>…</reasoning-el>` — collapsible thinking/reasoning block.
+- `<reasoning expanded>…</reasoning>` — collapsible thinking/reasoning block.
 - `<message-actions actions="copy,retry,up,down,edit,share">` — per-message action buttons.
-- `<suggestions-el items="A,B,C">` — suggested reply / prompt chips.
-- `<typing-el>` — streaming typing indicator.
-- `<composer-el value="..." placeholder="..." state="idle|streaming">` — prompt input bar (send button becomes stop while streaming).
-- `<citation-el index="1" title="...">` — source reference chip.
+- `<suggestions items="A,B,C">` — suggested reply / prompt chips.
+- `<typing>` — streaming typing indicator.
+- `<composer value="..." placeholder="..." state="idle|streaming">` — prompt input bar (send button becomes stop while streaming).
+- `<citation index="1" title="...">` — source reference chip.
 - `<token-usage used="1840" limit="8000">` — token/context usage meter.
 
 ## Icon rule
@@ -242,7 +239,7 @@ For chat, copilot, and agent prototypes:
 Use Lucide icon names through the `icon` attribute when available:
 
 ```html
-<button-el label="新建" icon="plus" variant="primary"></button-el>
+<button label="新建" icon="plus" variant="primary"></button>
 <list-item label="已归档" icon="archive"></list-item>
 ```
 
@@ -275,21 +272,21 @@ For each page, consider whether these states apply:
   <script type="module" src="./dist/rpui.js"></script>
 </head>
 <body>
-  <page-el title="页面标题" route="/route" description="页面说明">
-    <main-view device="web" scale="0.65">
-      <viewport-el device="web">
-        <!-- main snapshot built only with rp-* primitives -->
-      </viewport-el>
-    </main-view>
+  <page title="页面标题" route="/route" description="页面说明">
+    <view device="web" scale="0.65">
+      <viewport device="web">
+        <!-- main snapshot built only with RPML primitives -->
+      </viewport>
+    </view>
 
-    <annotation-el id="1" label="区域说明">
+    <annotation id="1" label="区域说明">
       简短说明此区域的职责。
-      <enum-el>
-        <enum-item label="默认" description="正常可用的数据态。"><empty-el label="示例"></empty-el></enum-item>
-        <enum-item label="加载" description="首次进入或刷新时展示。"><loading-el rows="3"></loading-el></enum-item>
-      </enum-el>
-    </annotation-el>
-  </page-el>
+      <enum>
+        <enum-item label="默认" description="正常可用的数据态。"><empty label="示例"></empty></enum-item>
+        <enum-item label="加载" description="首次进入或刷新时展示。"><loading rows="3"></loading></enum-item>
+      </enum>
+    </annotation>
+  </page>
 </body>
 </html>
 ```
