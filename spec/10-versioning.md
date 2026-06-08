@@ -2,7 +2,7 @@
 
 ## 当前版本
 
-**RPML 1.0** — 与 RPUI `@bracken/rpui` v0.x 对齐。
+**RPML 1.0** — 与 RPUI `@21stware/rpui` v0.x 对齐。
 
 ## 版本标识
 
@@ -24,6 +24,6 @@ RPML 语言只使用简洁的裸标签名（`page`、`view`、`button`、`naviga
 ## 渲染器版本关系
 
 ```
-RPML spec 1.x  →  @bracken/rpui 0.x / 1.x
-RPML spec 2.0  →  @bracken/rpui 2.x（破坏性版本独立发布）
+RPML spec 1.x  →  @21stware/rpui 0.x / 1.x
+RPML spec 2.0  →  @21stware/rpui 2.x（破坏性版本独立发布）
 ```

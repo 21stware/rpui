@@ -30,9 +30,16 @@ interface TreeNode {
 
 const CHROME_CSS = `
 .rpml-gallery { display:grid; grid-template-columns:260px 1fr; height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+.rpml-gallery.collapsed { grid-template-columns:1fr; }
+.rpml-gallery.collapsed .rpml-gx-side { display:none; }
 .rpml-gx-side { display:flex; flex-direction:column; border-right:1px solid #e5e7eb; background:#fff; min-height:0; }
-.rpml-gx-head { padding:16px; border-bottom:1px solid #e5e7eb; font-size:14px; font-weight:700; color:#111827; }
+.rpml-gx-head { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:16px; border-bottom:1px solid #e5e7eb; font-size:14px; font-weight:700; color:#111827; }
 .rpml-gx-head small { display:block; margin-top:3px; font-size:11px; font-weight:400; color:#6b7280; }
+.rpml-gx-toggle { flex:none; display:flex; align-items:center; justify-content:center; width:26px; height:26px; margin:-3px -3px 0 0; padding:0; border:1px solid #e5e7eb; border-radius:7px; background:#fff; color:#6b7280; font-size:15px; line-height:1; cursor:pointer; }
+.rpml-gx-toggle:hover { background:#f3f4f6; color:#111827; }
+.rpml-gx-fab { position:fixed; top:12px; left:12px; z-index:50; display:none; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border:1px solid #e5e7eb; border-radius:9px; background:#fff; color:#374151; font-size:17px; line-height:1; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+.rpml-gx-fab:hover { background:#f3f4f6; color:#111827; }
+.rpml-gallery.collapsed .rpml-gx-fab { display:flex; }
 .rpml-gx-nav { flex:1; overflow-y:auto; padding:8px; }
 .rpml-gx-group { padding:10px 8px 3px; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:.04em; }
 .rpml-gx-item { display:block; padding:6px 10px; border-radius:7px; font-size:13px; color:#374151; text-decoration:none; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -88,15 +95,25 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
   const side = document.createElement('aside');
   side.className = 'rpml-gx-side';
   const count = docs.length;
-  side.innerHTML = `<div class="rpml-gx-head">RPML 文档<small>${count} 个文件</small></div>`;
+  side.innerHTML = `<div class="rpml-gx-head"><span>RPML 文档<small>${count} 个文件</small></span><button class="rpml-gx-toggle" type="button" title="收起侧边栏" aria-label="收起侧边栏">«</button></div>`;
   const nav = document.createElement('nav');
   nav.className = 'rpml-gx-nav';
   side.appendChild(nav);
   const main = document.createElement('div');
   main.className = 'rpml-gx-main';
-  root.append(side, main);
+  const fab = document.createElement('button');
+  fab.className = 'rpml-gx-fab';
+  fab.type = 'button';
+  fab.title = '展开侧边栏';
+  fab.setAttribute('aria-label', '展开侧边栏');
+  fab.textContent = '☰';
+  root.append(side, main, fab);
   host.innerHTML = '';
   host.appendChild(root);
+
+  // Sidebar collapse → floating top-left button (session-only, no persistence).
+  side.querySelector('.rpml-gx-toggle')!.addEventListener('click', () => root.classList.add('collapsed'));
+  fab.addEventListener('click', () => root.classList.remove('collapsed'));
 
   const links = new Map<string, HTMLAnchorElement>();
 

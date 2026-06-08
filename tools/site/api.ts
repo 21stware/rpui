@@ -20,7 +20,7 @@ export function buildApi(ctx: Ctx): string {
 <table>
 <thead><tr><th>包</th><th>说明</th><th>导出</th></tr></thead>
 <tbody>
-<tr><td><code>@bracken/rpui</code></td><td>Web Components 运行时（渲染器）</td><td><code>registerAll()</code> · 副作用注册全部自定义元素</td></tr>
+<tr><td><code>@21stware/rpui</code></td><td>Web Components 运行时（渲染器）</td><td><code>registerAll()</code> · 副作用注册全部自定义元素</td></tr>
 <tr><td><code>rpml-parser</code></td><td>.rpml → AST / DOM</td><td><code>parse</code> · <code>parseNode</code> · <code>parseToPage</code> · <code>astToDom</code> · <code>expandSelfClosing</code> · <code>RpmlNode</code></td></tr>
 <tr><td><code>rpml-validator</code></td><td>结构 + 语义校验</td><td><code>validate(ast)</code> → <code>ValidationError[]</code></td></tr>
 <tr><td><code>rpml-compiler</code></td><td>目录 → 单 HTML</td><td><code>collectRpml(dir)</code> · <code>compileDocs(docs)</code></td></tr>
@@ -67,6 +67,21 @@ bun run compile examples -o examples.html</code></pre>
 <tr><td><code>&lt;dir&gt;</code></td><td>包含 .rpml 的目录（递归扫描）</td></tr>
 <tr><td><code>-o, --out</code></td><td>输出 HTML 路径（默认取目录名）</td></tr>
 <tr><td><code>--title</code></td><td>站点标题（默认取目录名）</td></tr>
+</tbody>
+</table>
+
+<h3>rpui serve</h3>
+<p>把当前目录的 <code>.rpml</code> 作为一个带侧边栏的文档集本地托管，启动后打印本地访问地址。每次刷新都会重新扫描目录，编辑后刷新即可看到更新——无需构建、无需 watcher。</p>
+<pre class="code" data-lang="bash"><code>npx @21stware/rpui serve .
+
+# 指定目录与端口
+npx @21stware/rpui serve ./prototypes --port 4000</code></pre>
+<table>
+<thead><tr><th>参数</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>[dir]</code></td><td>要托管的目录（默认当前目录）</td></tr>
+<tr><td><code>-p, --port</code></td><td>端口（默认 3000，占用时自动 +1）</td></tr>
+<tr><td><code>--host</code></td><td>主机（默认 localhost）</td></tr>
 </tbody>
 </table>
 

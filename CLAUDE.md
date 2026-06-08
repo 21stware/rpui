@@ -19,7 +19,7 @@ The runtime registers custom elements as a side effect and injects its global st
 This is a **Bun workspace monorepo**. All source code lives under `packages/`.
 
 ```
-packages/renderer-web/   — Web Components runtime (@bracken/rpui, was rpui src/)
+packages/renderer-web/   — Web Components runtime (@21stware/rpui, was rpui src/)
 packages/parser/         — .rpml text → AST → DOM (rpml-parser, private)
 packages/validator/      — structural + semantic validation + CLI (rpml-validator, private)
 packages/compiler/       — compile a dir of .rpml → one self-contained HTML (rpml-compiler, private)
@@ -64,9 +64,10 @@ Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages
 ## TypeScript/build setup
 
 - Root `package.json` is a Bun workspace root (private, no src).
-- `packages/renderer-web/` contains all component source. Two Vite configs:
+- `packages/renderer-web/` contains all component source. Three Vite configs:
   - `vite.config.ts` → `rpui.js` (runtime) + `rpml-loader.js` (imports rpui.js as shared chunk).
   - `vite.gallery.config.ts` → `gallery.js`, a fully self-contained bundle (runtime + parser + gallery chrome, no shared chunks) so the compiler can inline it as one `<script>`.
+  - `vite.serve.config.ts` → `serve.js`, the `rpui serve` CLI bundled to Node ESM (shebang, node: builtins external). Reads the sibling `gallery.js` at runtime. Exposed as the `rpui` bin, so `npx @21stware/rpui serve .` hosts a directory of `.rpml` as one gallery.
 - `packages/renderer-web/src/rpui.ts` is the public side-effect entry. Do not hand-edit `dist/`.
 - After building, sync root `dist/` manually: `cp packages/renderer-web/dist/*.js dist/` (CI does this automatically).
 - `rpml-validator` exports from `dist/` with `.d.ts`; `rpml-parser` exports directly from `src/` (all export conditions point at `src/index.ts`) so no pre-build is needed. `renderer-web` depends on `rpml-parser` (workspace:*) so Bun symlinks it for tsc/vite resolution.

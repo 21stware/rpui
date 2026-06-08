@@ -43,7 +43,7 @@ export function registerPreview(context: vscode.ExtensionContext): vscode.Dispos
         msg => {
           if (msg?.type === 'ready' && panel && previewedUri) {
             const doc = docFor(previewedUri);
-            if (doc) postSource(panel, doc.getText());
+            if (doc) postSource(panel, doc.getText(), previewedUri.toString());
           }
         },
         null,
@@ -54,13 +54,13 @@ export function registerPreview(context: vscode.ExtensionContext): vscode.Dispos
       panel.reveal(column, true);
     }
     panel.title = previewTitle(editor.document);
-    postSource(panel, editor.document.getText());
+    postSource(panel, editor.document.getText(), previewedUri.toString());
   };
 
   const refresh = (doc: vscode.TextDocument) => {
     if (!panel) return;
     clearTimeout(debounce);
-    debounce = setTimeout(() => panel && postSource(panel, doc.getText()), 150);
+    debounce = setTimeout(() => panel && postSource(panel, doc.getText(), doc.uri.toString()), 150);
   };
 
   const docFor = (uri: vscode.Uri): vscode.TextDocument | undefined =>
@@ -76,7 +76,7 @@ export function registerPreview(context: vscode.ExtensionContext): vscode.Dispos
       if (panel && editor?.document.languageId === 'rpml') {
         previewedUri = editor.document.uri;
         panel.title = previewTitle(editor.document);
-        postSource(panel, editor.document.getText());
+        postSource(panel, editor.document.getText(), previewedUri.toString());
       }
     })
   ];
@@ -116,9 +116,10 @@ function setShell(context: vscode.ExtensionContext, panel: vscode.WebviewPanel) 
   panel.webview.html = htmlShell(panel.webview, runtimeUri);
 }
 
-/** Push new source into the already-loaded webview. */
-function postSource(panel: vscode.WebviewPanel, source: string) {
-  panel.webview.postMessage({ type: 'render', source });
+/** Push new source into the already-loaded webview. `key` identifies the
+ *  document so the webview can preserve scroll across same-document re-renders. */
+function postSource(panel: vscode.WebviewPanel, source: string, key: string) {
+  panel.webview.postMessage({ type: 'render', source, key });
 }
 
 function htmlShell(webview: vscode.Webview, runtimeUri: vscode.Uri): string {
@@ -152,9 +153,28 @@ function htmlShell(webview: vscode.Webview, runtimeUri: vscode.Uri): string {
   const root = document.getElementById('rpml-root');
   const err = document.getElementById('rpml-error');
   const empty = document.getElementById('rpml-empty');
+  let lastKey = null;
 
-  function render(source) {
+  // The annotation pane (.annotation-el-pane) scrolls independently of the
+  // document, so capture both. Re-querying after render is required because
+  // the page shell rebuilds its DOM.
+  function captureScroll() {
+    const sc = document.scrollingElement || document.documentElement;
+    const pane = root.querySelector('.annotation-el-pane');
+    return { docX: sc.scrollLeft, docY: sc.scrollTop, paneX: pane ? pane.scrollLeft : 0, paneY: pane ? pane.scrollTop : 0 };
+  }
+
+  function restoreScroll(pos) {
+    const sc = document.scrollingElement || document.documentElement;
+    sc.scrollLeft = pos.docX; sc.scrollTop = pos.docY;
+    const pane = root.querySelector('.annotation-el-pane');
+    if (pane) { pane.scrollLeft = pos.paneX; pane.scrollTop = pos.paneY; }
+  }
+
+  function render(source, key) {
     empty.style.display = 'none';
+    // Only preserve scroll when re-rendering the same document, not on switch.
+    const pos = key === lastKey ? captureScroll() : null;
     try {
       root.replaceChildren(parseToPage(source));
       err.classList.remove('show');
@@ -162,11 +182,15 @@ function htmlShell(webview: vscode.Webview, runtimeUri: vscode.Uri): string {
       err.textContent = 'RPML 渲染错误：' + (e && e.message ? e.message : String(e));
       err.classList.add('show');
     }
+    lastKey = key;
+    // The page shell computes pin overlays + header width on rAF; restore after
+    // it settles so our offsets aren't clobbered.
+    if (pos) requestAnimationFrame(() => requestAnimationFrame(() => restoreScroll(pos)));
   }
 
   window.addEventListener('message', (ev) => {
     const msg = ev.data;
-    if (msg && msg.type === 'render') render(msg.source);
+    if (msg && msg.type === 'render') render(msg.source, msg.key);
   });
   // Signal readiness so the host can flush the first source.
   const vscode = acquireVsCodeApi();

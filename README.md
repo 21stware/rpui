@@ -17,7 +17,7 @@
 
 | Package | Description |
 |---------|-------------|
-| [`@bracken/rpui`](./packages/renderer-web) | Web Components runtime (the RPUI/RPML renderer) |
+| [`@21stware/rpui`](./packages/renderer-web) | Web Components runtime (the RPUI/RPML renderer) |
 | [`rpml-parser`](./packages/parser) | `.rpml` text → AST → DOM (private) |
 | [`rpml-validator`](./packages/validator) | Structural + semantic validation, `rpml` CLI (private) |
 | [`rpml-vscode-extension`](./packages/vscode-extension) | VS Code syntax + preview + diagnostics — WIP (private) |
@@ -39,6 +39,16 @@ bun run build        # build renderer-web to dist/rpui.js
 ```
 
 Or via URL param: `host.html?rpml=./my-page.rpml`
+
+## Serve a directory of prototypes
+
+Host a folder of `.rpml` files as one navigable gallery (collapsible sidebar, re-scanned on each refresh) and get a local URL:
+
+```bash
+npx @21stware/rpui serve .
+```
+
+See [`packages/renderer-web`](./packages/renderer-web#rpui-serve--host-a-directory-of-prototypes) for options.
 
 ## Validate
 

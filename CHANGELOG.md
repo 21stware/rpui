@@ -3,7 +3,7 @@
 ## 0.3.0 — 2026-06-08
 
 ### Added
-- Monorepo structure with Bun workspaces (`@bracken/rpui` renderer, `rpml-parser`, `rpml-validator`, `rpml-vscode-extension`)
+- Monorepo structure with Bun workspaces (`@21stware/rpui` renderer, `rpml-parser`, `rpml-validator`, `rpml-vscode-extension`)
 - RPML as a first-class file format (`.rpml`) — pure markup, root `<page-el>`, no HTML wrapper
 - `rpml-parser` — `.rpml` text → AST → DOM (`parse()`, `astToDom()`)
 - `rpml-validator` — structural + semantic validation (pin↔annotation parity, `rpml validate` CLI)
