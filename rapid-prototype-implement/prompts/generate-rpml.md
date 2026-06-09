@@ -67,7 +67,7 @@ Output a valid RPML file following this structure:
 - Every conditional branch in `<enum>` — states, permission variants, validation outcomes, async results.
 - Annotation bodies at implementation depth: trigger, data source, state-machine transitions, permission gates, validation rules, error handling, boundary values.
 
-For the full method — recursive decomposition (L1–L5), the coverage-matrix technique for combinatorial states, and the annotation-body dimensions — see `../references/practise.md`. The complexity bar is `examples/09-golden-reference.rpml`.
+For the full method — recursive decomposition (L1–L5), the coverage-matrix technique for combinatorial states, and the annotation-body dimensions — see `../references/practise.md`. The complexity bar is `../references/example-reference.rpml`.
 
 ## Element categories (quick reference)
 

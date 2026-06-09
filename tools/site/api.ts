@@ -71,17 +71,36 @@ bun run compile examples -o examples.html</code></pre>
 </table>
 
 <h3>rpui serve</h3>
-<p>把当前目录的 <code>.rpml</code> 作为一个带侧边栏的文档集本地托管，启动后打印本地访问地址。每次刷新都会重新扫描目录，编辑后刷新即可看到更新——无需构建、无需 watcher。</p>
+<p>把当前目录的 <code>.rpml</code> 作为一个带侧边栏的文档集本地托管，启动后打印本地访问地址并自动打开浏览器。每次刷新都会重新扫描目录，编辑后刷新即可看到更新——无需构建、无需 watcher。</p>
 <pre class="code" data-lang="bash"><code>npx @21stware/rpui serve .
 
 # 指定目录与端口
-npx @21stware/rpui serve ./prototypes --port 4000</code></pre>
+npx @21stware/rpui serve ./prototypes --port 4000
+
+# 不自动打开浏览器（headless / CI）
+npx @21stware/rpui serve . --no-open</code></pre>
 <table>
 <thead><tr><th>参数</th><th>说明</th></tr></thead>
 <tbody>
 <tr><td><code>[dir]</code></td><td>要托管的目录（默认当前目录）</td></tr>
 <tr><td><code>-p, --port</code></td><td>端口（默认 3000，占用时自动 +1）</td></tr>
 <tr><td><code>--host</code></td><td>主机（默认 localhost）</td></tr>
+<tr><td><code>--no-open</code></td><td>启动后不自动打开浏览器</td></tr>
+</tbody>
+</table>
+
+<h3>rpui build</h3>
+<p>把一个目录的 <code>.rpml</code> 编译成单个自包含 HTML 文件（内联运行时 + 带侧边栏的文档集），纯 <code>file://</code> 离线可用。与 <code>serve</code> 共享同一套零依赖运行时，<code>index.rpml</code> 作默认主页。</p>
+<pre class="code" data-lang="bash"><code>npx @21stware/rpui build .
+
+# 指定输出路径与标题
+npx @21stware/rpui build ./prototypes -o prototypes.html --title "原型集"</code></pre>
+<table>
+<thead><tr><th>参数</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>[dir]</code></td><td>包含 .rpml 的目录（递归扫描，默认当前目录）</td></tr>
+<tr><td><code>-o, --out</code></td><td>输出 HTML 路径（默认取目录名）</td></tr>
+<tr><td><code>--title</code></td><td>文档集标题（默认取目录名）</td></tr>
 </tbody>
 </table>
 

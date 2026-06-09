@@ -63,7 +63,7 @@ Concrete targets:
 - **Every conditional branch** in `<enum>` — states, permission variants, validation outcomes, async results.
 - **Implementation-depth annotation bodies**: trigger conditions, data source, state-machine transitions, permission gates, validation rules, error handling, boundary values.
 
-Reference: `examples/09-golden-reference.rpml` — 9 top-level annotations, 3–5 levels deep, implementation-level bodies. Study it before authoring; it is the complexity bar.
+Reference: [`example-reference.rpml`](example-reference.rpml) (bundled with this skill) — 9 top-level annotations, 3–5 levels deep, implementation-level bodies. Study it before authoring; it is the complexity bar.
 
 ## 6. What NOT to do
 

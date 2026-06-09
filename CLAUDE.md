@@ -25,7 +25,7 @@ packages/validator/      — structural + semantic validation + CLI (rpml-valida
 packages/compiler/       — compile a dir of .rpml → one self-contained HTML (rpml-compiler, private)
 packages/vscode-extension/ — VS Code extension (rpml-vscode-extension, WIP, private)
 spec/                    — RPML language specification
-examples/                — .rpml example files (01–09; viewer loads via ?rpml=)
+examples/                — .rpml example files (01–08; viewer loads via ?rpml=)
 rapid-prototype-implement/ — generation skill: SKILL.md, prompts, references
 tools/                   — dev scripts; tools/build-site.ts + tools/site/ generate docs/
 preview/                 — dev component browser (served by vite dev server)
@@ -67,7 +67,7 @@ Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages
 - `packages/renderer-web/` contains all component source. Three Vite configs:
   - `vite.config.ts` → `rpui.js` (runtime) + `rpml-loader.js` (imports rpui.js as shared chunk).
   - `vite.gallery.config.ts` → `gallery.js`, a fully self-contained bundle (runtime + parser + gallery chrome, no shared chunks) so the compiler can inline it as one `<script>`.
-  - `vite.serve.config.ts` → `serve.js`, the `rpui serve` CLI bundled to Node ESM (shebang, node: builtins external). Reads the sibling `gallery.js` at runtime. Exposed as the `rpui` bin, so `npx @21stware/rpui serve .` hosts a directory of `.rpml` as one gallery.
+  - `vite.serve.config.ts` → `serve.js`, the `rpui` CLI bundled to Node ESM (shebang, node: builtins external). Reads the sibling `gallery.js` at runtime. Exposed as the `rpui` bin with two subcommands: `npx @21stware/rpui serve .` hosts a directory of `.rpml` as one gallery (auto-opens the browser; `--no-open` to suppress), and `npx @21stware/rpui build .` compiles the directory into one self-contained HTML file (zero-dep, shares the serve HTML shape).
 - `packages/renderer-web/src/rpui.ts` is the public side-effect entry. Do not hand-edit `dist/`.
 - After building, sync root `dist/` manually: `cp packages/renderer-web/dist/*.js dist/` (CI does this automatically).
 - `rpml-validator` exports from `dist/` with `.d.ts`; `rpml-parser` exports directly from `src/` (all export conditions point at `src/index.ts`) so no pre-build is needed. `renderer-web` depends on `rpml-parser` (workspace:*) so Bun symlinks it for tsc/vite resolution.
@@ -155,6 +155,6 @@ For state coverage, consider loaded, empty, loading, error/retry, search default
 ## Demo/reference files
 
 - `playground.html` (generated into `docs/`) — in-browser RPML viewer: load any `.rpml` via `?rpml=examples/04-ticket-desk.rpml`, drag-and-drop, or file picker.
-- `examples/` — all 9 prototype examples as `.rpml` files (01–09); see `examples/README.md`.
+- `examples/` — all 8 prototype examples as `.rpml` files (01–08); see `examples/README.md`.
 - `llms.txt` is the component/tag reference for generated prototypes.
 - `rapid-prototype-implement/SKILL.md` documents the prototype implementation workflow, recursive decomposition method, overlay-trigger pattern, and quality bar.

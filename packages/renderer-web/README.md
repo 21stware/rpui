@@ -32,16 +32,20 @@ import { parseToPage } from '@21stware/rpui';
 document.body.appendChild(parseToPage(rpmlSource));
 ```
 
-## `rpui serve` — host a directory of prototypes
+## `rpui` CLI
 
-The package ships an `rpui` bin that hosts a directory of `.rpml` files as one navigable gallery (collapsible sidebar, hash routing, `index.rpml` as the default home) and prints a local URL:
+The package ships an `rpui` bin with two commands for working with a directory of `.rpml` files. Both render the directory as one navigable gallery (collapsible sidebar, hash routing, `index.rpml` as the default home) and share the same zero-dependency runtime.
+
+### `rpui serve` — host a directory of prototypes
+
+Hosts the directory on a local server, prints the URL, and opens the browser:
 
 ```bash
 npx @21stware/rpui serve .
 ```
 
 ```
-  RPUI serving 9 .rpml files from /Users/me/prototypes
+  RPUI serving 8 .rpml files from /Users/me/prototypes
 
   Local:  http://localhost:3000
 
@@ -55,10 +59,34 @@ The directory is re-scanned on every page load, so editing a `.rpml` and refresh
 | `[dir]` | Directory to serve (default: current directory) |
 | `-p, --port` | Port (default `3000`; auto-increments if busy) |
 | `--host` | Host (default `localhost`) |
+| `--no-open` | Don't open the browser on start (headless / CI) |
 
 ```bash
-# serve a specific directory on a chosen port
-npx @21stware/rpui serve ./prototypes --port 4000
+# serve a specific directory on a chosen port, without opening a browser
+npx @21stware/rpui serve ./prototypes --port 4000 --no-open
+```
+
+### `rpui build` — compile to one HTML file
+
+Compiles the directory into a single self-contained HTML file (inlined runtime + gallery) that works offline from `file://`:
+
+```bash
+npx @21stware/rpui build .
+```
+
+```
+  ✓ compiled 8 .rpml files → prototypes.html
+```
+
+| Argument | Description |
+|----------|-------------|
+| `[dir]` | Directory of `.rpml` (recursive; default: current directory) |
+| `-o, --out` | Output HTML path (default: `<dir>.html`) |
+| `--title` | Gallery title (default: directory name) |
+
+```bash
+# compile to a named file with a custom title
+npx @21stware/rpui build ./prototypes -o prototypes.html --title "Prototypes"
 ```
 
 ## Exports

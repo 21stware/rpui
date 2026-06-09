@@ -40,15 +40,21 @@ bun run build        # build renderer-web to dist/rpui.js
 
 Or via URL param: `host.html?rpml=./my-page.rpml`
 
-## Serve a directory of prototypes
+## Serve or build a directory of prototypes
 
-Host a folder of `.rpml` files as one navigable gallery (collapsible sidebar, re-scanned on each refresh) and get a local URL:
+Host a folder of `.rpml` files as one navigable gallery (collapsible sidebar, re-scanned on each refresh), opening the browser at a local URL:
 
 ```bash
 npx @21stware/rpui serve .
 ```
 
-See [`packages/renderer-web`](./packages/renderer-web#rpui-serve--host-a-directory-of-prototypes) for options.
+Or compile the folder into one self-contained, offline HTML file:
+
+```bash
+npx @21stware/rpui build .
+```
+
+See [`packages/renderer-web`](./packages/renderer-web#rpui-cli) for options.
 
 ## Validate
 

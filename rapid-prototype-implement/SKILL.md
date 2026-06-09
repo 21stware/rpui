@@ -76,7 +76,7 @@ Depth lives in these — do not re-derive it:
 - **Method** — recursive decomposition L1–L5, coverage-matrix for combinatorial states, annotation-body dimensions, the what-NOT-to-do list: [`references/practise.md`](references/practise.md).
 - **Compressed spec** — root structure, attributes, rules at a glance: [`references/spec-summary.md`](references/spec-summary.md). Full language rules: `spec/`.
 - **Component reference** — every element and its attributes: `llms.txt` (authoritative). One-line element index: [`references/element-index.md`](references/element-index.md).
-- **Worked examples (few-shot)** — a graduated simple/mid/complex shot set with the input→decision reasoning to imitate: [`references/examples.md`](references/examples.md). Study these to calibrate depth before authoring; `examples/09-golden-reference.rpml` is the complexity bar.
+- **Worked example (the complexity bar)** — a complete, implementation-depth prototype to study before authoring: [`references/example-reference.rpml`](references/example-reference.rpml) (a service desk: 9 top-level annotations, 3–5 levels deep, every overlay modeled as trigger → result). Match your depth to the domain — don't over-build a simple page to this level. More graduated examples (entry → complex) live in `examples/`.
 - **Visual catalog** — `bun run dev`, then the source-mode preview at `/preview/`.
 
 ## Workflow

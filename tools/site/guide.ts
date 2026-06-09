@@ -24,7 +24,6 @@ const SPEC_DOCS: [file: string, title: string][] = [
 const SKILL_DOCS: [file: string, title: string][] = [
   ['rapid-prototype-implement/SKILL.md', '技能总览'],
   ['rapid-prototype-implement/references/practise.md', '生成实践'],
-  ['rapid-prototype-implement/references/examples.md', '示例参照'],
   ['rapid-prototype-implement/references/spec-summary.md', '压缩规格'],
   ['rapid-prototype-implement/references/element-index.md', '元素索引'],
 ];

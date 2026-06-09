@@ -12,7 +12,6 @@
 | [06-multi-step-wizard.rpml](./06-multi-step-wizard.rpml) | 中 | 四步向导 |
 | [07-task-management.rpml](./07-task-management.rpml) | 高 | 任务管理看板（原 demo/index.html） |
 | [08-mobile-chat.rpml](./08-mobile-chat.rpml) | 中 | 移动端即时消息（原 demo/showcase.html） |
-| [09-golden-reference.rpml](./09-golden-reference.rpml) | 最高 | 高复杂度黄金参考（原 demo/golden.html） |
 
 ## 打开方式
 
