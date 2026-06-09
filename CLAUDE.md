@@ -12,7 +12,7 @@ A prototype imports the generated runtime once:
 <script type="module" src="./dist/rpui.js"></script>
 ```
 
-The runtime registers custom elements as a side effect and injects its global stylesheet and inline SVG icons. The model-facing component reference is `llms.txt`, and the repeatable prototype authoring workflow is `SKILL.md`.
+The runtime registers custom elements as a side effect and injects its global stylesheet and inline SVG icons. The model-facing component reference is `llms.txt`, and the repeatable prototype authoring workflow is `rapid-prototype-implement/SKILL.md`.
 
 ## Monorepo structure
 
@@ -26,7 +26,7 @@ packages/compiler/       — compile a dir of .rpml → one self-contained HTML 
 packages/vscode-extension/ — VS Code extension (rpml-vscode-extension, WIP, private)
 spec/                    — RPML language specification
 examples/                — .rpml example files (01–09; viewer loads via ?rpml=)
-agent/                   — agent guides, prompts, context packs
+rapid-prototype-implement/ — generation skill: SKILL.md, prompts, references
 tools/                   — dev scripts; tools/build-site.ts + tools/site/ generate docs/
 preview/                 — dev component browser (served by vite dev server)
 docs/                    — GENERATED site portal (gitignored; CI rebuilds via `bun run site`)
@@ -35,10 +35,10 @@ dist/                    — root dist/ (synced from packages/renderer-web/dist/
 
 ## Documentation site (docs/ portal)
 
-`docs/` is a **fully generated** static portal — do not hand-edit it (gitignored). `bun run site` (= `bun tools/build-site.ts`) reads `spec/`, `agent/`, and `preview/components.js` and emits:
+`docs/` is a **fully generated** static portal — do not hand-edit it (gitignored). `bun run site` (= `bun tools/build-site.ts`) reads `spec/`, `rapid-prototype-implement/`, and `preview/components.js` and emits:
 
 - `index.html` — hero landing page
-- `guide.html` — docs reader: sidebar + Markdown-rendered `spec/` (11 docs) + `agent/` guides, with per-doc TOC and hash routing
+- `guide.html` — docs reader: sidebar + Markdown-rendered `spec/` (11 docs) + `rapid-prototype-implement/` guides, with per-doc TOC and hash routing
 - `components.html` — component browser (reuses `components.js`)
 - `examples.html` — example gallery (live-scaled iframes → `playground.html`)
 - `api.html` — package exports, CLI usage, element index
@@ -136,7 +136,7 @@ Important custom elements:
 
 ## RPUI prototype authoring rules
 
-When creating or editing prototype HTML, follow `SKILL.md` and `llms.txt`:
+When creating or editing prototype HTML, follow `rapid-prototype-implement/SKILL.md` and `llms.txt`:
 
 - Use the bare RPML language tags (`page`, `view`, `button`, `navigator`, …). The parser maps them to the renderer's Web Component tags; never write the underlying component tags (`page-el`, `main-view`) directly.
 - Use `<page>` as the root and exactly one `<view>` per prototype page.
@@ -157,4 +157,4 @@ For state coverage, consider loaded, empty, loading, error/retry, search default
 - `playground.html` (generated into `docs/`) — in-browser RPML viewer: load any `.rpml` via `?rpml=examples/04-ticket-desk.rpml`, drag-and-drop, or file picker.
 - `examples/` — all 9 prototype examples as `.rpml` files (01–09); see `examples/README.md`.
 - `llms.txt` is the component/tag reference for generated prototypes.
-- `SKILL.md` documents the prototype implementation workflow, recursive decomposition method, overlay-trigger pattern, and quality bar.
+- `rapid-prototype-implement/SKILL.md` documents the prototype implementation workflow, recursive decomposition method, overlay-trigger pattern, and quality bar.

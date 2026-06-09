@@ -97,7 +97,7 @@ Exception: a permanently docked side panel may appear open in the snapshot as th
 ## Validation
 
 ```
-bun run --cwd packages/validator cli <file.rpml>
+bun run validate <file.rpml>
 ```
 
 Checks pin/annotation parity, consecutive pin numbering, and XSD structural constraints.

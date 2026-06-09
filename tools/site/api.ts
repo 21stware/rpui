@@ -1,11 +1,11 @@
 import type { Ctx } from '../build-site.ts';
 
 /** API & CLI reference page. Hand-authored structure, but the element index
- *  table is pulled from agent/context-packs/element-index.md (single source). */
+ *  table is pulled from rapid-prototype-implement/references/element-index.md (single source). */
 export function buildApi(ctx: Ctx): string {
   // Render the element index markdown (a big table) into the page.
   let elementIndex = '';
-  try { elementIndex = ctx.markdown(ctx.read('agent/context-packs/element-index.md')).html; }
+  try { elementIndex = ctx.markdown(ctx.read('rapid-prototype-implement/references/element-index.md')).html; }
   catch { elementIndex = '<p>（元素索引未找到）</p>'; }
 
   const body = `

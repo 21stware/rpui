@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-/** RPML site generator. Reads spec/, agent/, preview/components.js and emits a
+/** RPML site generator. Reads spec/, rapid-prototype-implement/, preview/components.js and emits a
  *  complete static portal into docs/. Run: bun tools/build-site.ts
  *
  *  spec/ Markdown is the single source of truth — never hand-copied into HTML. */

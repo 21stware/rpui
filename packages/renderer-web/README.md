@@ -70,4 +70,4 @@ npx @21stware/rpui serve ./prototypes --port 4000
 | `parseToPage(source)` | parse `.rpml` text into a ready-to-mount `<page>` element |
 | `rewriteTags(source)` | rewrite bare RPML language tags to the registered component tags |
 
-See the repo root for the full [RPML spec](../../spec), [`llms.txt`](../../llms.txt) component reference, and the [`SKILL.md`](../../SKILL.md) authoring workflow.
+See the repo root for the full [RPML spec](../../spec), [`llms.txt`](../../llms.txt) component reference, and the [`SKILL.md`](../../rapid-prototype-implement/SKILL.md) authoring workflow.

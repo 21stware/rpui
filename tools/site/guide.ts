@@ -21,10 +21,12 @@ const SPEC_DOCS: [file: string, title: string][] = [
   ['spec/10-versioning.md', '版本策略'],
 ];
 
-const AGENT_DOCS: [file: string, title: string][] = [
-  ['agent/AGENT-GUIDE.md', 'Agent 指南'],
-  ['agent/context-packs/spec-summary.md', '压缩规格'],
-  ['agent/context-packs/element-index.md', '元素索引'],
+const SKILL_DOCS: [file: string, title: string][] = [
+  ['rapid-prototype-implement/SKILL.md', '技能总览'],
+  ['rapid-prototype-implement/references/practise.md', '生成实践'],
+  ['rapid-prototype-implement/references/examples.md', '示例参照'],
+  ['rapid-prototype-implement/references/spec-summary.md', '压缩规格'],
+  ['rapid-prototype-implement/references/element-index.md', '元素索引'],
 ];
 
 function firstTitle(md: string, fallback: string): string {
@@ -36,19 +38,19 @@ export function buildGuide(ctx: Ctx): string {
   const pages: DocPage[] = [];
   const groups: NavGroup[] = [
     { label: '语言规格', items: [] },
-    { label: 'Agent', items: [] },
+    { label: '技能', items: [] },
   ];
 
   const ingest = (file: string, title: string, group: NavGroup) => {
     const src = ctx.read(file);
-    const id = file.replace(/^(spec|agent)\//, '').replace(/\.md$/, '').replace(/[\/]/g, '-');
+    const id = file.replace(/^(spec|rapid-prototype-implement\/references|rapid-prototype-implement)\//, '').replace(/\.md$/, '').replace(/[\/]/g, '-');
     const { html, headings } = ctx.markdown(src);
     pages.push({ id, title, html, headings });
     group.items.push({ id, title });
   };
 
   for (const [f, t] of SPEC_DOCS) ingest(f, t, groups[0]);
-  for (const [f, t] of AGENT_DOCS) ingest(f, t, groups[1]);
+  for (const [f, t] of SKILL_DOCS) ingest(f, t, groups[1]);
 
   // Sidebar
   const sidebar = groups.map(g =>

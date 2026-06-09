@@ -16,7 +16,7 @@ packages/parser/        — .rpml → AST
 packages/validator/     — validation + CLI
 spec/                   — language specification (edit here to propose changes)
 examples/               — .rpml example files
-agent/                  — agent prompt templates
+rapid-prototype-implement/  — generation skill (SKILL.md, prompts, references)
 tools/                  — dev scripts
 ```
 

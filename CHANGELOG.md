@@ -10,7 +10,7 @@
 - `rpml-loader.ts` — `<rpml-app src="...">` custom element + `?rpml=` URL param rendering
 - `spec/` — full language specification (00-overview through 10-versioning, per-element docs, XSD + JSON Schema)
 - `examples/` — 6 `.rpml` example files (01-minimal through 06-multi-step-wizard)
-- `agent/` — agent guide, prompt templates, context packs
+- `rapid-prototype-implement/` — generation skill: SKILL.md, prompt templates, reference packs
 - `tools/` — validate-examples.sh, check-spec-coverage.ts
 - GitHub Actions deploy workflow for GitHub Pages
 

@@ -1,4 +1,6 @@
-# RPML Agent Guide
+# RPML Generation Practices
+
+The single reference for *how* to decompose a page into a complete RPML prototype. `SKILL.md` routes here for method depth; the runnable system prompt is `prompts/generate-rpml.md`.
 
 ## 1. Inputs to gather before generating
 
@@ -26,15 +28,32 @@ Apply this top-down to every pinned region. Stop when further splitting adds no 
 
 A simple stat card may stop at L3. A data table with a detail drawer routinely reaches L5. Let the domain decide depth; let completeness decide breadth.
 
-For combinatorial states, build the product of axes rather than listing each axis independently:
-- permission × state
-- role × data-size
-- flow-step × validation
-- read-state × SLA × selection
+## 3. Coverage-matrix method
 
-Drop impossible cells; create one `<enum-item>` per surviving combination.
+Completeness in complex apps is combinatorial, not a flat list. When two or more axes interact, enumerate the **product**, not each axis alone:
 
-## 3. Quality bar
+- **permission × state** — detail-drawer buttons differ by role *and* by ticket status.
+- **role × data-size** — admin view of 5000 rows vs agent view of 7 rows.
+- **flow-step × validation** — each wizard step × (valid / invalid / pending).
+- **read-state × SLA × selection** — a table row's appearance is the product of all three.
+
+Build the matrix mentally, drop impossible cells, and create one `<enum-item>` per surviving combination. If a cell is intentionally out of scope, say so in an annotation rather than leaving it blank.
+
+## 4. Annotation body structure
+
+L1/L2 bodies must read like a spec, not a caption. For a non-trivial region, cover the relevant subset in plain prose — one or two precise sentences each:
+
+- **Trigger / entry condition** — what causes this to appear or activate.
+- **Data source & refresh** — where values come from, polling/refresh cadence.
+- **State enumeration** — which states exist (then expand them in `<enum>`).
+- **Permission gate** — which roles see/use it, what changes per role.
+- **Validation rule** — required fields, formats, cross-field constraints.
+- **Error / async handling** — loading, empty, partial-failure, retry behavior.
+- **Boundary values** — limits, overflow, truncation, zero/critical states.
+
+"Compact" means no padding — it does **not** mean omitting a dimension that matters. Completeness wins over brevity; precision wins over length.
+
+## 5. Quality bar
 
 A prototype meets the bar when a reviewer reading it has no remaining "but what happens when…" questions.
 
@@ -44,9 +63,9 @@ Concrete targets:
 - **Every conditional branch** in `<enum>` — states, permission variants, validation outcomes, async results.
 - **Implementation-depth annotation bodies**: trigger conditions, data source, state-machine transitions, permission gates, validation rules, error handling, boundary values.
 
-Reference: `demo/golden.html` — 9 top-level annotations, 3–5 levels deep.
+Reference: `examples/09-golden-reference.rpml` — 9 top-level annotations, 3–5 levels deep, implementation-level bodies. Study it before authoring; it is the complexity bar.
 
-## 4. What NOT to do
+## 6. What NOT to do
 
 - Do not use `div`, `button`, `input`, or `table` for product UI. Use RPML primitives only.
 - Do not add `onclick`, hover behavior, runtime focus, timers, API calls, or framework state.
@@ -57,17 +76,17 @@ Reference: `demo/golden.html` — 9 top-level annotations, 3–5 levels deep.
 - Use bare RPML tags. Single-word elements have no suffix (`button`, `table`); compound names keep their hyphen (`list-item`, `table-row`); platform primitives use `ios-*` / `macos-*`.
 - Do not omit a plausible state because the input didn't mention it; infer and annotate.
 
-## 5. Validation
+## 7. Validation
 
-Run the validator CLI after generating:
+Run the validator after generating:
 
 ```
-bun run --cwd packages/validator cli <file.rpml>
+bun run validate <file.rpml>
 ```
 
 The validator checks:
 - Every `data-pin="N"` has a matching top-level `<annotation id="N">`.
 - Pin numbers are continuous from 1 with no gaps.
-- XSD structural constraints (page root, exactly one view, etc.).
+- Structural constraints (page root, exactly one view, etc.).
 
 Fix all reported errors before delivering the file.

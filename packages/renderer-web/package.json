@@ -16,7 +16,7 @@
     },
     "./dist/rpui.js": "./dist/rpui.js",
     "./llms.txt": "../../llms.txt",
-    "./SKILL.md": "../../SKILL.md"
+    "./SKILL.md": "../../rapid-prototype-implement/SKILL.md"
   },
   "sideEffects": true,
   "files": [

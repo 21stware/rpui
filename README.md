@@ -60,6 +60,6 @@ bun packages/validator/src/cli.ts examples/04-ticket-desk.rpml
 
 - [`spec/`](./spec/) — Language specification
 - [`examples/`](./examples/) — `.rpml` example files (01 minimal → 04 golden)
-- [`agent/`](./agent/) — Agent guides and prompt templates
+- [`rapid-prototype-implement/`](./rapid-prototype-implement/) — Generation skill: SKILL.md, prompts, and reference packs
 - [`llms.txt`](./llms.txt) — Component reference for LLMs
-- [`SKILL.md`](./SKILL.md) — Prototype authoring workflow
+- [`rapid-prototype-implement/SKILL.md`](./rapid-prototype-implement/SKILL.md) — Prototype authoring workflow
