@@ -50,9 +50,9 @@ export function buildHome(ctx: Ctx): string {
   ${feat(I.layers, '完整覆盖状态', '一个页面在真实运行中的数十种状态——选中、展开、权限受限、加载、空、错误——全部在同一份文档里显式呈现。')}
   ${feat(I.zap, '零运行时依赖', '一个 .rpml 文件 + 一个 rpui.js 渲染器。无框架、无 CDN、无构建。导入即注册全部自定义元素。')}
   ${feat(I.bot, 'Agent 友好', 'llms.txt 是权威组件参考，标记可由 LLM 直接生成与审查，配套 prompt 模板与压缩规格。')}
-  ${feat(I.check, '可机器验证', 'XSD + 语义校验：pin↔annotation 引用完整性、结构约束，rpml validate 一键检查。')}
+  ${feat(I.check, '可机器验证', '结构 + 语义校验：pin↔annotation 引用完整性、结构约束，rpml validate 一键检查。')}
   ${feat(I.term, 'CLI 编译', 'rpml-compile 把一个目录的 .rpml 编译成带侧边栏导航的单 HTML 文件，纯 file:// 离线可用。')}
-  ${feat(I.box, '109+ 组件', 'Web / iOS / macOS / Agent UI 全平台快照原语，覆盖表格、表单、浮层、反馈、对话流。')}
+  ${feat(I.box, '全平台组件库', 'Web / iOS / macOS / Agent UI 全平台快照原语，覆盖表格、表单、浮层、反馈、对话流。')}
 </section>
 
 <div class="section-head" style="margin-top:80px"><h2>三步上手</h2><p>从一行导入到完整原型。</p></div>
