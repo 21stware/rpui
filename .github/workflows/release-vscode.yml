@@ -53,17 +53,44 @@ jobs:
           fi
 
       - name: Package .vsix
+        id: pkg
         working-directory: packages/vscode-extension
         run: |
           bun run build
-          bunx @vscode/vsce package --no-dependencies \
-            --out "rpml-vscode-extension-${{ steps.ver.outputs.version }}.vsix"
+          VSIX="rpml-vscode-extension-${{ steps.ver.outputs.version }}.vsix"
+          bunx @vscode/vsce package --no-dependencies --out "$VSIX"
+          # Fail loudly if packaging produced nothing — never publish an empty release.
+          if [ ! -s "$VSIX" ]; then
+            echo "::error::Expected $VSIX was not produced by vsce package."
+            exit 1
+          fi
+          echo "Packaged $(du -h "$VSIX" | cut -f1) → $VSIX"
+          echo "vsix=packages/vscode-extension/$VSIX" >> "$GITHUB_OUTPUT"
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.ver.outputs.tag }}
-          name: RPML VS Code Extension ${{ steps.ver.outputs.version }}
-          generate_release_notes: true
-          fail_on_unmatched_files: true
-          files: packages/vscode-extension/rpml-vscode-extension-${{ steps.ver.outputs.version }}.vsix
+      # For manual dispatch, create the tag so the release is anchored to a ref.
+      - name: Ensure tag exists (manual dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          if ! git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            git tag "$TAG"
+            git push origin "$TAG"
+          fi
+
+      # Idempotent: drop any prior release for this tag (keeps the tag), then
+      # recreate it with the .vsix attached. Uses the runner's built-in gh CLI
+      # (no third-party action, authenticated via GITHUB_TOKEN).
+      - name: Publish GitHub Release with .vsix
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          VSIX="${{ steps.pkg.outputs.vsix }}"
+          gh release delete "$TAG" --yes --cleanup-tag=false 2>/dev/null || true
+          gh release create "$TAG" \
+            --title "RPML VS Code Extension ${{ steps.ver.outputs.version }}" \
+            --generate-notes \
+            "$VSIX"
+          echo "Release $TAG published with asset $(basename "$VSIX")."
