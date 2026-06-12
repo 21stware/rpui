@@ -2,17 +2,17 @@
 
 ## File format
 
-An RPML file is an XML document. The root element is `<page>`. No HTML wrapper, no doctype required. Import the renderer once:
+An RPML file is HTML-like markup, parsed as HTML (not strict XML). The root element is `<page>`. No HTML wrapper, no doctype required. Because it parses as HTML, boolean attributes may omit their value (`required`, `has-action`) and bare `&` in text needs no escaping. Import the renderer once:
 
 ```html
 <script type="module" src="./dist/rpui.js"></script>
 ```
 
-Or as a standalone `.rpml` XML file validated by `rpml-1.0.xsd`.
+Or load a standalone `.rpml` file at runtime via the playground (`?rpml=`), `npx @21stware/rpui serve .`, or the compiler.
 
 ## Root structure
 
-```xml
+```html
 <page title="..." route="/route" description="Snapshot shows [representative state]">
   <view device="web|ipad|mobile" scale="0.65">
     <viewport device="web|ipad|mobile">
@@ -44,7 +44,7 @@ Or as a standalone `.rpml` XML file validated by `rpml-1.0.xsd`.
 - `anchor` — cross-page link (`to`, optional `section`) to another screen in the file set.
 - `diagram` — Mermaid text → inline SVG; place inside an annotation.
 
-**Primitive layer** — static UI building blocks used inside `view` and inside annotation `enum-item` bodies. ~109 elements across layout, controls, navigation, data display, feedback, enterprise, iOS, macOS, and agent families.
+**Primitive layer** — static UI building blocks used inside `view` and inside annotation `enum-item` bodies. A broad library across layout, controls, navigation, data display, feedback, enterprise, iOS, macOS, and agent families. The full registered set is enumerated in `element-index.md`.
 
 ## Pin system
 
@@ -103,4 +103,4 @@ Exception: a permanently docked side panel may appear open in the snapshot as th
 bun run validate <file.rpml>
 ```
 
-Checks pin/annotation parity, consecutive pin numbering, and XSD structural constraints.
+Checks structural constraints (root is `page`, exactly one `view`, `page` has a `title`, `annotation-global` carries no `id`), pin↔annotation parity, and consecutive pin numbering from 1.

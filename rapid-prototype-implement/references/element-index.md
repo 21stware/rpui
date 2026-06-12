@@ -1,6 +1,6 @@
 # RPML Element Index
 
-All ~109 elements registered by the RPUI runtime. RPML authoring uses the bare language tag names listed below; the runtime maps each to its Web Component tag.
+All elements registered by the RPUI runtime. RPML authoring uses the bare language tag names listed below; the runtime maps each to its Web Component tag. This table is the authoritative roster — `packages/parser/src/vocabulary.ts` is the single source it mirrors.
 
 ## Canvas elements
 

@@ -30,7 +30,7 @@ tools/                  — dev scripts
 
 ## Adding a spec change
 
-Edit the relevant `spec/` file. For new elements, follow the template. For language changes, update the relevant numbered doc and the XSD/JSON Schema in `spec/schema/`.
+Edit the relevant `spec/` file. For new elements, follow the template. For language changes, update the relevant numbered doc and `packages/parser/src/vocabulary.ts` (the single source for the language↔component tag mapping).
 
 ## Validate examples
 
