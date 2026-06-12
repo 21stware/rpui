@@ -38,15 +38,18 @@ Or as a standalone `.rpml` XML file validated by `rpml-1.0.xsd`.
 - `view` — scaled snapshot frame; `device`, `scale`, optional `width`/`height`.
 - `viewport` — snapshot viewport; same `device` as view.
 - `annotation` — specification block; top-level has `id` matching a pin, nested has no `id`.
+- `annotation-global` — page-level, pin-less note for cross-cutting concerns; renders at the top of the pane. No `id`, no pin.
 - `enum` — horizontal container for mutually exclusive states.
 - `enum-item` — one state card; `label` required, `description` optional.
+- `anchor` — cross-page link (`to`, optional `section`) to another screen in the file set.
+- `diagram` — Mermaid text → inline SVG; place inside an annotation.
 
 **Primitive layer** — static UI building blocks used inside `view` and inside annotation `enum-item` bodies. ~109 elements across layout, controls, navigation, data display, feedback, enterprise, iOS, macOS, and agent families.
 
 ## Pin system
 
-- Add `data-pin="N"` to any element inside `<view>`. Pins number from 1 with no gaps.
-- Every `data-pin="N"` requires a matching `<annotation id="N">` at the top level of `page`.
+- Add `data-pin="N"` to any element inside `<view>`. Pins number from 1 with no gaps. Pin as many regions as the page has — no target count.
+- Strict bidirectional parity: every `data-pin="N"` ↔ exactly one top-level `<annotation id="N">`. A numbered annotation with no pin is a defect — put cross-cutting notes in `<annotation-global>` instead.
 - The runtime renders water-drop pin markers automatically. Never write pin DOM manually.
 
 ## Annotation nesting and section addressing

@@ -30,12 +30,13 @@ These are short and load-bearing — follow them even before opening the referen
 2. exactly one `<view device="web|ipad|mobile">` containing the main snapshot (usually inside a `<viewport device="…">`),
 3. snapshot content built with **RPML primitives only**,
 4. `data-pin="N"` on every meaningful region, numbered from 1 with no gaps,
-5. a matching top-level `<annotation id="N" label="…">` for every pin,
-6. `<enum>` / `<enum-item>` for every conditional branch and state family.
+5. a matching top-level `<annotation id="N" label="…">` for every pin (and a matching pin for every numbered annotation — strict 1:1),
+6. `<annotation-global label="…">` for cross-cutting notes that don't belong to one region (permission matrix, glossary, global policy) — pin-less, rendered at the top of the pane,
+7. `<enum>` / `<enum-item>` for every conditional branch and state family.
 
 To preview, host the `.rpml` (playground `?rpml=`, `npx @21stware/rpui serve .`, or the compiler). Only as a secondary "embed in a page" option do you wrap it in HTML with a single `<script type="module" src="dist/rpui.js"></script>` — never the primary output.
 
-**Pin↔annotation parity.** Every `data-pin="N"` has exactly one top-level `<annotation id="N">`, and vice versa. Pins are consecutive from 1.
+**Pin↔annotation parity.** Every `data-pin="N"` has exactly one top-level `<annotation id="N">`, and every numbered `<annotation id="N">` has exactly one `data-pin="N"`. Pins are consecutive from 1. A numbered annotation with no pin is a defect — route genuinely cross-cutting notes to `<annotation-global>` instead.
 
 **Overlay trigger pattern.** Overlays and transient feedback (`modal`, `drawer`, `dropdown`, `popover`, `tooltip`, `toast`) are interaction _results_, not page regions. Never place them in the main snapshot. Instead: pin the **trigger** (the button/row/menu entry that opens it), state the trigger condition + permission gate in the annotation body, and render the overlay **inside the annotation** as an `<enum>` of its variants.
 
@@ -76,7 +77,7 @@ Depth lives in these — do not re-derive it:
 - **Method** — recursive decomposition L1–L5, coverage-matrix for combinatorial states, annotation-body dimensions, the what-NOT-to-do list: [`references/practise.md`](references/practise.md).
 - **Compressed spec** — root structure, attributes, rules at a glance: [`references/spec-summary.md`](references/spec-summary.md). Full language rules: `spec/`.
 - **Component reference** — every element and its attributes: `llms.txt` (authoritative). One-line element index: [`references/element-index.md`](references/element-index.md).
-- **Worked example (the complexity bar)** — a complete, implementation-depth prototype to study before authoring: [`references/example-reference.rpml`](references/example-reference.rpml) (a service desk: 9 top-level annotations, 3–5 levels deep, every overlay modeled as trigger → result). Match your depth to the domain — don't over-build a simple page to this level. More graduated examples (entry → complex) live in `examples/`.
+- **Worked example (the complexity bar)** — a complete, implementation-depth prototype to study before authoring: [`references/example-reference.rpml`](references/example-reference.rpml) (a service desk: every region pinned and annotated, deep where the domain warrants, every overlay modeled as trigger → result, cross-cutting concerns in `<annotation-global>`). Match your depth to the domain — don't over-build a simple page to this level. More graduated examples (entry → complex) live in `examples/`.
 - **Visual catalog** — `bun run dev`, then the source-mode preview at `/preview/`.
 
 ## Workflow
@@ -91,7 +92,7 @@ Depth lives in these — do not re-derive it:
 8. Verify no forbidden patterns (HTML product UI, JS, external resources, absolute positioning).
 9. **Validate:** `bun run validate <file.rpml>` — fix every reported error before delivering.
 
-**Multi-screen products.** A prototype is rarely one file. Produce **one `.rpml` per screen or functional region**, named by route, and collect them in a directory the gallery can host (`serve`, the compiler, or playground folder-drop). Never cram multiple screens into one `<page>` — the one-`<view>` contract forbids it. If a single page exceeds ~12 pins it is too dense: split a sub-area into its own file and note the relationship in each `description`. For cross-screen flows (wizard, drill-down), state the entry/exit routes so the set reads as one connected flow.
+**Multi-screen products.** A prototype is rarely one file. Produce **one `.rpml` per screen or functional region**, named by route, and collect them in a directory the gallery can host (`serve`, the compiler, or playground folder-drop). Never cram multiple screens into one `<page>` — the one-`<view>` contract forbids it. The split signal is conceptual, not numeric: if a `<view>` is covering more than one screen or route, split it into separate files. Link the resulting screens with `<anchor to="other.rpml" section="N">` and state the entry/exit routes in each `description` so the set reads as one connected flow.
 
 ## Quality bar
 

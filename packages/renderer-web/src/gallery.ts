@@ -84,6 +84,28 @@ function basename(path: string): string {
   return path.split('/').pop() || path;
 }
 
+/** Resolve an anchor's `to` (which may be relative to `fromPath`'s directory,
+ *  or a bare basename) against the known doc paths. Returns the exact doc path
+ *  or null if nothing matches. */
+function resolveAnchorTarget(to: string, fromPath: string, paths: Set<string>): string | null {
+  const clean = to.replace(/^\.?\//, '').replace(/^#/, '');
+  if (paths.has(clean)) return clean;
+  // Relative to the current doc's directory.
+  const dir = fromPath.includes('/') ? fromPath.slice(0, fromPath.lastIndexOf('/') + 1) : '';
+  const parts = (dir + clean).split('/');
+  const stack: string[] = [];
+  for (const p of parts) {
+    if (p === '..') stack.pop();
+    else if (p && p !== '.') stack.push(p);
+  }
+  const joined = stack.join('/');
+  if (paths.has(joined)) return joined;
+  // Fallback: unique basename match.
+  const base = basename(clean);
+  const matches = [...paths].filter(p => basename(p) === base);
+  return matches.length === 1 ? matches[0] : null;
+}
+
 /** Mount a gallery into `host` (defaults to document.body). */
 export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body): void {
   injectChrome();
@@ -145,22 +167,43 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
     return (idx ?? docs[0]).path;
   }
 
-  function show(path: string) {
+  let currentPath = '';
+
+  function show(path: string, section?: string) {
     const doc = byPath.get(path);
     if (!doc) { main.innerHTML = `<div class="rpml-gx-err">未找到文档：${path}</div>`; return; }
     try {
       main.innerHTML = '';
       main.appendChild(parseToPage(doc.source));
+      currentPath = path;
     } catch (e) {
       main.innerHTML = `<div class="rpml-gx-err">RPML 解析错误：${(e as Error).message}</div>`;
     }
     links.forEach((a, p) => a.classList.toggle('active', p === path));
+    if (section) {
+      // The freshly mounted page wires its own rp-section listener on connect;
+      // dispatch on the next frame so it is ready to focus the target.
+      requestAnimationFrame(() => requestAnimationFrame(() =>
+        window.dispatchEvent(new CustomEvent('rp-section', { detail: section }))));
+    }
   }
 
   function route() {
     const path = decodeURIComponent(location.hash.slice(1)) || pickDefault();
     show(path);
   }
+
+  // Cross-page navigation from <anchor>: resolve the target doc, route to it,
+  // and optionally deep-link a section. Preventing the event tells the anchor a
+  // gallery handled it (so it skips its standalone reload fallback).
+  window.addEventListener('rp-anchor', (e) => {
+    const { to, section } = (e as CustomEvent).detail as { to: string; section?: string };
+    const target = resolveAnchorTarget(to, currentPath, new Set(byPath.keys()));
+    if (!target) return; // unknown target → let the fallback try
+    e.preventDefault();
+    history.pushState(null, '', `#${target}`);
+    show(target, section);
+  });
 
   nav.addEventListener('click', e => {
     const a = (e.target as HTMLElement).closest('a.rpml-gx-item') as HTMLAnchorElement | null;

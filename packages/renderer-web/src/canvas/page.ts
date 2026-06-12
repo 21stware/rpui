@@ -1,5 +1,5 @@
 import { injectStyle } from '../core/style';
-import { attr, escapeHtml, isTopAnnotation } from '../core/dom';
+import { attr, escapeHtml, isGlobalAnnotation, isTopAnnotation } from '../core/dom';
 
 function activateSection(path: string, pane: Element | null) {
   document.querySelectorAll('.rp-section-focus').forEach(el => el.classList.remove('rp-section-focus'));
@@ -40,7 +40,11 @@ export class RpPage extends HTMLElement {
     const paneInner = document.createElement('div');
     paneInner.className = 'annotation-el-pane-inner';
 
-    existing.forEach(n => (isTopAnnotation(n) ? paneInner : body).appendChild(n));
+    // Right pane gets global annotations first (the "0th", cross-cutting notes),
+    // then the numbered top-level annotations in source order. Everything else
+    // (the header/main snapshot) stays in the left body.
+    existing.forEach(n => { if (isGlobalAnnotation(n)) paneInner.appendChild(n); });
+    existing.forEach(n => { if (isTopAnnotation(n)) paneInner.appendChild(n); else if (!isGlobalAnnotation(n)) body.appendChild(n); });
     pane.appendChild(paneInner);
     main.append(header, body);
 

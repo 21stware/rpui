@@ -35,6 +35,9 @@ function checkPins(root: RpmlNode, errors: ValidationError[]) {
   if (!mainView) return;
 
   const pinIds = collectPins(mainView, []);
+  // Only numbered top-level <annotation id="N"> take part in pin parity.
+  // <annotation-global> is intentionally pin-less (cross-cutting notes) and is
+  // never matched against a data-pin.
   const annotationIds = root.children
     .filter(c => c.tag === 'annotation-el' && c.attrs.id)
     .map(c => c.attrs.id);
@@ -45,7 +48,13 @@ function checkPins(root: RpmlNode, errors: ValidationError[]) {
   }
   for (const id of annotationIds) {
     if (!pinIds.includes(id))
-      errors.push({ path: `/annotation[id="${id}"]`, message: `Annotation id="${id}" has no matching data-pin="${id}" in view`, severity: 'warning' });
+      errors.push({ path: `/annotation[id="${id}"]`, message: `Annotation id="${id}" has no matching data-pin="${id}" in view (cross-cutting notes belong in <annotation-global>)`, severity: 'warning' });
+  }
+  // <annotation-global> must not carry an id or a pin — that's a numbered
+  // annotation, not a global one.
+  for (const g of root.children.filter(c => c.tag === 'annotation-global-el')) {
+    if (g.attrs.id)
+      errors.push({ path: '/annotation-global', message: 'annotation-global must not have an id (it is pin-less by design)', severity: 'error' });
   }
 }
 

@@ -20,4 +20,34 @@ export class MenuItemElement extends HTMLElement { connectedCallback() { injectS
 export class TocElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady || this.children.length) return; this.dataset.rpReady='true'; const items = csv(this,'items','概述,安装,用法,API,常见问题'); this.innerHTML = items.map((it,i)=>`<span class="toc-el-item${i===0?' active':''}">${escapeHtml(it)}</span>`).join(''); } }
 export class KbdElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const keys = csv(this,'keys','⌘,K'); this.innerHTML = keys.map(k=>`<kbd class="kbd-el-key">${escapeHtml(k)}</kbd>`).join('<span class="kbd-el-plus">+</span>'); } }
 
+/** `<anchor to="other.rpml" section="3" label="...">` — cross-page navigation
+ *  between prototype pages. Inside a gallery (playground / compiled / serve) it
+ *  dispatches a cancelable `rp-anchor` event that the gallery resolves to a
+ *  hash route (with optional `?section=` deep-link). With no gallery present
+ *  (standalone `?rpml=` viewer) it falls back to a `?rpml=&section=` reload, so
+ *  a single embedded page still navigates. */
+export class AnchorElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = 'true';
+    const to = attr(this, 'to');
+    const section = attr(this, 'section');
+    const label = attr(this, 'label', this.textContent?.trim() || to || '跳转');
+    const ic = attr(this, 'icon', 'arrow-right');
+    this.innerHTML = `${ic ? icon(ic, 14) : ''}<span class="anchor-el-label">${escapeHtml(label)}</span>`;
+    this.addEventListener('click', () => {
+      if (!to) return;
+      const ev = new CustomEvent('rp-anchor', { detail: { to, section, from: this }, bubbles: true, composed: true, cancelable: true });
+      this.dispatchEvent(ev);
+      if (ev.defaultPrevented) return; // a gallery handled the route
+      // Standalone fallback: reload the single-page viewer with the new doc.
+      const url = new URL(location.href);
+      url.searchParams.set('rpml', to);
+      if (section) url.searchParams.set('section', section); else url.searchParams.delete('section');
+      location.href = url.toString();
+    });
+  }
+}
+
 

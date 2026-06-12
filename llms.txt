@@ -42,19 +42,24 @@ Tags:
 - `<viewport device="web|ipad|mobile" width="..." height="auto|900">` — snapshot viewport. Use the same `device` as the view for clarity.
 - `<annotation id="1" label="...">` — top-level annotation linked to `data-pin="1"`; rendered in the right annotation pane.
 - `<annotation label="...">` — nested annotation; no `id` required.
+- `<annotation-global label="...">` — page-level, pin-less annotation for cross-cutting notes (permission matrix, glossary, global empty/error policy, conventions). Rendered at the **top** of the annotation pane, above the numbered annotations. Has no `id` and no pin. Use this instead of a numbered annotation for anything that doesn't map to one snapshot region.
 - `<enum>` — horizontal state/variant container.
 - `<enum-item label="..." description="...">` — one explicit state/variant card with optional short description.
+- `<anchor to="other.rpml" section="N" label="...">` — cross-page link to another prototype screen in the file set. `section` is optional and deep-links a specific annotation on the target page. Works in the gallery (playground / `serve` / compiled single-file) and degrades to a `?rpml=` reload in the standalone viewer.
+- `<diagram>` — renders Mermaid text (flowchart / state / sequence / class / ER) to inline SVG. Place inside an annotation to specify a flow or state machine. Put the diagram header on its own line.
 
 ## Pin rule
 
-Inside `<view>`, add `data-pin="N"` to meaningful regions. Number pins from 1 without gaps.
+Inside `<view>`, add `data-pin="N"` to meaningful regions. Number pins from 1 without gaps. Pin as many regions as the page actually has — there is no target count, and none should be padded in or dropped to hit one.
 
-Every `data-pin="N"` must have a matching top-level annotation:
+Pin↔annotation parity is strict and bidirectional. Every `data-pin="N"` has exactly one matching top-level `<annotation id="N">`, and every numbered `<annotation id="N">` has exactly one matching `data-pin="N"`:
 
 ```html
 <navigator data-pin="1">...</navigator>
 <annotation id="1" label="顶部导航">...</annotation>
 ```
+
+A numbered annotation with no pin is a defect. For cross-cutting notes that don't map to one region (permission matrix, glossary, global policy), use `<annotation-global>` — it is pin-less by design and renders at the top of the pane.
 
 RPUI renders water-drop pins automatically. Never write pin DOM manually.
 
@@ -291,5 +296,5 @@ For each page, consider whether these states apply:
 </html>
 ```
 
-For a realistic high-complexity reference (9 top-level annotations, 3–5 levels of nesting, implementation-level annotation bodies, permission matrix, state machines, SLA boundaries), see `demo/golden.html`. Refer to `SKILL.md` for the recursive decomposition method, coverage-matrix technique, and complexity expectations.
+For a realistic high-complexity reference (every region pinned and annotated, deep nesting where the domain warrants, implementation-level annotation bodies, permission matrix in `<annotation-global>`, state machines, SLA boundaries), see `rapid-prototype-implement/references/example-reference.rpml`. Refer to `SKILL.md` for the recursive decomposition method, coverage-matrix technique, and complexity expectations.
 

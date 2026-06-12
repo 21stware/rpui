@@ -1,0 +1,64 @@
+<page
+    title="购物车"
+    route="/cart"
+    description="结算流程第 1/2 屏。展示已加购商品、金额汇总与「去结算」入口；点击「去结算」通过 anchor 跳转到 payment.rpml。主快照为有 2 件商品的常规态。">
+
+  <view device="web" scale="0.7">
+    <viewport device="web">
+      <navigator height="60" data-pin="1">
+        <logo label="Shop"></logo>
+        <breadcrumb items="首页,购物车"></breadcrumb>
+        <avatar size="30" initials="LY"></avatar>
+      </navigator>
+
+      <panel padding="20" elevation="1">
+        <layout rows="auto auto auto" gap="16">
+          <table rows="2" columns="商品,单价,数量,小计" has-action data-pin="2"></table>
+          <key-value data-pin="3">
+            <kv-row label="商品合计" value="¥ 318.00"></kv-row>
+            <kv-row label="运费" value="¥ 0.00"></kv-row>
+            <kv-row label="应付" value="¥ 318.00"></kv-row>
+          </key-value>
+          <button label="去结算" variant="primary" size="lg" data-pin="4"></button>
+        </layout>
+      </panel>
+    </viewport>
+  </view>
+
+  <annotation-global label="结算流程总览">
+    两屏流程：购物车 → 支付。本屏是入口，下一屏 payment.rpml 完成支付。
+    <diagram>
+graph LR
+  A[购物车] -->|去结算| B[支付页]
+  B -->|提交支付| C[支付结果]
+  B -->|返回| A
+    </diagram>
+    跨屏跳转用 anchor 承载，章节深链用 section。
+    <anchor to="payment.rpml" label="打开支付页"></anchor>
+  </annotation-global>
+
+  <annotation id="1" label="顶部导航">
+    固定 60px。面包屑标识当前处于购物车。登录用户显示头像；未登录显示「登录」入口。
+  </annotation>
+
+  <annotation id="2" label="商品列表">
+    展示已加购商品行：商品名、单价、数量步进、小计。运行时表格单元格为示意文本，实际数据见此说明：2 行分别为「无线耳机 ¥199×1」「机械键盘 ¥119×1」。
+    <enum>
+      <enum-item label="有商品" description="常规态，可结算。"><table rows="2" columns="商品,单价,数量,小计" has-action></table></enum-item>
+      <enum-item label="空购物车" description="隐藏汇总与结算，引导去逛逛。"><empty label="购物车是空的" description="去挑选心仪的商品吧" has-action></empty></enum-item>
+    </enum>
+  </annotation>
+
+  <annotation id="3" label="金额汇总">
+    合计 = Σ 小计；运费按满减规则，满 99 包邮故为 0；应付 = 合计 + 运费 − 优惠。金额实时随数量变化。
+  </annotation>
+
+  <annotation id="4" label="去结算">
+    主操作。点击通过 anchor 跳转到 payment.rpml。购物车为空时按钮禁用。
+    <enum>
+      <enum-item label="可结算" description="有商品且已选地址。"><button label="去结算" variant="primary" size="lg"></button></enum-item>
+      <enum-item label="禁用" description="购物车为空时不可点击。"><button label="去结算" variant="primary" size="lg" state="disabled"></button></enum-item>
+    </enum>
+    <anchor to="payment.rpml" section="2" label="跳到支付页·支付方式"></anchor>
+  </annotation>
+</page>

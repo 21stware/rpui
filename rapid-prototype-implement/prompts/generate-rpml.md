@@ -54,7 +54,20 @@ Output a valid RPML file following this structure:
 
 **Overlay pattern:** Do not place `modal`, `drawer`, `dropdown`, `popover`, `tooltip`, or `toast` in the main snapshot. Pin the trigger; render the overlay inside its annotation `<enum>`.
 
-**Pin parity:** Every `data-pin="N"` needs a matching `<annotation id="N">`. Pins are consecutive from 1.
+**Pin parity (strict, 1:1):** Every `data-pin="N"` has exactly one matching numbered `<annotation id="N">`, and every numbered `<annotation id="N">` has exactly one matching `data-pin="N"` in the view. Pins are consecutive from 1. **Never write a numbered annotation with no pin** — that is the most common defect. A note that doesn't belong to one pinned region (a cross-cutting permission matrix, a glossary, a global empty/error policy, page-wide conventions) goes in `<annotation-global>`, which is pin-less by design — not in a numbered annotation.
+
+**Cross-page links:** Use `<anchor to="other.rpml" section="N" label="…">` to link from one screen to another (the `section` is optional and deep-links a specific annotation on the target). Use it for flow transitions, drill-downs, and "see also" references across the file set.
+
+**Diagrams:** Use `<diagram>` (inside an annotation, for flows/state machines/sequence/ER) with Mermaid text. Put the diagram header on its own line:
+
+```html
+<diagram>
+graph TD
+  A[列表] --> B{有筛选?}
+  B -->|是| C[过滤结果]
+  B -->|否| D[全部数据]
+</diagram>
+```
 
 **No interactivity:** No `onclick`, event attributes, timers, API calls, external images, or CDN resources.
 
@@ -62,8 +75,8 @@ Output a valid RPML file following this structure:
 
 ## Quality targets
 
-- 8–10 top-level annotations, one per meaningful pinned region.
-- 3–5 nesting levels where the domain warrants it (region → element → state family → per-state rule → boundary).
+- **One annotation per pinned region — no target count.** Pin and annotate as many regions as the page actually has; a dense admin screen has many, a simple form has few. Do not pad to hit a number, and do not drop a real region to stay under one. Completeness, not a quota, decides breadth.
+- Nest as deep as the domain warrants — a simple stat card stays shallow; a data table with a detail drawer goes deep (region → element → state family → per-state rule → boundary). Let depth follow complexity, not a target.
 - Every conditional branch in `<enum>` — states, permission variants, validation outcomes, async results.
 - Annotation bodies at implementation depth: trigger, data source, state-machine transitions, permission gates, validation rules, error handling, boundary values.
 
@@ -71,7 +84,7 @@ For the full method — recursive decomposition (L1–L5), the coverage-matrix t
 
 ## Element categories (quick reference)
 
-- **Canvas:** `page`, `view`, `viewport`, `annotation`, `enum`, `enum-item`
+- **Canvas:** `page`, `view`, `viewport`, `annotation`, `annotation-global`, `enum`, `enum-item`, `anchor`, `diagram`
 - **Layout:** `layout`, `panel`, `card`, `navigator`, `sidebar`, `split-pane`, `divider`, `spacer`
 - **Controls:** `input`, `search`, `textarea`, `select`, `button`, `checkbox`, `radio`, `toggle`, `form`, `form-item`, `date-picker`, `upload`, `slider`, `range`, `number-input`, `rating`, `pin-input`, `color-swatch`, `autocomplete`
 - **Navigation:** `tabs`, `tab`, `breadcrumb`, `pagination`, `steps`, `segmented`, `menu`, `menu-item`, `context-menu`, `command-palette`, `toc`, `kbd`, `list`, `list-item`, `badge`, `avatar`

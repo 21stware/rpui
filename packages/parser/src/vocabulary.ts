@@ -22,7 +22,9 @@ export const PRIMITIVES: readonly string[] = [
   // controls
   'search', 'input', 'textarea', 'select', 'button', 'button-group', 'checkbox', 'radio', 'toggle', 'form', 'form-item', 'date-picker', 'upload', 'image-placeholder', 'progress', 'slider', 'range', 'number-input', 'rating', 'pin-input', 'color-swatch', 'autocomplete',
   // navigation
-  'badge', 'avatar', 'list', 'list-item', 'tabs', 'tab', 'pagination', 'steps', 'breadcrumb', 'segmented', 'command-palette', 'context-menu', 'menu', 'menu-item', 'toc', 'kbd',
+  'badge', 'avatar', 'list', 'list-item', 'tabs', 'tab', 'pagination', 'steps', 'breadcrumb', 'segmented', 'command-palette', 'context-menu', 'menu', 'menu-item', 'toc', 'kbd', 'anchor',
+  // diagram
+  'diagram',
   // data display
   'table', 'table-row', 'bulk-action-bar', 'empty', 'loading', 'alert', 'toast', 'dropdown', 'popover', 'tooltip', 'modal', 'drawer', 'card', 'stat-card', 'tag', 'chip', 'tree', 'tree-item', 'timeline', 'timeline-item', 'calendar', 'kanban', 'kanban-column', 'kanban-card', 'code-block', 'diff', 'image-grid', 'key-value', 'kv-row', 'accordion', 'accordion-item', 'banner', 'skeleton', 'countdown', 'result', 'permission-gate', 'quota-bar', 'api-key', 'audit-row', 'workflow-node',
   // iOS
@@ -46,11 +48,14 @@ const EXPLICIT: Record<string, string> = {
   page: 'page-el',
   view: 'main-view',
   annotation: 'annotation-el',
+  'annotation-global': 'annotation-global-el',
   enum: 'enum-el',
   'enum-item': 'enum-item',
   viewport: 'viewport-el',
   // curated primitive rename
-  navigator: 'navbar-el'
+  navigator: 'navbar-el',
+  // compound component tag that reads cleaner as a single word in the language
+  diagram: 'diagram-block'
 };
 
 /** Language tag → Web Component tag. */

@@ -53,17 +53,38 @@ L1/L2 bodies must read like a spec, not a caption. For a non-trivial region, cov
 
 "Compact" means no padding — it does **not** mean omitting a dimension that matters. Completeness wins over brevity; precision wins over length.
 
+### 4.1 Cross-cutting concerns → `<annotation-global>`
+
+Some notes don't belong to any single pinned region: a role/permission matrix that spans the whole page, a global empty/error/loading policy, a glossary of domain terms, page-wide conventions. **Do not** invent a numbered annotation for these — a numbered annotation must always have a matching pin. Put them in `<annotation-global label="…">`, which is pin-less by design and renders at the top of the annotation pane (the "0th" annotation):
+
+```html
+<annotation-global label="角色权限矩阵">
+  三类角色能力差异，供研发实现 RBAC、QA 设计权限用例。
+  <enum>
+    <enum-item label="管理员" description="全量读写"></enum-item>
+    <enum-item label="成员" description="读写本人"></enum-item>
+    <enum-item label="只读" description="仅查看与导出"></enum-item>
+  </enum>
+</annotation-global>
+```
+
+### 4.2 Cross-page links and diagrams
+
+- **`<anchor to="other.rpml" section="N" label="…">`** — link to another screen in the file set; `section` optionally deep-links a specific annotation on the target. Use for flow transitions and drill-downs so the set reads as one connected product.
+- **`<diagram>`** — render a Mermaid flow / state / sequence / ER diagram inside an annotation to specify a state machine or flow precisely. Put the diagram header (`graph TD`, `stateDiagram-v2`, …) on its own line.
+
 ## 5. Quality bar
 
 A prototype meets the bar when a reviewer reading it has no remaining "but what happens when…" questions.
 
 Concrete targets:
-- **8–10 top-level annotations**, one per meaningful pinned region.
-- **3–5 nesting levels** where the domain warrants it.
+- **One annotation per pinned region — no target count.** Pin and annotate every meaningful region the page actually has. A dense admin page has many; a simple form has few. Never pad to a number, never drop a real region to stay under one. *Completeness decides breadth; the page decides the count.*
+- **Depth follows complexity.** Nest as deep as the region warrants — a stat card stays shallow, a data table with a detail drawer goes deep. Don't force uniform depth.
+- **Strict pin↔annotation parity.** Every `data-pin="N"` ↔ exactly one numbered `<annotation id="N">`, both directions. A numbered annotation with no pin is a defect. Cross-cutting notes go in `<annotation-global>` (see §4.1), not an orphan numbered annotation.
 - **Every conditional branch** in `<enum>` — states, permission variants, validation outcomes, async results.
 - **Implementation-depth annotation bodies**: trigger conditions, data source, state-machine transitions, permission gates, validation rules, error handling, boundary values.
 
-Reference: [`example-reference.rpml`](example-reference.rpml) (bundled with this skill) — 9 top-level annotations, 3–5 levels deep, implementation-level bodies. Study it before authoring; it is the complexity bar.
+Reference: [`example-reference.rpml`](example-reference.rpml) (bundled with this skill) — implementation-level bodies, every overlay modeled as trigger → result, with cross-cutting concerns in `<annotation-global>`. Study it before authoring; it is the complexity bar.
 
 ## 6. What NOT to do
 

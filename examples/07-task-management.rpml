@@ -204,12 +204,12 @@
       </annotation>
     </annotation>
 
-    <annotation id="7" label="成员权限矩阵">
+    <annotation-global label="成员权限矩阵">
       跨区域横切关注点（无 pin）。三类角色能力差异需显式说明，供研发实现 RBAC、QA 设计权限用例。
       <enum>
         <enum-item label="管理员" description="可新建/编辑/删除任务、改优先级、批量操作、项目设置。"><card title="管理员" subtitle="项目负责人"><tag label="全量读写" color="orange"></tag></card></enum-item>
         <enum-item label="成员" description="可编辑分配给自己的任务、更新进度；不可删除他人任务。"><card title="成员" subtitle="任务执行人"><tag label="读写本人" color="green"></tag></card></enum-item>
         <enum-item label="只读" description="只能查看与导出，所有写操作与批量栏隐藏。"><card title="只读成员" subtitle="干系人"><tag label="只读" color="red"></tag></card></enum-item>
       </enum>
-    </annotation>
+    </annotation-global>
   </page>

@@ -13,7 +13,10 @@
   <xs:complexType name="RpPage">
     <xs:sequence>
       <xs:element name="view" type="rp:RpMainView" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="annotation" type="rp:RpAnnotationTop" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="annotation"        type="rp:RpAnnotationTop"/>
+        <xs:element name="annotation-global"  type="rp:RpAnnotationGlobal"/>
+      </xs:choice>
     </xs:sequence>
     <xs:attribute name="title"       type="xs:string" use="required"/>
     <xs:attribute name="route"       type="xs:string"/>
@@ -53,6 +56,18 @@
 
   <!-- Nested annotation: no id -->
   <xs:complexType name="RpAnnotationNested" mixed="true">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="annotation" type="rp:RpAnnotationNested"/>
+        <xs:element name="enum"       type="rp:RpEnum"/>
+        <xs:any namespace="##other" processContents="lax"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="label" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- Global annotation: page-level, pin-less; no id. Renders at top of pane. -->
+  <xs:complexType name="RpAnnotationGlobal" mixed="true">
     <xs:sequence>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="annotation" type="rp:RpAnnotationNested"/>

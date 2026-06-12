@@ -9,8 +9,11 @@ All ~109 elements registered by the RPUI runtime. RPML authoring uses the bare l
 | page | Canvas | Root document shell; holds title, route, description; layouts main view left, annotations right |
 | view | Canvas | Scaled snapshot frame; device preset sets fixed width; scale attribute zooms the canvas |
 | annotation | Canvas | Specification block; top-level (id=N) links to data-pin="N"; nested adds sub-region spec |
+| annotation-global | Canvas | Page-level, pin-less note for cross-cutting concerns; renders at top of pane; no id/pin |
 | enum | Canvas | Horizontal row of mutually exclusive state/variant cards |
 | enum-item | Canvas | One state card with label and optional description; auto-numbered with a black square badge |
+| anchor | Canvas | Cross-page link (to, optional section) to another screen in the file set |
+| diagram | Canvas | Renders Mermaid text (flow/state/sequence/ER) to inline SVG inside an annotation |
 
 ## Layout primitives
 

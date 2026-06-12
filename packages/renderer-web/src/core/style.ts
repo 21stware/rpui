@@ -33,6 +33,10 @@ annotation-el annotation-el, annotation-el annotation-el, annotation-el annotati
 .annotation-el-marker.circle { width:16px; height:16px; background:var(--rp-purple); border-radius:50%; }
 .annotation-el-marker.triangle { width:18px; height:16px; background:var(--rp-success); clip-path:polygon(50% 0, 100% 100%, 0 100%); }
 .annotation-el-marker.triangle > span { transform:translateY(2px); font-size:9px; }
+.annotation-el-marker.global { width:20px; height:20px; background:#0f172a; border-radius:6px; font-size:11px; }
+annotation-global-el, annotation-global-el { display:block; width:fit-content; max-width:980px; margin:0 0 18px; padding:10px 12px 12px; line-height:1.65; color:#1f2937; font-size:14px; background:linear-gradient(180deg,#f8fafc,#fff); border:1px solid var(--rp-border); border-left:3px solid #0f172a; border-radius:var(--rp-radius-md); }
+.annotation-el-pane annotation-global-el, .annotation-el-pane annotation-global-el { max-width:none; }
+.annotation-el-pane annotation-global-el .annotation-el-body { max-width:none; }
 .annotation-el-body { display:block; position:relative; width:fit-content; max-width:920px; }
 .rp-pin-slice { width:18px; height:18px; font-size:10px; box-shadow:0 1px 5px rgba(37,99,235,.3); }
 .annotation-el-body > :not(annotation-el):not(annotation-el):not(enum-el):not(enum-el) { max-width:820px; }
@@ -490,6 +494,15 @@ citation-el, citation-el { display:inline-flex; align-items:center; gap:6px; max
 token-usage, token-usage { display:inline-flex; align-items:center; gap:7px; font-size:12px; color:#9ca3af; }
 .rp-token-track { width:90px; height:5px; border-radius:999px; background:#e5e7eb; overflow:hidden; }
 .rp-token-fill { display:block; height:100%; background:#9ca3af; }
+anchor-el, anchor-el { display:inline-flex; align-items:center; gap:6px; padding:4px 11px; font-size:13px; font-weight:600; color:var(--rp-primary); background:rgba(37,99,235,.08); border:1px solid rgba(37,99,235,.25); border-radius:999px; cursor:pointer; text-decoration:none; vertical-align:middle; }
+anchor-el:hover, anchor-el:hover { background:rgba(37,99,235,.14); }
+.anchor-el-label { line-height:1; }
+diagram-block, diagram-block { display:block; width:fit-content; max-width:100%; margin:10px 0; padding:12px; background:#fff; border:1px solid var(--rp-border); border-radius:var(--rp-radius-md); overflow:auto; }
+.diagram-block-svg { display:flex; justify-content:center; }
+.diagram-block-svg svg { max-width:100%; height:auto; }
+.diagram-block-empty, .diagram-block-err { font-size:13px; color:var(--rp-muted); }
+.diagram-block-err { color:var(--rp-danger); margin-bottom:6px; }
+.diagram-block-raw { margin:0; font-family:ui-monospace,Menlo,monospace; font-size:12px; line-height:1.5; color:#374151; white-space:pre; overflow:auto; }
 `;
 
 export function injectStyle() {

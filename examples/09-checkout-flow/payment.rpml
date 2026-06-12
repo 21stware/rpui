@@ -1,0 +1,64 @@
+<page
+    title="支付"
+    route="/checkout/payment"
+    description="结算流程第 2/2 屏。选择支付方式、确认金额并提交；可返回购物车。主快照为已选「微信支付」、金额已确认的待提交态。">
+
+  <view device="web" scale="0.7">
+    <viewport device="web">
+      <navigator height="60" data-pin="1">
+        <logo label="Shop"></logo>
+        <breadcrumb items="首页,购物车,支付"></breadcrumb>
+        <avatar size="30" initials="LY"></avatar>
+      </navigator>
+
+      <panel padding="20" elevation="1">
+        <layout rows="auto auto auto" gap="16">
+          <list data-pin="2">
+            <list-item label="微信支付" icon="wallet" state="selected"></list-item>
+            <list-item label="支付宝" icon="credit-card"></list-item>
+            <list-item label="银行卡" icon="landmark"></list-item>
+          </list>
+          <key-value data-pin="3">
+            <kv-row label="应付金额" value="¥ 318.00"></kv-row>
+          </key-value>
+          <button-group data-pin="4">
+            <button label="返回购物车"></button>
+            <button label="确认支付 ¥318.00" variant="primary" size="lg"></button>
+          </button-group>
+        </layout>
+      </panel>
+    </viewport>
+  </view>
+
+  <annotation-global label="结算流程总览">
+    本屏是结算流程的第 2/2 屏。返回入口见区域 4，回到 index.rpml。
+    <anchor to="index.rpml" label="返回购物车"></anchor>
+  </annotation-global>
+
+  <annotation id="1" label="顶部导航">
+    与购物车页一致，面包屑多一级「支付」标识当前进度。
+  </annotation>
+
+  <annotation id="2" label="支付方式">
+    单选列表，默认选中上次使用的方式（此处微信支付）。某渠道不可用时置灰并说明原因。
+    <enum>
+      <enum-item label="微信支付（选中）"><list-item label="微信支付" icon="wallet" state="selected"></list-item></enum-item>
+      <enum-item label="银行卡（不可用）" description="未绑卡时置灰，引导去绑定。"><list-item label="银行卡" icon="landmark" state="disabled"></list-item></enum-item>
+    </enum>
+  </annotation>
+
+  <annotation id="3" label="应付金额">
+    金额从购物车带入，提交前再次核对。与购物车「应付」一致；若期间价格变动，提交时拦截并提示刷新。
+  </annotation>
+
+  <annotation id="4" label="操作组">
+    「返回购物车」通过 anchor 回到 index.rpml；「确认支付」提交订单。提交后进入支付结果（成功/失败/超时）。
+    <enum>
+      <enum-item label="待提交" description="已选支付方式，可提交。"><button label="确认支付 ¥318.00" variant="primary" size="lg"></button></enum-item>
+      <enum-item label="提交中" description="防重复点击，按钮 loading。"><button label="处理中" variant="primary" size="lg" state="loading"></button></enum-item>
+      <enum-item label="支付成功" description="跳转结果页。"><result status="success" title="支付成功" description="订单已提交，正在出库" has-action></result></enum-item>
+      <enum-item label="支付失败" description="保留方式选择，可重试。"><result status="error" title="支付失败" description="渠道异常，请重试或更换方式" has-action></result></enum-item>
+    </enum>
+    <anchor to="index.rpml" label="返回购物车"></anchor>
+  </annotation>
+</page>

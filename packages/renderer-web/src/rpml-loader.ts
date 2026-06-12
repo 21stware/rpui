@@ -11,6 +11,10 @@ class RpmlApp extends HTMLElement {
       const res = await fetch(src);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       this.replaceWith(parseToPage(await res.text()));
+      // Honor a ?section= deep-link (e.g. arriving from an <anchor> fallback).
+      const section = new URLSearchParams(location.search).get('section');
+      if (section) requestAnimationFrame(() => requestAnimationFrame(() =>
+        window.dispatchEvent(new CustomEvent('rp-section', { detail: section }))));
     } catch (e) {
       this.textContent = `RPML load error: ${e}`;
       console.error(e);

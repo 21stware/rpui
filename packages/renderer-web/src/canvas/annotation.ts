@@ -111,6 +111,36 @@ export class RpAnnotation extends HTMLElement {
 
 export class RpEnum extends HTMLElement { connectedCallback() { injectStyle(); } }
 
+/** `<annotation-global>` — a page-level annotation with no pin and no number.
+ *  RpPage renders these at the very top of the right-side pane (the "0th"
+ *  annotation), for cross-cutting notes that don't map to one snapshot region:
+ *  permission matrices, glossaries, global empty/error policy, conventions. */
+export class RpAnnotationGlobal extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = 'true';
+    const existing = Array.from(this.childNodes);
+    const label = attr(this, 'label', '全局说明');
+
+    const marker = document.createElement('span');
+    marker.className = 'annotation-el-marker global';
+    marker.innerHTML = '<span>★</span>';
+
+    const head = document.createElement('div');
+    head.className = 'annotation-el-head';
+    const title = document.createElement('span');
+    title.className = 'annotation-el-title';
+    title.textContent = label;
+    head.append(marker, title);
+
+    const body = document.createElement('div');
+    body.className = 'annotation-el-body';
+    existing.forEach(n => body.appendChild(n));
+    this.append(head, body);
+  }
+}
+
 export class RpEnumItem extends HTMLElement {
   connectedCallback() {
     injectStyle();

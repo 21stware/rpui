@@ -56,6 +56,7 @@ export const COMPONENTS = [
   { group: 'Data display', name: 'avatar', html: '<avatar size="40" initials="OC"></avatar>', attrs: [['size', '尺寸 px'], ['initials', '首字母']] },
   { group: 'Data display', name: 'image-placeholder', html: '<image-placeholder width="160" height="100" label="封面"></image-placeholder>', attrs: [['width', '宽'], ['height', '高'], ['label', '文字']] },
   { group: 'Data display', name: 'bulk-action-bar', html: '<bulk-action-bar count="3" actions="归档,删除,导出"></bulk-action-bar>', attrs: [['count', '已选数'], ['actions', '逗号分隔动作']] },
+  { group: 'Data display', name: 'diagram', html: '<diagram>\ngraph LR\n  A[列表] --> B{有筛选?}\n  B -->|是| C[过滤结果]\n  B -->|否| D[全部数据]\n</diagram>', attrs: [['(文本内容)', 'Mermaid 源码：flowchart / state / sequence / class / ER'], ['(注意)', '图表声明（graph TD 等）需单独成行']] },
 
   // ---------- Navigation ----------
   { group: 'Navigation', name: 'tabs', html: '<tabs active="1"><tab label="全部" badge="38"></tab><tab label="未读" badge="12"></tab><tab label="已归档"></tab></tabs>', attrs: [['active', '索引或标签'], ['(子) tab', 'label / badge']] },
@@ -68,6 +69,7 @@ export const COMPONENTS = [
   { group: 'Navigation', name: 'command-palette', html: '<command-palette query="" results="新建文件,打开设置,搜索工单,切换主题"></command-palette>', attrs: [['query', '当前输入'], ['results', '逗号分隔结果']] },
   { group: 'Navigation', name: 'toc', html: '<toc items="概述,安装,用法,API"></toc>', attrs: [['items', '逗号分隔目录项']] },
   { group: 'Navigation', name: 'kbd', html: '<kbd keys="⌘,K"></kbd>', attrs: [['keys', '逗号分隔按键']] },
+  { group: 'Navigation', name: 'anchor', html: '<anchor to="payment.rpml" label="去支付页"></anchor> <anchor to="payment.rpml" section="2" label="支付页·方式" icon="external-link"></anchor>', attrs: [['to', '目标 .rpml 路径（同一文件集内）'], ['section', '可选，目标页要聚焦的注释 id'], ['label', '链接文字'], ['icon', '图标名，默认 arrow-right']] },
 
   // ---------- Feedback ----------
   { group: 'Feedback', name: 'alert', html: '<alert type="warning" title="SLA 风险" message="1 小时内未响应将升级" closable></alert>', attrs: [['type', 'info | success | warning | error'], ['title', '标题'], ['message', '正文'], ['closable', '关闭按钮']] },

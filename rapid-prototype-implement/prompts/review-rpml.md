@@ -14,14 +14,14 @@ You are an RPML reviewer. Given an RPML document, check it against the following
 ### Pin/annotation parity
 
 - [ ] Every `data-pin="N"` in the main view has a matching top-level `<annotation id="N">`.
-- [ ] Every top-level `<annotation id="N">` has a corresponding `data-pin="N"` in the main view.
+- [ ] Every top-level `<annotation id="N">` has a corresponding `data-pin="N"` in the main view. **A numbered annotation with no pin is a defect** — flag it. If the content is genuinely cross-cutting (permission matrix, glossary, global policy, conventions), it should be moved to `<annotation-global>`, not left as an orphan numbered annotation.
 - [ ] Pin numbers are consecutive from 1 with no gaps.
+- [ ] `<annotation-global>` blocks carry no `id` and no pin (they are page-level, rendered at the top of the pane).
 
 ### Annotation count and depth
 
-- [ ] 8–10 top-level annotations. Fewer suggests under-specified regions; more than 12 suggests the page should be split.
-- [ ] Complex regions reach 3–5 nesting levels (region → element → state family → per-state rule → boundary).
-- [ ] Simple regions may stop at L2–L3. Depth matches domain complexity — neither too shallow nor artificially deep.
+- [ ] Annotation count matches the page's real regions — there is **no target number**. Every meaningful region is pinned and annotated; none is padded in or dropped to hit a count. A dense screen legitimately has many; a simple one has few.
+- [ ] Depth follows domain complexity (region → element → state family → per-state rule → boundary). Complex regions nest deep; simple ones stay shallow. Neither artificially deep nor too shallow.
 
 ### Enum coverage
 
