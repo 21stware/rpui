@@ -30,7 +30,9 @@ jobs:
         run: bun run --cwd packages/renderer-web build
 
       - name: Sync root dist/ (copy-runtime reads ../../dist/rpui.js)
-        run: cp packages/renderer-web/dist/*.js dist/
+        run: |
+          mkdir -p dist
+          cp packages/renderer-web/dist/*.js dist/
 
       - name: Resolve version
         id: ver
