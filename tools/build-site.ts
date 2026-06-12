@@ -4,7 +4,7 @@
  *
  *  spec/ Markdown is the single source of truth — never hand-copied into HTML. */
 
-import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync, cpSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { markdown, escapeHtml } from './site/markdown.ts';
@@ -37,6 +37,31 @@ write('components.html', buildComponents(ctx));
 write('examples.html', buildExamples(ctx));
 write('api.html', buildApi(ctx));
 write('playground.html', buildPlayground(ctx));
+
+// Assemble the runtime assets the generated HTML references, so `bun run site`
+// produces a portal that actually works locally (playground imports
+// ./dist/gallery.js + ./dist/rpml-loader.js; examples-page iframes load
+// examples/*.rpml). Previously this copy lived only in deploy.yml, so a local
+// `bun run site` always left a stale playground. CI runs the renderer build
+// before this script; locally, run `bun run build` first.
+function copyInto(srcRel: string, destRel: string, label: string) {
+  const src = join(ROOT, srcRel);
+  if (!existsSync(src)) { console.log(`  ⚠ skip docs/${destRel} (missing ${srcRel} — run \`bun run build\` first)`); return; }
+  const dest = join(DOCS, destRel);
+  rmSync(dest, { recursive: true, force: true }); // drop stale leftovers (e.g. renamed examples)
+  mkdirSync(dirname(dest), { recursive: true });
+  cpSync(src, dest, { recursive: true });
+  console.log(`  ✓ docs/${destRel}${label ? ` ${label}` : ''}`);
+}
+
+mkdirSync(join(DOCS, 'dist'), { recursive: true });
+copyInto('packages/renderer-web/dist/rpui.js', 'dist/rpui.js', '');
+copyInto('packages/renderer-web/dist/rpml-loader.js', 'dist/rpml-loader.js', '');
+copyInto('packages/renderer-web/dist/gallery.js', 'dist/gallery.js', '');
+copyInto('preview/components.js', 'components.js', '');
+copyInto('llms.txt', 'llms.txt', '');
+copyInto('examples', 'examples', '');
+
 console.log('Done.');
 
 export type Ctx = typeof ctx;

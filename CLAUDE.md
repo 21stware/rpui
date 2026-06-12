@@ -45,7 +45,7 @@ dist/                    — root dist/ (synced from packages/renderer-web/dist/
 - `playground.html` — in-browser RPML viewer (single-file or folder-drop gallery)
 - `site.css` — shared styles (Inter + JetBrains Mono, modern tech aesthetic)
 
-`spec/` Markdown is the **single source of truth** — never hand-copy spec content into HTML. The generator lives in `tools/build-site.ts` + `tools/site/` (markdown.ts converter, css.ts, chrome.ts shell, one module per page). CI runs `bun run site` then copies `dist/*.js`, `components.js`, `llms.txt`, `examples/` into `docs/` before deploying to GitHub Pages. `REPO` URL is set in `tools/site/chrome.ts`.
+`spec/` Markdown is the **single source of truth** — never hand-copy spec content into HTML. The generator lives in `tools/build-site.ts` + `tools/site/` (markdown.ts converter, css.ts, chrome.ts shell, one module per page). `bun run site` emits the HTML **and** assembles the runtime assets the HTML references — it copies `packages/renderer-web/dist/*.js` → `docs/dist/`, plus `components.js`, `llms.txt`, and `examples/` into `docs/` (clearing stale copies first), so a local `bun run site` produces a working playground. Run `bun run build` first so the bundles exist. CI just runs `bun run build` then `bun run site` before deploying to GitHub Pages. `REPO` URL is set in `tools/site/chrome.ts`.
 
 ## Development commands
 

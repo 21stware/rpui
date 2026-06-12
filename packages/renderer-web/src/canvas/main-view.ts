@@ -26,6 +26,10 @@ export class RpMainView extends HTMLElement {
       stage.style.transform = `scale(${scale})`;
       const clip = document.createElement('div');
       clip.className = 'rp-main-stage-clip';
+      // transform:scale keeps the stage's *layout* box at its unscaled size, so
+      // the clip must be given the scaled height explicitly — otherwise it wraps
+      // the full unscaled stage and bleeds empty space below the visible canvas.
+      if (!autoHeight) clip.style.height = `${height * scale}px`;
       children.forEach(n => {
         if (isViewportNode(n)) {
           if (!n.hasAttribute('width') && !n.hasAttribute('device')) n.style.setProperty('--snap-width', `${width}px`);
@@ -58,10 +62,15 @@ export class RpMainView extends HTMLElement {
     if (!usesAutoHeight(this)) return;
     const shell = this.querySelector<HTMLElement>('.rp-main-shell');
     const stage = this.querySelector<HTMLElement>('.rp-main-stage');
+    const clip = this.querySelector<HTMLElement>('.rp-main-stage-clip');
     if (!shell || !stage) return;
     const scale = Number(attr(this, 'scale', '0.7')) || 0.7;
     const next = `${Math.ceil(stage.scrollHeight * scale)}px`;
     if (shell.style.height !== next) shell.style.height = next;
+    // Keep the clip's layout box at the scaled height too; transform:scale leaves
+    // the stage's own box unscaled, so without this the clip reserves the full
+    // unscaled height and pushes empty space below the canvas.
+    if (clip && clip.style.height !== next) clip.style.height = next;
   }
 
   renderPins() {

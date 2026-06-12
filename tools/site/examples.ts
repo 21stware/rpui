@@ -9,6 +9,7 @@ const EXAMPLES: { file: string; level: string; title: string; desc: string }[] =
   { file: '06-multi-step-wizard', level: '中', title: '多步骤向导', desc: '四步流程，每步 valid / invalid / pending。' },
   { file: '07-task-management', level: '高', title: '任务管理看板', desc: '任务列表、批量操作、抽屉、权限差异。' },
   { file: '08-mobile-chat', level: '中', title: '移动端即时消息', desc: 'device="mobile" 设备预设，会话列表。' },
+  { file: '09-checkout-flow/index', level: '中', title: '结算流程（两屏）', desc: 'anchor 跨页跳转 + diagram 流程图 + annotation-global 总览。' },
 ];
 
 export function buildExamples(ctx: Ctx): string {
@@ -23,7 +24,7 @@ export function buildExamples(ctx: Ctx): string {
   const body = `
 <div class="page-intro">
   <h1>示例画廊</h1>
-  <p>8 个由浅入深的 <code>.rpml</code> 原型。点击任意卡片在 Playground 中打开；也可把整个文件夹拖进 Playground 构建带侧边栏的文档集。</p>
+  <p>由浅入深的 <code>.rpml</code> 原型。点击任意卡片在 Playground 中打开；也可把整个文件夹拖进 Playground 构建带侧边栏的文档集。</p>
 </div>
 <section class="ex-grid">${cards}</section>
 <div style="text-align:center;padding:48px 28px 8px">

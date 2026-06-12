@@ -18,6 +18,7 @@ export function buildPlayground(ctx: Ctx): string {
     ['06-multi-step-wizard', '06 多步骤向导'],
     ['07-task-management', '07 任务管理看板'],
     ['08-mobile-chat', '08 移动端即时消息'],
+    ['09-checkout-flow/index', '09 结算流程（anchor + diagram）'],
   ];
   const exLinks = examples
     .map(([file, label]) => `<li><a href="?rpml=examples/${file}.rpml">${label}</a></li>`)
