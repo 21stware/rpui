@@ -13,6 +13,15 @@ Language support for **RPML** (`.rpml`) — the Rapid Prototype Markup Language 
 - **Diagnostics** — runs the RPML parser + validator on every edit: parse errors, missing `<view>`, `data-pin` ↔ `<annotation id>` parity, missing `title`. Toggle with `rpml.validate.enable`.
 - **Live preview** — `RPML: Open Preview to the Side` renders the document with the real RPUI runtime in a webview, re-rendering as you type.
 
+## Install
+
+Download the latest `.vsix` from the [Releases page](https://github.com/21stware/rpui/releases?q=vscode) (assets named `rpml-vscode-extension-<version>.vsix`), then either:
+
+- VS Code → Extensions view → `⋯` menu → **Install from VSIX…**, or
+- command line: `code --install-extension rpml-vscode-extension-<version>.vsix`
+
+Releases are built and published automatically by CI (`.github/workflows/release-vscode.yml`) — see [Release](#release).
+
 ## How it works
 
 The completion catalog (`data/elements.json`) is generated from the **single source of truth** — the parser vocabulary (`packages/parser/src/vocabulary.ts`) plus the component attribute catalog (`preview/components.js`). The diagnostics reuse `rpml-parser` + `rpml-validator` directly (bundled). The preview loads the same `dist/rpui.js` runtime the browser uses, so the language tags (`page`, `view`, `navigator`, …) are mapped to component tags exactly as in production.
@@ -37,3 +46,17 @@ bun run --cwd packages/vscode-extension gen
 
 - `dist/extension.js` — bundled extension (esbuild, CJS, `vscode` external).
 - `media/rpui.js` — copy of the RPUI runtime for the preview webview.
+
+## Release
+
+GitHub Releases are produced by `.github/workflows/release-vscode.yml`. To cut a release:
+
+1. Bump `version` in `packages/vscode-extension/package.json`.
+2. Tag the commit `vscode-v<version>` (must match the `package.json` version — CI fails the build otherwise) and push the tag:
+
+   ```bash
+   git tag vscode-v0.1.0
+   git push origin vscode-v0.1.0
+   ```
+
+CI builds the renderer, packages the `.vsix`, and attaches it to a GitHub Release named for the version. The workflow can also be run manually from the Actions tab (**Run workflow**), in which case it uses the current `package.json` version.
