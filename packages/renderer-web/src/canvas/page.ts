@@ -16,8 +16,11 @@ function activateSection(path: string, pane: Element | null) {
 }
 
 export class RpPage extends HTMLElement {
+  private _handlers?: [() => void, (e: Event) => void];
+
   connectedCallback() {
     injectStyle();
+    this.wireRouting();
     if (this.dataset.rpReady) return;
     this.dataset.rpReady = 'true';
     const pageTitle = attr(this,'title','Untitled');
@@ -59,15 +62,30 @@ export class RpPage extends HTMLElement {
       if (mv) header.style.maxWidth = `${mv.offsetWidth}px`;
     });
 
-    // Section routing: handle URL and clicks
+    this.wireRouting();
+    requestAnimationFrame(this._handlers![0]);
+  }
+
+  /** Section routing: handle URL and rp-section events. Re-queries the pane
+   *  lazily so listeners don't capture build-scope DOM (survives reconnect). */
+  private wireRouting() {
+    if (this._handlers) return; // already wired this connection
+    const pane = () => this.querySelector('.annotation-el-pane');
     const go = () => {
       const sec = new URLSearchParams(location.search).get('section');
-      if (sec) activateSection(sec, pane);
+      if (sec) activateSection(sec, pane());
     };
+    const onSection = (e: Event) => activateSection((e as CustomEvent).detail, pane());
+    this._handlers = [go, onSection];
     window.addEventListener('popstate', go);
-    window.addEventListener('rp-section', (e) => activateSection((e as CustomEvent).detail, pane));
-    requestAnimationFrame(go);
+    window.addEventListener('rp-section', onSection);
+  }
+
+  disconnectedCallback() {
+    if (this._handlers) {
+      window.removeEventListener('popstate', this._handlers[0]);
+      window.removeEventListener('rp-section', this._handlers[1]);
+      this._handlers = undefined;
+    }
   }
 }
-
-

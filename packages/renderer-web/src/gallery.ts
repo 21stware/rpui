@@ -11,7 +11,7 @@
  * (or the first doc) is the default home.
  */
 
-import { registerAll } from './rpui';
+import { registerAll } from './registry';
 import { liveRender } from './core/live-render';
 import { injectThemeStyle, initTheme, currentTheme, setTheme } from './core/theme';
 
@@ -116,8 +116,9 @@ function resolveAnchorTarget(to: string, fromPath: string, paths: Set<string>): 
 }
 
 export interface GalleryController {
-  /** Hot-update the doc set in place — re-renders current doc if its source changed. */
   update(newDocs: RpmlDoc[]): void;
+  /** Remove window listeners, close SSE if any, and clear the host element. */
+  destroy(): void;
 }
 
 /** Mount a gallery into `host` (defaults to document.body). */
@@ -231,17 +232,18 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
     show(path);
   }
 
-  // Cross-page navigation from <anchor>: resolve the target doc, route to it,
-  // and optionally deep-link a section. Preventing the event tells the anchor a
-  // gallery handled it (so it skips its standalone reload fallback).
-  window.addEventListener('rp-anchor', (e) => {
+  // Named handlers so they can be removed on destroy().
+  const onAnchor = (e: Event) => {
     const { to, section } = (e as CustomEvent).detail as { to: string; section?: string };
     const target = resolveAnchorTarget(to, currentPath, new Set(byPath.keys()));
-    if (!target) return; // unknown target → let the fallback try
+    if (!target) return;
     e.preventDefault();
     history.pushState(null, '', `#${target}`);
     show(target, section);
-  });
+  };
+  const onPopstate = () => route();
+  window.addEventListener('rp-anchor', onAnchor);
+  window.addEventListener('popstate', onPopstate);
 
   nav.addEventListener('click', e => {
     const el = e.target as HTMLElement;
@@ -264,18 +266,15 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
     history.pushState(null, '', a.hash);
     show(path);
   });
-  window.addEventListener('popstate', route);
   route();
 
   const controller: GalleryController = {
     update(newDocs: RpmlDoc[]) {
       const prevSource = byPath.get(currentPath)?.source;
       byPath = new Map(newDocs.map(d => [d.path, d]));
-      // Rebuild nav only when the path set changes.
       const newPaths = newDocs.map(d => d.path).sort().join('\0');
       const oldPaths = [...links.keys()].sort().join('\0');
       if (newPaths !== oldPaths) rebuildNav(newDocs);
-      // Re-render current doc if its source changed; else navigate to default.
       const curr = byPath.get(currentPath);
       if (curr) {
         if (curr.source !== prevSource) show(currentPath, undefined, true);
@@ -285,6 +284,13 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
         history.replaceState(null, '', `#${def}`);
         show(def);
       }
+    },
+    destroy() {
+      window.removeEventListener('rp-anchor', onAnchor);
+      window.removeEventListener('popstate', onPopstate);
+      host.innerHTML = '';
+      const g = globalThis as { __RPML_GALLERY__?: GalleryController };
+      if (g.__RPML_GALLERY__ === controller) delete g.__RPML_GALLERY__;
     }
   };
   (globalThis as { __RPML_GALLERY__?: GalleryController }).__RPML_GALLERY__ = controller;
@@ -296,16 +302,16 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
 const inlined = (globalThis as { __RPML_DOCS__?: RpmlDoc[] }).__RPML_DOCS__;
 if (inlined && Array.isArray(inlined) && inlined.length) {
   const mount = () => {
-    mountGallery(inlined);
+    const gallery = mountGallery(inlined);
     // Live mode: connect to the serve SSE endpoint and push updates into the gallery.
     if ((globalThis as { __RPML_LIVE__?: boolean }).__RPML_LIVE__) {
       const es = new EventSource('/~live');
       es.onmessage = (ev) => {
-        try {
-          const docs: RpmlDoc[] = JSON.parse(ev.data);
-          (globalThis as { __RPML_GALLERY__?: GalleryController }).__RPML_GALLERY__?.update(docs);
-        } catch { /* ignore malformed push */ }
+        try { gallery.update(JSON.parse(ev.data) as RpmlDoc[]); } catch { /* ignore malformed */ }
       };
+      // Close the SSE connection when the gallery is explicitly destroyed.
+      const origDestroy = gallery.destroy.bind(gallery);
+      gallery.destroy = () => { es.close(); origDestroy(); };
     }
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);

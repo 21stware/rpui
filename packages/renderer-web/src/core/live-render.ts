@@ -8,6 +8,26 @@ export interface LiveRenderOpts {
   onError?: (msg: string | null) => void;
 }
 
+/** Stateful single-document renderer — tracks initialization and exposes destroy(). */
+export interface DocRenderer {
+  render(source: string): void;
+  destroy(): void;
+}
+
+export function createDocRenderer(
+  host: HTMLElement,
+  opts: Pick<LiveRenderOpts, 'scroller' | 'onError'> = {}
+): DocRenderer {
+  let initialized = false;
+  return {
+    render(source) {
+      liveRender(host, source, { ...opts, preserve: initialized });
+      initialized = true;
+    },
+    destroy() { host.replaceChildren(); initialized = false; }
+  };
+}
+
 /** Parse + mount RPML into `host`, preserving scroll position by default. */
 export function liveRender(host: HTMLElement, source: string, opts: LiveRenderOpts = {}): void {
   const { scroller, preserve = true, onError } = opts;
