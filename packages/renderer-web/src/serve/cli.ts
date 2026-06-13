@@ -6,11 +6,11 @@
  * Zero runtime dependencies (node: builtins only). Both commands reuse the same
  * shape as the compiler output: an HTML page that inlines `globalThis.__RPML_DOCS__`
  * plus the self-contained `gallery.js` bundle (which sits next to this file in dist/).
- * `serve` re-scans the directory on every page request, so refreshing the browser
- * after an edit shows the change — no watcher / websocket.
+ * `serve` watches the directory and pushes updated docs over Server-Sent Events
+ * (`/~live`); the gallery applies them in place, so edits appear without a reload.
  */
-import { createServer } from 'node:http';
-import { readFileSync, readdirSync, statSync, existsSync, writeFileSync } from 'node:fs';
+import { createServer, IncomingMessage, ServerResponse } from 'node:http';
+import { readFileSync, readdirSync, statSync, existsSync, writeFileSync, watch } from 'node:fs';
 import { join, relative, sep, dirname, resolve, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
@@ -42,15 +42,14 @@ function escapeHtml(s: string): string {
   return s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]!));
 }
 
-/** Build the gallery HTML for the current state of `dir`. */
-function buildHtml(dir: string, title: string, galleryJs: string): string {
-  const docs = collectRpml(dir);
-  // JSON.stringify is safe to embed in a <script> as long as we escape </script
-  // and the unicode line separators that break JS string literals.
-  const data = JSON.stringify(docs)
+function safeJson(docs: RpmlDoc[]): string {
+  return JSON.stringify(docs)
     .replace(/<\/script/gi, '<\\/script')
     .replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+}
 
+/** Build the initial gallery HTML. Pass `live: true` in serve mode to enable SSE hot-reload. */
+function buildHtml(docs: RpmlDoc[], title: string, galleryJs: string, live = false): string {
   return `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -60,7 +59,7 @@ function buildHtml(dir: string, title: string, galleryJs: string): string {
 <style>html,body{margin:0;height:100%}</style>
 </head>
 <body>
-<script>globalThis.__RPML_DOCS__ = ${data};</script>
+<script>globalThis.__RPML_DOCS__ = ${safeJson(docs)};${live ? 'globalThis.__RPML_LIVE__ = true;' : ''}</script>
 <script type="module">
 ${galleryJs}
 </script>
@@ -145,12 +144,28 @@ async function serve(argv: string[]) {
   const galleryJs = readFileSync(GALLERY_JS, 'utf8');
   const title = root.split(sep).pop() || 'RPML';
 
+  // Live clients: each open SSE connection gets pushed the fresh doc set on change.
+  const clients = new Set<ServerResponse>();
+
   const server = createServer((req, res) => {
     const url = (req.url || '/').split('?')[0];
     try {
+      // Server-Sent Events stream: holds the connection open and pushes the
+      // current docs whenever a watched .rpml file changes.
+      if (url === '/~live') {
+        res.writeHead(200, {
+          'content-type': 'text/event-stream; charset=utf-8',
+          'cache-control': 'no-cache, no-transform',
+          connection: 'keep-alive'
+        });
+        res.write('retry: 1000\n\n');
+        clients.add(res);
+        req.on('close', () => clients.delete(res));
+        return;
+      }
       if (url === '/' || !url.endsWith('.rpml')) {
         res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
-        res.end(buildHtml(root, title, galleryJs));
+        res.end(buildHtml(collectRpml(root), title, galleryJs, true));
         return;
       }
       // Convenience: serve raw .rpml source on its own path.
@@ -168,15 +183,37 @@ async function serve(argv: string[]) {
     }
   });
 
+  // Watch the tree and push fresh docs to every live client (debounced). fs.watch
+  // is recursive on macOS/Windows; on Linux it isn't, so we fall back to polling.
+  let lastJson = '';
+  const pushUpdate = () => {
+    let docs: RpmlDoc[];
+    try { docs = collectRpml(root); } catch { return; } // mid-write race — skip
+    const json = safeJson(docs);
+    if (json === lastJson) return; // nothing actually changed
+    lastJson = json;
+    const frame = `data: ${json}\n\n`;
+    for (const res of clients) res.write(frame);
+  };
+  let debounce: ReturnType<typeof setTimeout> | undefined;
+  const onChange = () => { clearTimeout(debounce); debounce = setTimeout(pushUpdate, 80); };
+  try {
+    watch(root, { recursive: true }, onChange);
+  } catch {
+    // recursive watch unsupported (older Linux) — poll the serialized doc set.
+    setInterval(pushUpdate, 700);
+  }
+
   const actualPort = await listen(server, port, host);
   const count = collectRpml(root).length;
+  lastJson = safeJson(collectRpml(root));
   const addr = `http://${host}:${actualPort}`;
   console.log(``);
   console.log(`  RPUI serving ${count} .rpml file${count === 1 ? '' : 's'} from ${root}`);
   console.log(``);
   console.log(`  Local:  ${addr}`);
   console.log(``);
-  console.log(`  Press Ctrl+C to stop`);
+  console.log(`  Live reload on — edits render in place. Press Ctrl+C to stop`);
   if (open) openBrowser(addr);
 }
 
@@ -213,7 +250,7 @@ function build(argv: string[]) {
     console.error(`✗ No .rpml files found in ${root}`);
     process.exit(1);
   }
-  writeFileSync(out, buildHtml(root, title, galleryJs));
+  writeFileSync(out, buildHtml(collectRpml(root), title, galleryJs));
   console.log(`✓ compiled ${count} .rpml file${count === 1 ? '' : 's'} → ${out}`);
 }
 

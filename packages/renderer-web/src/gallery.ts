@@ -11,8 +11,8 @@
  * (or the first doc) is the default home.
  */
 
-import { parseToPage } from 'rpml-parser';
 import { registerAll } from './rpui';
+import { liveRender } from './core/live-render';
 import { injectThemeStyle, initTheme, currentTheme, setTheme } from './core/theme';
 
 registerAll();
@@ -115,18 +115,22 @@ function resolveAnchorTarget(to: string, fromPath: string, paths: Set<string>): 
   return matches.length === 1 ? matches[0] : null;
 }
 
+export interface GalleryController {
+  /** Hot-update the doc set in place — re-renders current doc if its source changed. */
+  update(newDocs: RpmlDoc[]): void;
+}
+
 /** Mount a gallery into `host` (defaults to document.body). */
-export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body): void {
+export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body): GalleryController {
   injectChrome();
-  const byPath = new Map(docs.map(d => [d.path, d]));
-  const tree = buildTree(docs);
+  let byPath = new Map(docs.map(d => [d.path, d]));
+  let tree = buildTree(docs);
 
   const root = document.createElement('div');
   root.className = 'rpml-gallery';
   const side = document.createElement('aside');
   side.className = 'rpml-gx-side';
-  const count = docs.length;
-  side.innerHTML = `<div class="rpml-gx-head"><span>RPML 文档<small>${count} 个文件</small></span><div class="rpml-gx-head-actions"><button class="rpml-gx-btn rpml-gx-theme" type="button" title="切换亮色/暗色" aria-label="切换亮色/暗色">◑</button><button class="rpml-gx-btn rpml-gx-toggle" type="button" title="收起侧边栏" aria-label="收起侧边栏">«</button></div></div>`;
+  side.innerHTML = `<div class="rpml-gx-head"><span>RPML 文档<small>${docs.length} 个文件</small></span><div class="rpml-gx-head-actions"><button class="rpml-gx-btn rpml-gx-theme" type="button" title="切换亮色/暗色" aria-label="切换亮色/暗色">◑</button><button class="rpml-gx-btn rpml-gx-toggle" type="button" title="收起侧边栏" aria-label="收起侧边栏">«</button></div></div>`;
   const nav = document.createElement('nav');
   nav.className = 'rpml-gx-nav';
   side.appendChild(nav);
@@ -188,24 +192,32 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
   }
   renderNav(tree, 0);
 
+  function rebuildNav(newDocs: RpmlDoc[]) {
+    nav.innerHTML = '';
+    links.clear();
+    tree = buildTree(newDocs);
+    renderNav(tree, 0);
+    side.querySelector<HTMLElement>('.rpml-gx-head small')!.textContent = `${newDocs.length} 个文件`;
+  }
+
   function pickDefault(): string {
-    const idx = docs.find(d => basename(d.path).replace(/\.rpml$/i, '').toLowerCase() === 'index');
-    return (idx ?? docs[0]).path;
+    const cur = [...byPath.values()];
+    const idx = cur.find(d => basename(d.path).replace(/\.rpml$/i, '').toLowerCase() === 'index');
+    return (idx ?? cur[0]).path;
   }
 
   let currentPath = '';
 
-  function show(path: string, section?: string) {
+  function show(path: string, section?: string, preserve = false) {
     const doc = byPath.get(path);
     if (!doc) { main.innerHTML = `<div class="rpml-gx-err">未找到文档：${path}</div>`; return; }
-    try {
-      main.innerHTML = '';
-      main.appendChild(parseToPage(doc.source));
-      currentPath = path;
-    } catch (e) {
-      main.innerHTML = `<div class="rpml-gx-err">RPML 解析错误：${(e as Error).message}</div>`;
-    }
-    links.forEach((a, p) => a.classList.toggle('active', p === path));
+    liveRender(main, doc.source, {
+      scroller: main,
+      preserve,
+      onError: (msg) => { if (msg) main.innerHTML = `<div class="rpml-gx-err">RPML 解析错误：${msg}</div>`; }
+    });
+    currentPath = path;
+    links.forEach((row, p) => row.classList.toggle('active', p === path));
     if (section) {
       // The freshly mounted page wires its own rp-section listener on connect;
       // dispatch on the next frame so it is ready to focus the target.
@@ -254,12 +266,48 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
   });
   window.addEventListener('popstate', route);
   route();
+
+  const controller: GalleryController = {
+    update(newDocs: RpmlDoc[]) {
+      const prevSource = byPath.get(currentPath)?.source;
+      byPath = new Map(newDocs.map(d => [d.path, d]));
+      // Rebuild nav only when the path set changes.
+      const newPaths = newDocs.map(d => d.path).sort().join('\0');
+      const oldPaths = [...links.keys()].sort().join('\0');
+      if (newPaths !== oldPaths) rebuildNav(newDocs);
+      // Re-render current doc if its source changed; else navigate to default.
+      const curr = byPath.get(currentPath);
+      if (curr) {
+        if (curr.source !== prevSource) show(currentPath, undefined, true);
+        else links.forEach((row, p) => row.classList.toggle('active', p === currentPath));
+      } else if (newDocs.length) {
+        const def = pickDefault();
+        history.replaceState(null, '', `#${def}`);
+        show(def);
+      }
+    }
+  };
+  (globalThis as { __RPML_GALLERY__?: GalleryController }).__RPML_GALLERY__ = controller;
+  return controller;
 }
 
 // Auto-mount for compiled single-file output: the compiler inlines docs as
 // globalThis.__RPML_DOCS__ before this bundle runs.
 const inlined = (globalThis as { __RPML_DOCS__?: RpmlDoc[] }).__RPML_DOCS__;
 if (inlined && Array.isArray(inlined) && inlined.length) {
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => mountGallery(inlined));
-  else mountGallery(inlined);
+  const mount = () => {
+    mountGallery(inlined);
+    // Live mode: connect to the serve SSE endpoint and push updates into the gallery.
+    if ((globalThis as { __RPML_LIVE__?: boolean }).__RPML_LIVE__) {
+      const es = new EventSource('/~live');
+      es.onmessage = (ev) => {
+        try {
+          const docs: RpmlDoc[] = JSON.parse(ev.data);
+          (globalThis as { __RPML_GALLERY__?: GalleryController }).__RPML_GALLERY__?.update(docs);
+        } catch { /* ignore malformed push */ }
+      };
+    }
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
 }

@@ -113,7 +113,7 @@ function setShell(context: vscode.ExtensionContext, panel: vscode.WebviewPanel) 
     return;
   }
   const runtimeUri = panel.webview.asWebviewUri(vscode.Uri.file(path.join(dir, 'rpui.js')));
-  panel.webview.html = htmlShell(panel.webview, runtimeUri);
+  panel.webview.html = htmlShell(panel.webview.cspSource, runtimeUri);
 }
 
 /** Push new source into the already-loaded webview. `key` identifies the
@@ -122,14 +122,14 @@ function postSource(panel: vscode.WebviewPanel, source: string, key: string) {
   panel.webview.postMessage({ type: 'render', source, key });
 }
 
-function htmlShell(webview: vscode.Webview, runtimeUri: vscode.Uri): string {
+function htmlShell(cspSource: string, runtimeUri: vscode.Uri): string {
   const nonce = String(Math.random()).slice(2) + String(Date.now());
   const csp = [
     `default-src 'none'`,
-    `style-src ${webview.cspSource} 'unsafe-inline'`,
-    `img-src ${webview.cspSource} data:`,
-    `font-src ${webview.cspSource} data:`,
-    `script-src 'nonce-${nonce}' ${webview.cspSource}`
+    `style-src ${cspSource} 'unsafe-inline'`,
+    `img-src ${cspSource} data:`,
+    `font-src ${cspSource} data:`,
+    `script-src 'nonce-${nonce}' ${cspSource}`
   ].join('; ');
 
   return `<!doctype html>
@@ -149,43 +149,22 @@ function htmlShell(webview: vscode.Webview, runtimeUri: vscode.Uri): string {
 <div id="rpml-root"></div>
 <pre id="rpml-error"></pre>
 <script type="module" nonce="${nonce}">
-  import { parseToPage } from "${runtimeUri}";
+  import { liveRender } from "${runtimeUri}";
   const root = document.getElementById('rpml-root');
-  const err = document.getElementById('rpml-error');
+  const err  = document.getElementById('rpml-error');
   const empty = document.getElementById('rpml-empty');
   let lastKey = null;
 
-  // The annotation pane (.annotation-el-pane) scrolls independently of the
-  // document, so capture both. Re-querying after render is required because
-  // the page shell rebuilds its DOM.
-  function captureScroll() {
-    const sc = document.scrollingElement || document.documentElement;
-    const pane = root.querySelector('.annotation-el-pane');
-    return { docX: sc.scrollLeft, docY: sc.scrollTop, paneX: pane ? pane.scrollLeft : 0, paneY: pane ? pane.scrollTop : 0 };
-  }
-
-  function restoreScroll(pos) {
-    const sc = document.scrollingElement || document.documentElement;
-    sc.scrollLeft = pos.docX; sc.scrollTop = pos.docY;
-    const pane = root.querySelector('.annotation-el-pane');
-    if (pane) { pane.scrollLeft = pos.paneX; pane.scrollTop = pos.paneY; }
-  }
-
   function render(source, key) {
     empty.style.display = 'none';
-    // Only preserve scroll when re-rendering the same document, not on switch.
-    const pos = key === lastKey ? captureScroll() : null;
-    try {
-      root.replaceChildren(parseToPage(source));
-      err.classList.remove('show');
-    } catch (e) {
-      err.textContent = 'RPML 渲染错误：' + (e && e.message ? e.message : String(e));
-      err.classList.add('show');
-    }
+    liveRender(root, source, {
+      preserve: key === lastKey,
+      onError: (msg) => {
+        if (msg) { err.textContent = 'RPML 渲染错误：' + msg; err.classList.add('show'); }
+        else { err.classList.remove('show'); }
+      }
+    });
     lastKey = key;
-    // The page shell computes pin overlays + header width on rAF; restore after
-    // it settles so our offsets aren't clobbered.
-    if (pos) requestAnimationFrame(() => requestAnimationFrame(() => restoreScroll(pos)));
   }
 
   window.addEventListener('message', (ev) => {
