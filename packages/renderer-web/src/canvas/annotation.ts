@@ -123,6 +123,15 @@ export class RpAnnotationGlobal extends HTMLElement {
     const existing = Array.from(this.childNodes);
     const label = attr(this, 'label', '全局说明');
 
+    // Give the global a non-numeric section namespace so any nested <annotation>
+    // inside it (which has no id) resolves to e.g. `global-1-1` instead of a bare
+    // numeric index — otherwise it would collide with the numbered pin annotation
+    // of the same index and steal its hash-navigation target.
+    const globalSiblings = this.parentElement ? Array.from(this.parentElement.children).filter(
+      el => el.tagName.toLowerCase() === 'annotation-global-el'
+    ) : [];
+    this.dataset.rpSection = `global-${globalSiblings.indexOf(this) + 1}`;
+
     const marker = document.createElement('span');
     marker.className = 'annotation-el-marker global';
     marker.innerHTML = '<span>★</span>';

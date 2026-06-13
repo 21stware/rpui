@@ -1,4 +1,5 @@
 import { registerAll, parseToPage } from './rpui';
+import { mountThemeFab } from './core/theme';
 
 export { parseToPage };
 registerAll();
@@ -11,6 +12,9 @@ class RpmlApp extends HTMLElement {
       const res = await fetch(src);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       this.replaceWith(parseToPage(await res.text()));
+      // A single .rpml preview has no sidebar, so surface the theme toggle as a
+      // floating button (mirrors the gallery's collapse FAB).
+      mountThemeFab();
       // Honor a ?section= deep-link (e.g. arriving from an <anchor> fallback).
       const section = new URLSearchParams(location.search).get('section');
       if (section) requestAnimationFrame(() => requestAnimationFrame(() =>

@@ -13,6 +13,7 @@
 
 import { parseToPage } from 'rpml-parser';
 import { registerAll } from './rpui';
+import { injectThemeStyle, initTheme, currentTheme, setTheme } from './core/theme';
 
 registerAll();
 
@@ -32,25 +33,33 @@ const CHROME_CSS = `
 .rpml-gallery { display:grid; grid-template-columns:260px 1fr; height:100vh; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
 .rpml-gallery.collapsed { grid-template-columns:1fr; }
 .rpml-gallery.collapsed .rpml-gx-side { display:none; }
-.rpml-gx-side { display:flex; flex-direction:column; border-right:1px solid #e5e7eb; background:#fff; min-height:0; }
-.rpml-gx-head { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:16px; border-bottom:1px solid #e5e7eb; font-size:14px; font-weight:700; color:#111827; }
-.rpml-gx-head small { display:block; margin-top:3px; font-size:11px; font-weight:400; color:#6b7280; }
-.rpml-gx-toggle { flex:none; display:flex; align-items:center; justify-content:center; width:26px; height:26px; margin:-3px -3px 0 0; padding:0; border:1px solid #e5e7eb; border-radius:7px; background:#fff; color:#6b7280; font-size:15px; line-height:1; cursor:pointer; }
-.rpml-gx-toggle:hover { background:#f3f4f6; color:#111827; }
-.rpml-gx-fab { position:fixed; top:12px; left:12px; z-index:50; display:none; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border:1px solid #e5e7eb; border-radius:9px; background:#fff; color:#374151; font-size:17px; line-height:1; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.12); }
-.rpml-gx-fab:hover { background:#f3f4f6; color:#111827; }
+.rpml-gx-side { display:flex; flex-direction:column; border-right:1px solid var(--rpml-gx-border,#e5e7eb); background:var(--rpml-gx-side-bg,#fff); min-height:0; }
+.rpml-gx-head { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; padding:16px; border-bottom:1px solid var(--rpml-gx-border,#e5e7eb); font-size:14px; font-weight:700; color:var(--rpml-gx-fg,#111827); }
+.rpml-gx-head small { display:block; margin-top:3px; font-size:11px; font-weight:400; color:var(--rpml-gx-muted,#6b7280); }
+.rpml-gx-head-actions { flex:none; display:flex; gap:6px; margin:-3px -3px 0 0; }
+.rpml-gx-btn { display:flex; align-items:center; justify-content:center; width:26px; height:26px; padding:0; border:1px solid var(--rpml-gx-border,#e5e7eb); border-radius:7px; background:var(--rpml-gx-side-bg,#fff); color:var(--rpml-gx-muted,#6b7280); font-size:15px; line-height:1; cursor:pointer; }
+.rpml-gx-btn:hover { background:var(--rpml-gx-hover,#f3f4f6); color:var(--rpml-gx-fg,#111827); }
+.rpml-gx-fab { position:fixed; top:12px; left:12px; z-index:50; display:none; align-items:center; justify-content:center; width:34px; height:34px; padding:0; border:1px solid var(--rpml-gx-border,#e5e7eb); border-radius:9px; background:var(--rpml-gx-side-bg,#fff); color:var(--rpml-gx-fg,#374151); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+.rpml-gx-fab:hover { background:var(--rpml-gx-hover,#f3f4f6); }
 .rpml-gallery.collapsed .rpml-gx-fab { display:flex; }
 .rpml-gx-nav { flex:1; overflow-y:auto; padding:8px; }
-.rpml-gx-group { padding:10px 8px 3px; font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:.04em; }
-.rpml-gx-item { display:block; padding:6px 10px; border-radius:7px; font-size:13px; color:#374151; text-decoration:none; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.rpml-gx-item:hover { background:#f3f4f6; }
-.rpml-gx-item.active { background:#eff6ff; color:#1d4ed8; font-weight:650; }
-.rpml-gx-indent { padding-left:22px; }
-.rpml-gx-main { overflow:auto; min-height:0; background:#f4f6f8; }
+.rpml-gx-group { padding:10px 8px 3px; font-size:11px; font-weight:700; color:var(--rpml-gx-group,#9ca3af); text-transform:uppercase; letter-spacing:.04em; }
+.rpml-gx-row { display:flex; align-items:center; border-radius:7px; }
+.rpml-gx-row:hover { background:var(--rpml-gx-hover,#f3f4f6); }
+.rpml-gx-row.active { background:var(--rpml-gx-active-bg,#eff6ff); }
+.rpml-gx-item { flex:1; min-width:0; display:block; padding:6px 10px; font-size:13px; color:var(--rpml-gx-item,#374151); text-decoration:none; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rpml-gx-row.active .rpml-gx-item { color:var(--rpml-gx-active-fg,#1d4ed8); font-weight:650; }
+.rpml-gx-indent .rpml-gx-item { padding-left:22px; }
+.rpml-gx-copy { flex:none; margin-right:6px; padding:3px 7px; border:1px solid var(--rpml-gx-border,#e5e7eb); border-radius:6px; background:transparent; color:var(--rpml-gx-muted,#9ca3af); font-size:11px; line-height:1.4; cursor:pointer; opacity:0; transition:opacity .12s; }
+.rpml-gx-row:hover .rpml-gx-copy { opacity:1; }
+.rpml-gx-copy:hover { background:var(--rpml-gx-copy-hover,#e5e7eb); color:var(--rpml-gx-fg,#111827); }
+.rpml-gx-copy.copied { opacity:1; color:var(--rpml-gx-ok,#059669); border-color:var(--rpml-gx-ok,#059669); }
+.rpml-gx-main { overflow:auto; min-height:0; background:var(--rpml-gx-main-bg,#f4f6f8); }
 .rpml-gx-err { padding:40px; color:#dc2626; font-family:ui-monospace,Menlo,monospace; }
 `;
 
 function injectChrome() {
+  injectThemeStyle();
   if (document.getElementById('rpml-gallery-style')) return;
   const s = document.createElement('style');
   s.id = 'rpml-gallery-style';
@@ -117,7 +126,7 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
   const side = document.createElement('aside');
   side.className = 'rpml-gx-side';
   const count = docs.length;
-  side.innerHTML = `<div class="rpml-gx-head"><span>RPML 文档<small>${count} 个文件</small></span><button class="rpml-gx-toggle" type="button" title="收起侧边栏" aria-label="收起侧边栏">«</button></div>`;
+  side.innerHTML = `<div class="rpml-gx-head"><span>RPML 文档<small>${count} 个文件</small></span><div class="rpml-gx-head-actions"><button class="rpml-gx-btn rpml-gx-theme" type="button" title="切换亮色/暗色" aria-label="切换亮色/暗色">◑</button><button class="rpml-gx-btn rpml-gx-toggle" type="button" title="收起侧边栏" aria-label="收起侧边栏">«</button></div></div>`;
   const nav = document.createElement('nav');
   nav.className = 'rpml-gx-nav';
   side.appendChild(nav);
@@ -137,7 +146,14 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
   side.querySelector('.rpml-gx-toggle')!.addEventListener('click', () => root.classList.add('collapsed'));
   fab.addEventListener('click', () => root.classList.remove('collapsed'));
 
-  const links = new Map<string, HTMLAnchorElement>();
+  // Light/dark theme toggle. Seeds from the `theme` URL param (or OS preference)
+  // and writes the choice back to the URL so it survives reloads.
+  initTheme();
+  side.querySelector('.rpml-gx-theme')!.addEventListener('click', () => {
+    setTheme(currentTheme() === 'dark' ? 'light' : 'dark');
+  });
+
+  const links = new Map<string, HTMLElement>();
 
   function renderNav(node: TreeNode, depth: number) {
     // Render leaf children first, then folders — folders as group labels.
@@ -145,12 +161,22 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
     const leaves = entries.filter(e => e.path).sort((a, b) => a.name.localeCompare(b.name));
     const folders = entries.filter(e => !e.path).sort((a, b) => a.name.localeCompare(b.name));
     for (const leaf of leaves) {
+      const row = document.createElement('div');
+      row.className = depth > 0 ? 'rpml-gx-row rpml-gx-indent' : 'rpml-gx-row';
       const a = document.createElement('a');
-      a.className = depth > 0 ? 'rpml-gx-item rpml-gx-indent' : 'rpml-gx-item';
+      a.className = 'rpml-gx-item';
       a.textContent = leaf.title || leaf.name;
       a.href = `#${leaf.path}`;
-      links.set(leaf.path!, a);
-      nav.appendChild(a);
+      const copy = document.createElement('button');
+      copy.className = 'rpml-gx-copy';
+      copy.type = 'button';
+      copy.title = '复制此页全部内容';
+      copy.setAttribute('aria-label', '复制此页全部内容');
+      copy.dataset.copyPath = leaf.path!;
+      copy.textContent = 'copy';
+      row.append(a, copy);
+      links.set(leaf.path!, row);
+      nav.appendChild(row);
     }
     for (const folder of folders) {
       const g = document.createElement('div');
@@ -206,7 +232,20 @@ export function mountGallery(docs: RpmlDoc[], host: HTMLElement = document.body)
   });
 
   nav.addEventListener('click', e => {
-    const a = (e.target as HTMLElement).closest('a.rpml-gx-item') as HTMLAnchorElement | null;
+    const el = e.target as HTMLElement;
+    const copyBtn = el.closest('.rpml-gx-copy') as HTMLButtonElement | null;
+    if (copyBtn) {
+      e.preventDefault();
+      const doc = byPath.get(copyBtn.dataset.copyPath!);
+      if (!doc) return;
+      void navigator.clipboard?.writeText(doc.source).then(() => {
+        copyBtn.classList.add('copied');
+        copyBtn.textContent = '已复制';
+        setTimeout(() => { copyBtn.classList.remove('copied'); copyBtn.textContent = 'copy'; }, 1500);
+      });
+      return;
+    }
+    const a = el.closest('a.rpml-gx-item') as HTMLAnchorElement | null;
     if (!a) return;
     e.preventDefault();
     const path = decodeURIComponent(a.hash.slice(1));

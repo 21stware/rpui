@@ -1,6 +1,6 @@
 {
   "name": "@21stware/rpui",
-  "version": "0.4.2",
+  "version": "0.4.4",
   "description": "RPUI: static UI prototype renderer (RPML Web Components runtime)",
   "type": "module",
   "main": "dist/rpui.js",
@@ -14,9 +14,7 @@
       "types": "./dist/rpui.d.ts",
       "default": "./dist/rpui.js"
     },
-    "./dist/rpui.js": "./dist/rpui.js",
-    "./llms.txt": "../../llms.txt",
-    "./SKILL.md": "../../rapid-prototype-implement/SKILL.md"
+    "./dist/rpui.js": "./dist/rpui.js"
   },
   "sideEffects": true,
   "files": [
