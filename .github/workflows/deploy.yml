@@ -36,6 +36,8 @@ jobs:
 
       - name: Build site (HTML + runtime bundles + examples → docs/)
         run: bun run site
+        env:
+          GA_ID: G-CRQEPH6EC0
 
       - uses: actions/configure-pages@v4
 

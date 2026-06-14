@@ -113,5 +113,5 @@ ${elementIndex}
 
 </div>`;
 
-  return ctx.page({ title: 'API — RPUI', active: 'api', version: ctx.VERSION }, body);
+  return ctx.page({ title: 'API — RPUI', active: 'api', version: ctx.VERSION, path: 'api.html', description: '@21stware/rpui npm 包 API、CLI 命令参考与 RPML 工具链文档。' }, body);
 }

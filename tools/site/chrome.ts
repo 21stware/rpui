@@ -1,6 +1,10 @@
 /** Shared page chrome: HTML shell, header nav, footer. */
 
 export const REPO = 'https://github.com/21stware/rpui';
+export const SITE_URL = 'https://21stware.github.io/rpui';
+
+// Set GA_ID env var at build time (GitHub Actions secret) or hardcode below.
+const GA_ID: string = process.env.GA_ID ?? '';
 
 const MARK = `<span class="mark">R</span>`;
 
@@ -8,12 +12,39 @@ export interface PageOpts {
   title: string;
   active: 'home' | 'guide' | 'components' | 'examples' | 'api' | 'playground';
   version: string;
+  /** Page meta description (used for <meta name="description"> and OG tags). */
+  description?: string;
+  /** URL path relative to site root, e.g. '' or 'guide.html'. Used for canonical + OG url. */
+  path?: string;
   /** extra <head> markup (page-specific styles/scripts) */
   head?: string;
   /** extra markup before </body> */
   bodyEnd?: string;
   /** relative path prefix to site root, e.g. '' or '../' */
   base?: string;
+}
+
+function gaSnippet(): string {
+  if (!GA_ID) return '';
+  return `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${GA_ID}');</script>`;
+}
+
+function seoHead(opts: PageOpts, base: string): string {
+  const canonical = `${SITE_URL}/${opts.path ?? ''}`;
+  const desc = opts.description ?? 'Rapid Prototype UI — 静态 UI 原型规格与运行时。';
+  return `<link rel="canonical" href="${canonical}" />
+<meta name="description" content="${desc}" />
+<meta name="robots" content="index, follow" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="${canonical}" />
+<meta property="og:title" content="${opts.title}" />
+<meta property="og:description" content="${desc}" />
+<meta property="og:site_name" content="RPUI" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="${opts.title}" />
+<meta name="twitter:description" content="${desc}" />
+${gaSnippet()}`;
 }
 
 function header(active: PageOpts['active'], version: string, base: string): string {
@@ -71,7 +102,7 @@ export function page(opts: PageOpts, body: string): string {
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>${opts.title}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
+${seoHead(opts, base)}<link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="${base}site.css" />

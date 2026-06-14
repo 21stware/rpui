@@ -112,7 +112,7 @@ route();
 </script>`;
 
   return ctx.page(
-    { title: '文档 — RPUI', active: 'guide', version: ctx.VERSION, bodyEnd: script },
+    { title: '文档 — RPUI', active: 'guide', version: ctx.VERSION, path: 'guide.html', description: 'RPML 语言规格、React 集成指南 — 注释模型、状态枚举、权限门控、三种渲染模式。', bodyEnd: script },
     body
   );
 }

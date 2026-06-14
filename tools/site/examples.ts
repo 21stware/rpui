@@ -39,5 +39,5 @@ function scale(){document.querySelectorAll('.ex-thumb').forEach(t=>{
 window.addEventListener('load',scale);window.addEventListener('resize',scale);scale();
 </script>`;
 
-  return ctx.page({ title: '示例 — RPUI', active: 'examples', version: ctx.VERSION, bodyEnd: script }, body);
+  return ctx.page({ title: '示例 — RPUI', active: 'examples', version: ctx.VERSION, path: 'examples.html', description: 'RPML 原型示例 — 邮件客户端、工单系统、数据仪表盘等真实产品用例。', bodyEnd: script }, body);
 }

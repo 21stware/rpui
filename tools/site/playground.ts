@@ -153,7 +153,7 @@ export function buildPlayground(ctx: Ctx): string {
 </script>`;
 
   return ctx.page(
-    { title: 'Playground — RPUI', active: 'playground', version: ctx.VERSION, head, bodyEnd: script },
+    { title: 'Playground — RPUI', active: 'playground', version: ctx.VERSION, path: 'playground.html', description: '在线 RPML Playground — 拖拽 .rpml 文件即时渲染，支持文件夹画廊模式。', head, bodyEnd: script },
     body,
   );
 }

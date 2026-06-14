@@ -75,5 +75,5 @@ if(hash&&COMPONENTS.find(c=>c.name===hash))active=hash;
 renderList('');renderMain();
 </script>`;
 
-  return ctx.page({ title: '组件 — RPUI', active: 'components', version: ctx.VERSION, head, bodyEnd: script }, body);
+  return ctx.page({ title: '组件 — RPUI', active: 'components', version: ctx.VERSION, path: 'components.html', description: '100+ 静态 UI 原型组件参考 — 布局、导航、表单、数据展示、iOS / macOS / Agent。', head, bodyEnd: script }, body);
 }

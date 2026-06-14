@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { markdown, escapeHtml } from './site/markdown.ts';
 import { SITE_CSS } from './site/css.ts';
-import { page, REPO } from './site/chrome.ts';
+import { page, REPO, SITE_URL } from './site/chrome.ts';
 import { buildHome } from './site/home.ts';
 import { buildGuide } from './site/guide.ts';
 import { buildExamples } from './site/examples.ts';
@@ -37,6 +37,13 @@ write('components.html', buildComponents(ctx));
 write('examples.html', buildExamples(ctx));
 write('api.html', buildApi(ctx));
 write('playground.html', buildPlayground(ctx));
+
+// sitemap.xml
+const PAGES = ['index.html','guide.html','components.html','examples.html','api.html','playground.html'];
+const now = new Date().toISOString().slice(0, 10);
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${PAGES.map(p => `  <url><loc>${SITE_URL}/${p}</loc><lastmod>${now}</lastmod></url>`).join('\n')}\n</urlset>`;
+writeFileSync(join(DOCS, 'sitemap.xml'), sitemap);
+console.log('  ✓ docs/sitemap.xml');
 
 // Assemble the runtime assets the generated HTML references, so `bun run site`
 // produces a portal that actually works locally (playground imports

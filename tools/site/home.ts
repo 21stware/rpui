@@ -66,5 +66,5 @@ export function buildHome(ctx: Ctx): string {
   <a class="btn btn-primary" href="guide.html">开始阅读语言规格 →</a>
 </div>
 `;
-  return ctx.page({ title: 'RPUI — Rapid Prototype UI', active: 'home', version: ctx.VERSION }, body);
+  return ctx.page({ title: 'RPUI — Rapid Prototype UI', active: 'home', version: ctx.VERSION, path: 'index.html', description: 'Rapid Prototype UI — 用一份静态文档涵盖交互状态、权限分支、加载/空/错误态。原生 Web Components，无需构建工具。' }, body);
 }
