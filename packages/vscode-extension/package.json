@@ -5,22 +5,35 @@
   "description": "RPML (.rpml) language support: syntax highlighting, tag/attribute completion, validation, and live preview.",
   "type": "commonjs",
   "private": true,
-  "publisher": "bracken",
+  "publisher": "21stware",
   "repository": {
     "type": "git",
     "url": "https://github.com/21stware/rpui.git",
     "directory": "packages/vscode-extension"
   },
-  "engines": { "vscode": "^1.84.0" },
-  "categories": ["Programming Languages", "Snippets", "Visualization"],
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Visualization"
+  ],
   "main": "./dist/extension.js",
-  "activationEvents": ["onLanguage:rpml"],
+  "activationEvents": [
+    "onLanguage:rpml"
+  ],
   "contributes": {
     "languages": [
       {
         "id": "rpml",
-        "aliases": ["RPML", "rpml"],
-        "extensions": [".rpml"],
+        "aliases": [
+          "RPML",
+          "rpml"
+        ],
+        "extensions": [
+          ".rpml"
+        ],
         "configuration": "./language-configuration.json",
         "icon": {
           "light": "./icons/rpml-file.s.svg",
@@ -56,8 +69,14 @@
         }
       ],
       "commandPalette": [
-        { "command": "rpml.openPreview", "when": "editorLangId == rpml" },
-        { "command": "rpml.openPreviewToSide", "when": "editorLangId == rpml" }
+        {
+          "command": "rpml.openPreview",
+          "when": "editorLangId == rpml"
+        },
+        {
+          "command": "rpml.openPreviewToSide",
+          "when": "editorLangId == rpml"
+        }
       ]
     },
     "configuration": {
@@ -73,7 +92,7 @@
   },
   "scripts": {
     "gen": "bun scripts/gen-elements.ts",
-    "copy-runtime": "mkdir -p media && cp ../../dist/rpui.js media/rpui.js",
+    "copy-runtime": "mkdir -p media && cp ../renderer-web/dist/rpui.js media/rpui.js",
     "build": "bun run gen && bun run copy-runtime && bun run bundle",
     "bundle": "esbuild src/extension.ts --bundle --platform=node --target=node18 --external:vscode --format=cjs --outfile=dist/extension.js",
     "watch": "esbuild src/extension.ts --bundle --platform=node --target=node18 --external:vscode --format=cjs --outfile=dist/extension.js --watch",

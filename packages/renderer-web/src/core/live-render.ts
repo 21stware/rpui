@@ -6,6 +6,8 @@ export interface LiveRenderOpts {
   /** Preserve scroll across re-render (default true). Pass false when switching docs. */
   preserve?: boolean;
   onError?: (msg: string | null) => void;
+  /** Inject data-rp-line attributes for pick-mode source tracing. */
+  annotateLines?: boolean;
 }
 
 /** Stateful single-document renderer — tracks initialization and exposes destroy(). */
@@ -16,7 +18,7 @@ export interface DocRenderer {
 
 export function createDocRenderer(
   host: HTMLElement,
-  opts: Pick<LiveRenderOpts, 'scroller' | 'onError'> = {}
+  opts: Pick<LiveRenderOpts, 'scroller' | 'onError' | 'annotateLines'> = {}
 ): DocRenderer {
   let initialized = false;
   return {
@@ -37,7 +39,7 @@ export function liveRender(host: HTMLElement, source: string, opts: LiveRenderOp
     ? { x: sc.scrollLeft, y: sc.scrollTop, px: pane?.scrollLeft ?? 0, py: pane?.scrollTop ?? 0 }
     : null;
   try {
-    host.replaceChildren(parseToPage(source));
+    host.replaceChildren(parseToPage(source, { annotateLines: opts.annotateLines }));
     onError?.(null);
   } catch (e) {
     onError?.((e as Error).message ?? String(e));

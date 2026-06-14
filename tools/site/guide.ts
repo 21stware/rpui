@@ -19,6 +19,7 @@ const SPEC_DOCS: [file: string, title: string][] = [
   ['spec/08-data-binding.md', '数据绑定'],
   ['spec/09-boundary-conditions.md', '边界条件'],
   ['spec/10-versioning.md', '版本策略'],
+  ['spec/react.md', 'React 集成'],
 ];
 
 const SKILL_DOCS: [file: string, title: string][] = [

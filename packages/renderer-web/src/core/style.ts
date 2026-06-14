@@ -12,7 +12,7 @@ page-el, page-el { display:block; padding:32px 40px; overflow:visible; }
 .page-el-title-row { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
 .page-el-title { margin:0; font-size:28px; line-height:1.2; letter-spacing:-.02em; }
 .page-el-route { font-size:13px; color:var(--rp-muted); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:rgba(255,255,255,.7); border:1px solid var(--rp-border); border-radius:999px; padding:3px 9px; }
-.page-el-description { margin:10px 0 0; color:#374151; line-height:1.6; font-size:14px; }
+.page-el-description { margin:10px 0 0; color:var(--rp-muted); line-height:1.6; font-size:14px; }
 .page-el-body { flex:0 1 auto; display:block; width:fit-content; max-width:100%; min-height:0; overflow:visible; }
 .annotation-el-pane { min-width:380px; max-width:680px; position:sticky; top:32px; height:auto; min-height:calc(100vh - 64px); max-height:calc(100vh - 64px); overflow-y:auto; overflow-x:auto; padding:0 0 48px 0; align-self:start; }
 .annotation-el-pane-inner { padding:4px 12px 24px 6px; }
@@ -23,10 +23,10 @@ main-view, main-view { display:block; width:fit-content; margin:0 0 28px; positi
 .rp-pin { position:absolute; z-index:20; display:grid; place-items:center; width:24px; height:24px; color:#fff; font-size:11px; font-weight:700; background:var(--rp-primary); border-radius:50% 50% 50% 0; transform:translate(-6px,-6px) rotate(-45deg); box-shadow:0 2px 8px rgba(37,99,235,.25); cursor:pointer; }
 .rp-pin > span { transform:rotate(45deg); }
 .rp-pin:hover { opacity:0.85; }
-annotation-el, annotation-el { display:block; width:fit-content; max-width:980px; margin:14px 0; line-height:1.65; color:#1f2937; font-size:14px; }
+annotation-el, annotation-el { display:block; width:fit-content; max-width:980px; margin:14px 0; line-height:1.65; color:var(--rp-text); font-size:14px; }
 annotation-el annotation-el, annotation-el annotation-el, annotation-el annotation-el, annotation-el annotation-el { margin:10px 0 8px 22px; }
 .annotation-el-head { display:flex; align-items:center; gap:8px; margin:0 0 4px; width:fit-content; }
-.annotation-el-title { font-weight:700; color:#111827; }
+.annotation-el-title { font-weight:700; color:var(--rp-text); }
 .annotation-el-marker { display:inline-grid; place-items:center; flex:0 0 auto; color:#fff; font-size:10px; font-weight:700; line-height:1; }
 .annotation-el-marker.drop { width:22px; height:22px; background:var(--rp-primary); border-radius:50% 50% 50% 0; transform:rotate(-45deg); }
 .annotation-el-marker.drop > span { transform:rotate(45deg); }

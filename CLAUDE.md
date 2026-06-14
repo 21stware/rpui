@@ -20,6 +20,7 @@ This is a **Bun workspace monorepo**. All source code lives under `packages/`.
 
 ```
 packages/renderer-web/   — Web Components runtime (@21stware/rpui, was rpui src/)
+packages/renderer-react/ — React binding (@21stware/rpui-react): <RpmlRenderer> wraps the runtime with incremental, scroll-preserving rendering; built with rolldown
 packages/parser/         — .rpml text → AST → DOM (rpml-parser, private)
 packages/validator/      — structural + semantic validation + CLI (rpml-validator, private)
 packages/compiler/       — compile a dir of .rpml → one self-contained HTML (rpml-compiler, private)
@@ -54,6 +55,7 @@ bun install                                    # install all workspace deps
 bun run dev                                    # open component preview at /preview/
 bun run --cwd packages/renderer-web typecheck  # TypeScript type-check
 bun run build                                  # build rpui.js + rpml-loader.js + gallery.js
+bun run --cwd packages/renderer-react build    # build @21stware/rpui-react (rolldown)
 bun run validate <file.rpml>                   # validate one .rpml
 bash tools/validate-examples.sh                # validate all examples/*.rpml
 bun run compile <dir> -o out.html              # compile a dir of .rpml → one HTML

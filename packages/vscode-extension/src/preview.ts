@@ -9,6 +9,7 @@ import * as path from 'path';
 export function registerPreview(context: vscode.ExtensionContext): vscode.Disposable[] {
   let panel: vscode.WebviewPanel | undefined;
   let previewedUri: vscode.Uri | undefined;
+  let lastUri = '';
   let debounce: ReturnType<typeof setTimeout> | undefined;
 
   const open = (column: vscode.ViewColumn) => {
@@ -33,17 +34,29 @@ export function registerPreview(context: vscode.ExtensionContext): vscode.Dispos
       );
       panel.iconPath = iconUri(context.extensionPath);
       panel.onDidDispose(
-        () => { panel = undefined; previewedUri = undefined; },
+        () => { panel = undefined; previewedUri = undefined; lastUri = ''; },
         null,
         context.subscriptions
       );
       // The webview signals 'ready' once its module loads; flush the latest
       // source then (avoids a race where the first postMessage is dropped).
+      // 'pick' messages carry a source line to reveal in the originating editor.
       panel.webview.onDidReceiveMessage(
-        msg => {
+        async msg => {
           if (msg?.type === 'ready' && panel && previewedUri) {
             const doc = docFor(previewedUri);
             if (doc) postSource(panel, doc.getText(), previewedUri.toString());
+          } else if (msg?.type === 'pick' && msg.line) {
+            const doc = vscode.workspace.textDocuments.find(d => d.uri.toString() === lastUri);
+            if (doc) {
+              const pos = new vscode.Position(Math.max(0, msg.line - 1), 0);
+              await vscode.window.showTextDocument(doc, {
+                selection: new vscode.Range(pos, pos),
+                preserveFocus: true,
+                viewColumn: panel?.viewColumn === vscode.ViewColumn.Two
+                  ? vscode.ViewColumn.One : vscode.ViewColumn.Active,
+              });
+            }
           }
         },
         null,
@@ -80,6 +93,11 @@ export function registerPreview(context: vscode.ExtensionContext): vscode.Dispos
       }
     })
   ];
+
+  function postSource(p: vscode.WebviewPanel, source: string, key: string) {
+    lastUri = key;
+    p.webview.postMessage({ type: 'render', source, key });
+  }
 }
 
 function previewTitle(doc: vscode.TextDocument): string {
@@ -116,12 +134,6 @@ function setShell(context: vscode.ExtensionContext, panel: vscode.WebviewPanel) 
   panel.webview.html = htmlShell(panel.webview.cspSource, runtimeUri);
 }
 
-/** Push new source into the already-loaded webview. `key` identifies the
- *  document so the webview can preserve scroll across same-document re-renders. */
-function postSource(panel: vscode.WebviewPanel, source: string, key: string) {
-  panel.webview.postMessage({ type: 'render', source, key });
-}
-
 function htmlShell(cspSource: string, runtimeUri: vscode.Uri): string {
   const nonce = String(Math.random()).slice(2) + String(Date.now());
   const csp = [
@@ -138,10 +150,26 @@ function htmlShell(cspSource: string, runtimeUri: vscode.Uri): string {
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="${csp}" />
 <style nonce="${nonce}">
-  html,body{margin:0;background:#f6f7f9}
-  #rpml-error{display:none;font-family:ui-monospace,SFMono-Regular,monospace;color:#b00020;padding:16px;white-space:pre-wrap}
-  #rpml-error.show{display:block}
-  #rpml-empty{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#6b7280;padding:24px}
+/* Map VS Code theme tokens → RPUI CSS vars so the prototype chrome matches the editor theme */
+:root {
+  --rp-bg: var(--vscode-editor-background, #f6f7f9);
+  --rp-surface: var(--vscode-sideBar-background, #ffffff);
+  --rp-surface-soft: var(--vscode-editorGroupHeader-tabsBackground, #f9fafb);
+  --rp-text: var(--vscode-editor-foreground, #111827);
+  --rp-muted: var(--vscode-descriptionForeground, #6b7280);
+  --rp-border: var(--vscode-panel-border, #e5e7eb);
+  --rp-border-strong: var(--vscode-editorWidget-border, #d1d5db);
+  --rp-primary: var(--vscode-button-background, #2563eb);
+  /* pick-mode highlight colors from VS Code selection tokens */
+  --rpui-pick-hover: var(--vscode-editor-hoverHighlightBackground, rgba(99,102,241,.07));
+  --rpui-pick-hover-border: var(--vscode-focusBorder, rgba(99,102,241,.8));
+  --rpui-pick-selected: var(--vscode-editor-selectionBackground, rgba(37,99,235,.12));
+  --rpui-pick-selected-border: var(--vscode-editor-selectionHighlightBorder, rgba(37,99,235,1));
+}
+html,body { margin:0; background:var(--rp-bg); }
+#rpml-error { display:none; font-family:ui-monospace,SFMono-Regular,monospace; color:var(--vscode-editorError-foreground,#b00020); padding:16px; white-space:pre-wrap; }
+#rpml-error.show { display:block; }
+#rpml-empty { font-family:var(--vscode-font-family,-apple-system,sans-serif); color:var(--rp-muted); padding:24px; }
 </style>
 </head>
 <body>
@@ -149,32 +177,34 @@ function htmlShell(cspSource: string, runtimeUri: vscode.Uri): string {
 <div id="rpml-root"></div>
 <pre id="rpml-error"></pre>
 <script type="module" nonce="${nonce}">
-  import { liveRender } from "${runtimeUri}";
-  const root = document.getElementById('rpml-root');
-  const err  = document.getElementById('rpml-error');
+  import { createDocRenderer, ModeManager } from "${runtimeUri}";
+  const root  = document.getElementById('rpml-root');
+  const err   = document.getElementById('rpml-error');
   const empty = document.getElementById('rpml-empty');
-  let lastKey = null;
-
-  function render(source, key) {
-    empty.style.display = 'none';
-    liveRender(root, source, {
-      preserve: key === lastKey,
-      onError: (msg) => {
-        if (msg) { err.textContent = 'RPML 渲染错误：' + msg; err.classList.add('show'); }
-        else { err.classList.remove('show'); }
-      }
-    });
-    lastKey = key;
-  }
-
-  window.addEventListener('message', (ev) => {
-    const msg = ev.data;
-    if (msg && msg.type === 'render') render(msg.source, msg.key);
-  });
-  // Signal readiness so the host can flush the first source.
   const vscode = acquireVsCodeApi();
+
+  const renderer = createDocRenderer(root, {
+    annotateLines: true,
+    onError: msg => {
+      if (msg) { err.textContent = 'RPML 渲染错误：' + msg; err.classList.add('show'); }
+      else { err.classList.remove('show'); }
+    }
+  });
+  // pick mode by default: clicking an element focuses its source line in the editor
+  const manager = new ModeManager(root, {
+    mode: 'pick',
+    onPick: info => vscode.postMessage({ type: 'pick', line: info.line, tag: info.tag, langTag: info.langTag, pin: info.pin }),
+  });
+
+  window.addEventListener('message', ev => {
+    const msg = ev.data;
+    if (!msg || msg.type !== 'render') return;
+    empty.style.display = 'none';
+    renderer.render(msg.source);
+  });
+
   vscode.postMessage({ type: 'ready' });
-</script>
+<\/script>
 </body>
 </html>`;
 }

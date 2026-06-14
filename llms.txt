@@ -10,6 +10,22 @@ A generated prototype imports one file only:
 
 `dist/rpui.js` registers all custom elements and injects runtime CSS plus Lucide-style inline SVG icons. Do not import external CSS, image CDNs, icon CDNs, or UI frameworks.
 
+## Rendering RPML
+
+There are two supported ways to render RPML markup:
+
+1. Standalone HTML — import `dist/rpui.js` and write the `<page>` markup inline, or load a `.rpml` file with `dist/rpml-loader.js` (`<rpml-app src="./page.rpml">`). See the recommended HTML shape at the end of this document.
+2. React — use the `@21stware/rpui-react` package. It wraps the runtime as a `<RpmlRenderer>` component with incremental, scroll-preserving rendering, suitable for live editors where the RPML text changes as the user types.
+
+```tsx
+import { RpmlRenderer } from '@21stware/rpui-react';
+
+// rpml is a string of RPML markup (a <page>…</page> document).
+<RpmlRenderer rpml={rpml} debounce={150} onError={msg => setError(msg)} />
+```
+
+Install both packages: `@21stware/rpui` (runtime, peer) and `@21stware/rpui-react` (binding). Props: `rpml` (required source string), `debounce` (ms, default 0 — debounce re-renders for live editors), `onError` (called with the parse-error message, or `null` when it clears), plus `className` / `style` on the host `<div>`. Each update re-parses and patches the host; already-initialized custom elements skip their setup, and scroll position is preserved. The RPML language and primitives below are identical regardless of which renderer you use. Full guide: `spec/react.md`.
+
 ARIA note: component states (checked / expanded / selected / disabled / current / pressed) follow the structure that the W3C ARIA Authoring Practices expect, so annotations can describe accessibility intent precisely. RPUI is static and does not emit runtime `role` / `aria-*` attributes — treat ARIA as a reference for which states to expose and document, not as runtime behavior.
 
 ## Core model

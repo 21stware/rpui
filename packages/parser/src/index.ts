@@ -74,13 +74,30 @@ function domToAst(el: Element): RpmlNode {
   return { tag: el.tagName.toLowerCase(), attrs, children, ...(text ? { text } : {}) };
 }
 
+/** Inject `data-rp-line="N"` (1-based) into every opening tag so pick-mode
+ *  elements can be traced back to their source line. Must run before normalize()
+ *  so line offsets reflect the original source. */
+function annotateLinesInSource(source: string): string {
+  const lines: number[] = new Array(source.length);
+  let ln = 1;
+  for (let i = 0; i < source.length; i++) { lines[i] = ln; if (source[i] === '\n') ln++; }
+  // Capture: tag | attrs (no slash) | optional self-closing slash
+  return source.replace(
+    /<([a-zA-Z][\w:-]*)((?:"[^"]*"|'[^']*'|[^>"'/])*)(\/?)>/g,
+    (_m, tag: string, attrs: string, sc: string, offset: number) =>
+      `<${tag}${attrs} data-rp-line="${lines[offset]}"${sc}>`
+  );
+}
+
 /** Parse a .rpml string into a DOM Element using the live document's HTML parser.
  *  Requires a browser environment. Language tags are rewritten to component tags
  *  first; custom elements then upgrade against the live registry — identical to
- *  inlining the component-tag markup in a .html file. */
-export function parseToPage(source: string): Element {
+ *  inlining the component-tag markup in a .html file.
+ *  Pass `{ annotateLines: true }` to inject `data-rp-line` for pick-mode line tracing. */
+export function parseToPage(source: string, opts: { annotateLines?: boolean } = {}): Element {
+  const src = opts.annotateLines ? annotateLinesInSource(source.trim()) : source;
   const holder = document.createElement('div');
-  holder.innerHTML = normalize(source);
+  holder.innerHTML = normalize(src);
   const root = holder.querySelector('page-el') ?? holder.firstElementChild;
   if (!root) throw new Error('RPML parse error: no <page> root element found');
   return root;
