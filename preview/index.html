@@ -3,27 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RPUI 组件浏览器</title>
+  <title>RPUI 预览</title>
   <script type="module" src="/packages/renderer-web/src/rpui.ts"></script>
   <style>
-    :root { --b: #e5e7eb; --muted: #6b7280; --pri: #2563eb; }
+    :root { --b: #e5e7eb; --b2: #eef0f3; --muted: #6b7280; --pri: #2563eb; --ink: #111827; --bg: #f4f6f8; --tile: #fff; }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #111827; background: #f4f6f8; }
-    .px-app { display: grid; grid-template-columns: 280px 1fr; height: 100vh; }
-    /* sidebar */
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+
+    /* ---- shared top bar ---- */
+    .top { position: sticky; top: 0; z-index: 50; background: rgba(244,246,248,.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--b); padding: 12px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .top h1 { margin: 0; font-size: 16px; letter-spacing: -0.02em; white-space: nowrap; }
+    .top h1 span { color: var(--muted); font-weight: 500; font-size: 12.5px; margin-left: 8px; }
+    .seg { display: inline-flex; border: 1px solid var(--b); border-radius: 9px; overflow: hidden; background: #fff; }
+    .seg button { border: 0; background: transparent; padding: 7px 14px; font-size: 13px; color: #374151; cursor: pointer; }
+    .seg button + button { border-left: 1px solid var(--b); }
+    .seg button.active { background: var(--pri); color: #fff; font-weight: 600; }
+    .top-search { flex: 1; min-width: 180px; max-width: 320px; height: 34px; padding: 0 12px; border: 1px solid var(--b); border-radius: 9px; font-size: 13px; outline: none; background: #fff; }
+    .top-search:focus { border-color: var(--pri); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+    .gx-toggles { display: flex; gap: 6px; margin-left: auto; }
+    .gx-toggle { font-size: 12px; padding: 6px 11px; border: 1px solid var(--b); border-radius: 8px; background: #fff; color: #374151; cursor: pointer; user-select: none; }
+    .gx-toggle.active { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; font-weight: 600; }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ---- browser view ---- */
+    #view-browser.active { display: grid; grid-template-columns: 260px 1fr; height: calc(100vh - 59px); }
     .px-side { display: flex; flex-direction: column; border-right: 1px solid var(--b); background: #fff; min-height: 0; }
-    .px-side-head { padding: 16px 16px 10px; border-bottom: 1px solid var(--b); }
-    .px-side-head h1 { margin: 0 0 10px; font-size: 16px; letter-spacing: -0.01em; }
-    .px-search { width: 100%; height: 34px; padding: 0 11px; border: 1px solid var(--b); border-radius: 8px; font-size: 13px; outline: none; }
-    .px-search:focus { border-color: var(--pri); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
     .px-list { flex: 1; overflow-y: auto; padding: 8px; }
     .px-group-label { padding: 10px 8px 4px; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
     .px-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 7px; font-size: 13px; color: #374151; cursor: pointer; font-family: ui-monospace, Menlo, monospace; }
     .px-item:hover { background: #f3f4f6; }
     .px-item.active { background: #eff6ff; color: #1d4ed8; font-weight: 650; }
     .px-count { color: var(--muted); font-size: 11px; padding: 4px 10px 10px; }
-    /* main */
-    .px-main { overflow-y: auto; min-height: 0; padding: 32px 40px 80px; }
+    .px-main { overflow-y: auto; min-height: 0; padding: 28px 36px 80px; }
     .px-title { margin: 0 0 2px; font-size: 24px; font-family: ui-monospace, Menlo, monospace; letter-spacing: -0.02em; }
     .px-group-tag { display: inline-block; margin-bottom: 20px; font-size: 12px; color: var(--muted); }
     .px-card { border: 1px solid var(--b); border-radius: 12px; background: #fff; margin-bottom: 20px; overflow: hidden; }
@@ -36,72 +49,322 @@
     .px-attrs tr:last-child td { border-bottom: 0; }
     .px-attrs td:first-child { font-family: ui-monospace, Menlo, monospace; color: #1d4ed8; white-space: nowrap; width: 1%; }
     .px-empty { color: var(--muted); padding: 40px; text-align: center; }
+
+    /* ---- gallery view ---- */
+    .gx-wrap { padding: 22px 28px 96px; }
+    .gx-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .gx-chip { font-size: 12px; padding: 5px 11px; border: 1px solid var(--b); border-radius: 999px; background: #fff; color: #374151; cursor: pointer; white-space: nowrap; user-select: none; }
+    .gx-chip:hover { border-color: #cbd2da; }
+    .gx-chip.active { background: var(--pri); border-color: var(--pri); color: #fff; font-weight: 600; }
+    .gx-section-head { display: flex; align-items: baseline; gap: 10px; margin: 26px 2px 14px; }
+    .gx-section-head h2 { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; color: #374151; }
+    .gx-section-head .gx-sec-count { font-size: 12px; color: var(--muted); }
+    .gx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); grid-auto-rows: 8px; gap: 16px; align-items: start; }
+    .gx-grid.dense { grid-auto-flow: dense; }
+    .gx-tile { background: var(--tile); border: 1px solid var(--b); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; transition: border-color .12s, box-shadow .12s; }
+    .gx-tile:hover { border-color: #cbd2da; box-shadow: 0 2px 12px rgba(15,23,42,.06); }
+    .gx-tile-head { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--b2); flex: none; }
+    .gx-tile-name { font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; font-weight: 650; color: #1f2937; cursor: pointer; }
+    .gx-tile-name:hover { color: var(--pri); }
+    .gx-tile-group { margin-left: auto; font-size: 10.5px; color: var(--muted); padding: 2px 7px; border-radius: 6px; background: #f3f4f6; white-space: nowrap; }
+    .gx-tile-body { padding: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; align-content: flex-start; min-width: 0; }
+    .gx-tile-body :is(tabs,tab,breadcrumb,segmented,steps,macos-menubar,macos-segmented,ios-tabbar,ios-segmented,pagination) { white-space: nowrap; }
+    .gx-grid.outline .gx-tile-body > * { outline: 1px dashed rgba(37,99,235,.25); outline-offset: 2px; }
+    .gx-count-foot { margin-top: 40px; text-align: center; color: var(--muted); font-size: 12px; }
+
+    /* ---- live editor view ---- */
+    #view-live.active { display: block; height: calc(100vh - 59px); }
+    .lv-split { display: grid; grid-template-columns: minmax(320px, 0.9fr) 1.4fr; height: 100%; }
+    .lv-editor, .lv-preview { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+    .lv-editor { border-right: 1px solid var(--b); background: #0f172a; }
+    .lv-pane-head { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; font-size: 12px; font-weight: 650; color: var(--muted); border-bottom: 1px solid var(--b2); background: #fafbfc; }
+    .lv-editor .lv-pane-head { color: #94a3b8; border-bottom-color: #1e293b; background: #0b1120; }
+    .lv-status { font-weight: 500; font-family: ui-monospace, Menlo, monospace; }
+    .lv-status.ok { color: #34d399; }
+    .lv-status.err { color: #f87171; }
+    #lv-input { flex: 1; resize: none; border: 0; outline: none; padding: 16px; background: #0f172a; color: #e2e8f0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.65; tab-size: 2; white-space: pre; overflow: auto; }
+    .lv-preview { background: var(--bg); }
+    .lv-render { flex: 1; overflow: auto; min-height: 0; }
+    .lv-error { margin: 16px; padding: 12px 14px; border: 1px solid #fca5a5; border-radius: 10px; background: #fef2f2; color: #b91c1c; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; white-space: pre-wrap; }
   </style>
 </head>
 <body>
-  <div class="px-app">
+  <header class="top">
+    <h1>RPUI<span>Dev Preview</span></h1>
+    <div class="seg" id="view-seg">
+      <button data-view="browser" class="active">浏览器</button>
+      <button data-view="gallery">Gallery</button>
+      <button data-view="live">Live</button>
+    </div>
+    <input class="top-search" type="search" id="search" placeholder="搜索组件 / 分组…" autocomplete="off" />
+    <div class="gx-toggles" id="gx-toggles" hidden>
+      <button class="gx-toggle active" id="gx-t-dense" title="紧凑铺排（bento 密铺）">密铺</button>
+      <button class="gx-toggle" id="gx-t-outline" title="为每个渲染元素描边，便于审查留白与边界">描边</button>
+    </div>
+  </header>
+
+  <!-- browser view -->
+  <section class="view active" id="view-browser">
     <aside class="px-side">
-      <div class="px-side-head">
-        <h1>RPUI 组件浏览器</h1>
-        <input class="px-search" type="search" placeholder="搜索组件…" id="px-search" autocomplete="off" />
-      </div>
       <nav class="px-list" id="px-list"></nav>
       <div class="px-count" id="px-count"></div>
     </aside>
     <main class="px-main" id="px-main"></main>
-  </div>
+  </section>
+
+  <!-- gallery view -->
+  <section class="view" id="view-gallery">
+    <div class="gx-wrap">
+      <div class="gx-chips" id="gx-chips"></div>
+      <div id="gx-grid-wrap"></div>
+    </div>
+  </section>
+
+  <!-- live editor view -->
+  <section class="view" id="view-live">
+    <div class="lv-split">
+      <div class="lv-editor">
+        <div class="lv-pane-head">
+          <span>RPML 源码</span>
+          <span class="lv-status" id="lv-status">就绪</span>
+        </div>
+        <textarea id="lv-input" spellcheck="false" autocomplete="off"></textarea>
+      </div>
+      <div class="lv-preview">
+        <div class="lv-pane-head"><span>实时渲染</span></div>
+        <div class="lv-render" id="lv-render"></div>
+      </div>
+    </div>
+  </section>
 
   <script type="module">
     import { COMPONENTS } from './components.js';
-    import { rewriteTags } from '/packages/parser/src/index.ts';
+    import { rewriteTags, parseToPage } from '/packages/parser/src/index.ts';
 
-    const listEl = document.getElementById('px-list');
-    const mainEl = document.getElementById('px-main');
-    const searchEl = document.getElementById('px-search');
-    const countEl = document.getElementById('px-count');
-    let active = COMPONENTS[0]?.name;
+    // ---- Canvas / annotation components: not in the UI catalog, but core to RPML
+    //      review. Hand-authored samples so the preview covers the full vocabulary. ----
+    const CANVAS = [
+      { group: 'Canvas / 标注', name: 'annotation',
+        html: '<annotation id="1" label="自动保存策略"><p>为防止用户数据丢失，系统部署以下后台保存机制：</p><ul><li><strong>保存频率：</strong>页面内容发生改变后，每隔 <code>30 秒</code> 自动执行一次后台静默保存。</li><li><strong>退出拦截：</strong>监测到切换页面、关闭标签页时，自动触发一次本地强制保存。</li><li><strong>网络异常处理：</strong>断网时转为本地 <code>LocalStorage</code> 存储，恢复后自动与云端同步。</li></ul></annotation>',
+        attrs: [['id', '编号，对应 data-pin'], ['label', '标题']] },
+      { group: 'Canvas / 标注', name: 'annotation-global',
+        html: '<annotation-global label="全局权限矩阵"><ul><li><strong>访客：</strong>只读，所有写操作入口隐藏。</li><li><strong>成员：</strong>可创建与编辑，不可删除。</li><li><strong>管理员：</strong>完整权限，含删除与成员管理。</li></ul></annotation-global>',
+        attrs: [['label', '标题（无编号、无 pin）']] },
+      { group: 'Canvas / 标注', name: 'enum',
+        html: '<annotation id="3" label="用户名字段状态"><enum><enum-item label="默认" description="空输入，placeholder 可见"></enum-item><enum-item label="填写中" description="1–2 字符，不触发校验"></enum-item><enum-item label="合法" description="绿色勾图标"></enum-item><enum-item label="已占用" description="服务端 409，红色提示"></enum-item></enum></annotation>',
+        attrs: [['(子) enum-item', 'label / description']] },
+    ];
 
+    const ALL = [...CANVAS, ...COMPONENTS];
+
+    // Width tiers for the bento grid. Horizontal components (tabs, menubars,
+    // breadcrumbs, segmented controls, tables) wrap their CJK text char-by-char
+    // when squeezed, so they get span-2/span-3 tiles; everything else stays compact.
+    const FULL = new Set(['annotation','annotation-global','enum','macos-menubar','macos-window','macos-table','table','kanban','chat','command-palette','diff','code-block','calendar','timeline','image-grid','diagram']);
+    const WIDE = new Set(['tabs','breadcrumb','segmented','steps','pagination','composer','form','banner','navigator','tree','accordion','key-value','ios-list','ios-tabbar','macos-sidebar','macos-toolbar','macos-segmented','bulk-action-bar','suggestions','context-menu','toc','drawer','modal','alert','reasoning','agent-output','quota-bar','audit-row','autocomplete']);
+
+    const searchEl = document.getElementById('search');
+    const seg = document.getElementById('view-seg');
+    const gxToggles = document.getElementById('gx-toggles');
+
+    let mode = 'browser';
     function escapeHtml(s) { return s.replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
-
-    function filtered(q) {
-      q = q.trim().toLowerCase();
-      if (!q) return COMPONENTS;
-      return COMPONENTS.filter(c => c.name.toLowerCase().includes(q) || c.group.toLowerCase().includes(q));
+    function filtered() {
+      const q = searchEl.value.trim().toLowerCase();
+      if (!q) return ALL;
+      return ALL.filter(c => c.name.toLowerCase().includes(q) || c.group.toLowerCase().includes(q));
     }
 
-    function renderList(q) {
-      const items = filtered(q);
-      countEl.textContent = items.length + ' / ' + COMPONENTS.length + ' 个组件';
+    /* ============ browser view ============ */
+    const listEl = document.getElementById('px-list');
+    const mainEl = document.getElementById('px-main');
+    const countEl = document.getElementById('px-count');
+    let active = ALL[0]?.name;
+
+    function renderList() {
+      const items = filtered();
+      countEl.textContent = items.length + ' / ' + ALL.length + ' 个组件';
       if (!items.length) { listEl.innerHTML = '<div class="px-empty">无匹配</div>'; return; }
+      if (!items.find(x => x.name === active)) active = items[0].name;
       let html = '', lastGroup = null;
       for (const c of items) {
         if (c.group !== lastGroup) { html += '<div class="px-group-label">' + escapeHtml(c.group) + '</div>'; lastGroup = c.group; }
-        html += '<div class="px-item' + (c.name === active ? ' active' : '') + '" data-name="' + c.name + '">' + escapeHtml(c.name) + '</div>';
+        html += '<div class="px-item' + (c.name === active ? ' active' : '') + '" data-name="' + escapeHtml(c.name) + '">' + escapeHtml(c.name) + '</div>';
       }
       listEl.innerHTML = html;
-      listEl.querySelectorAll('.px-item').forEach(el => el.addEventListener('click', () => { active = el.dataset.name; renderList(searchEl.value); renderMain(); }));
+      listEl.querySelectorAll('.px-item').forEach(el => el.addEventListener('click', () => { active = el.dataset.name; renderList(); renderMain(); }));
     }
 
     function renderMain() {
-      const c = COMPONENTS.find(x => x.name === active);
+      const c = ALL.find(x => x.name === active);
       if (!c) { mainEl.innerHTML = '<div class="px-empty">选择左侧组件查看</div>'; return; }
-      const attrsRows = c.attrs.map(([a, d]) => '<tr><td>' + escapeHtml(a) + '</td><td>' + escapeHtml(d) + '</td></tr>').join('');
+      const attrsRows = (c.attrs || []).map(([a, d]) => '<tr><td>' + escapeHtml(a) + '</td><td>' + escapeHtml(d) + '</td></tr>').join('');
       mainEl.innerHTML =
         '<h2 class="px-title">' + escapeHtml(c.name) + '</h2>' +
         '<span class="px-group-tag">' + escapeHtml(c.group) + '</span>' +
         '<div class="px-card"><div class="px-card-head">渲染预览</div><div class="px-render">' + rewriteTags(c.html) + '</div></div>' +
-        '<div class="px-card"><div class="px-card-head">属性</div><table class="px-attrs"><thead><tr><th>属性</th><th>说明</th></tr></thead><tbody>' + attrsRows + '</tbody></table></div>' +
+        (attrsRows ? '<div class="px-card"><div class="px-card-head">属性</div><table class="px-attrs"><thead><tr><th>属性</th><th>说明</th></tr></thead><tbody>' + attrsRows + '</tbody></table></div>' : '') +
         '<div class="px-card"><div class="px-card-head">源码</div><pre class="px-code">' + escapeHtml(c.html) + '</pre></div>';
     }
 
-    searchEl.addEventListener('input', () => {
-      const items = filtered(searchEl.value);
-      if (items.length && !items.find(x => x.name === active)) { active = items[0].name; renderMain(); }
-      renderList(searchEl.value);
-    });
+    /* ============ gallery view ============ */
+    const chipsEl = document.getElementById('gx-chips');
+    const gridWrap = document.getElementById('gx-grid-wrap');
+    const denseBtn = document.getElementById('gx-t-dense');
+    const outlineBtn = document.getElementById('gx-t-outline');
+    let activeGroup = 'All';
+    let dense = true, outline = false;
+    const groups = ['All', ...[...new Set(ALL.map(c => c.group))]];
 
-    renderList('');
-    renderMain();
+    function renderChips() {
+      chipsEl.innerHTML = groups.map(g =>
+        `<button class="gx-chip${g === activeGroup ? ' active' : ''}" data-group="${escapeHtml(g)}">${escapeHtml(g)}</button>`
+      ).join('');
+      chipsEl.querySelectorAll('.gx-chip').forEach(el =>
+        el.addEventListener('click', () => { activeGroup = el.dataset.group; renderGallery(); }));
+    }
+
+    function galleryItems() {
+      return filtered().filter(c => activeGroup === 'All' || c.group === activeGroup);
+    }
+
+    function tileHtml(c) {
+      const span = FULL.has(c.name) ? 3 : WIDE.has(c.name) ? 2 : 1;
+      const colSpan = span > 1 ? `grid-column: span ${span};` : '';
+      return `<article class="gx-tile" style="${colSpan}">
+        <div class="gx-tile-head">
+          <span class="gx-tile-name" data-name="${escapeHtml(c.name)}" title="在浏览器视图中打开">${escapeHtml(c.name)}</span>
+          <span class="gx-tile-group">${escapeHtml(c.group)}</span>
+        </div>
+        <div class="gx-tile-body">${rewriteTags(c.html)}</div>
+      </article>`;
+    }
+
+    function renderGallery() {
+      renderChips();
+      const items = galleryItems();
+      if (!items.length) { gridWrap.innerHTML = '<div class="px-empty">无匹配组件</div>'; return; }
+      const bySection = [];
+      let cur = null;
+      for (const c of items) {
+        if (!cur || cur.group !== c.group) { cur = { group: c.group, items: [] }; bySection.push(cur); }
+        cur.items.push(c);
+      }
+      const gridCls = `gx-grid${dense ? ' dense' : ''}${outline ? ' outline' : ''}`;
+      let html = '';
+      for (const sec of bySection) {
+        html += `<div class="gx-section-head"><h2>${escapeHtml(sec.group)}</h2><span class="gx-sec-count">${sec.items.length}</span></div>`;
+        html += `<div class="${gridCls}">${sec.items.map(tileHtml).join('')}</div>`;
+      }
+      html += `<div class="gx-count-foot">共 ${items.length} / ${ALL.length} 个组件</div>`;
+      gridWrap.innerHTML = html;
+      // jump to browser view on tile-name click
+      gridWrap.querySelectorAll('.gx-tile-name').forEach(el =>
+        el.addEventListener('click', () => { active = el.dataset.name; setMode('browser'); renderList(); renderMain(); }));
+      scheduleAutosize();
+    }
+
+    let roTiles;
+    function scheduleAutosize() {
+      requestAnimationFrame(() => requestAnimationFrame(autosize));
+      [120, 350, 700].forEach(t => setTimeout(autosize, t));
+      roTiles?.disconnect();
+      roTiles = new ResizeObserver(() => requestAnimationFrame(autosize));
+      gridWrap.querySelectorAll('.gx-tile-body').forEach(b => roTiles.observe(b));
+    }
+    function autosize() {
+      if (mode !== 'gallery') return;
+      const ROW = 8, GAP = 16;
+      gridWrap.querySelectorAll('.gx-tile').forEach(tile => {
+        tile.style.gridRow = '';
+        const h = tile.getBoundingClientRect().height;
+        const span = Math.max(1, Math.round((h + GAP) / (ROW + GAP)));
+        tile.style.gridRow = `span ${span}`;
+      });
+    }
+
+    /* ============ live editor view ============ */
+    const lvInput = document.getElementById('lv-input');
+    const lvRender = document.getElementById('lv-render');
+    const lvStatus = document.getElementById('lv-status');
+    const LV_SEED = `<page title="实时预览" route="/live" description="编辑左侧源码，右侧即时渲染。">
+
+  <view device="web" scale="0.8">
+    <viewport device="web">
+      <navigator height="56" data-pin="1">
+        <logo label="App"></logo>
+        <avatar initials="OC"></avatar>
+      </navigator>
+      <panel padding="24">
+        <stat-card label="活跃用户" value="12,480" trend="up" change="+12%"></stat-card>
+      </panel>
+    </viewport>
+  </view>
+
+  <annotation id="1" label="顶部导航">
+    固定顶栏，高度 <code>56px</code>，包含 Logo 与用户头像。
+  </annotation>
+
+</page>`;
+    const LV_KEY = 'rpui-live-src';
+    let lvTimer = 0;
+
+    function renderLive() {
+      const src = lvInput.value;
+      try { localStorage.setItem(LV_KEY, src); } catch {}
+      if (!src.trim()) { lvRender.innerHTML = ''; lvStatus.textContent = '空'; lvStatus.className = 'lv-status'; return; }
+      try {
+        const el = parseToPage(src);
+        lvRender.replaceChildren(el);
+        lvStatus.textContent = '已渲染';
+        lvStatus.className = 'lv-status ok';
+      } catch (e) {
+        lvRender.innerHTML = `<div class="lv-error">${escapeHtml(String(e && e.message || e))}</div>`;
+        lvStatus.textContent = '解析错误';
+        lvStatus.className = 'lv-status err';
+      }
+    }
+
+    function scheduleLive() {
+      clearTimeout(lvTimer);
+      lvStatus.textContent = '输入中…';
+      lvStatus.className = 'lv-status';
+      lvTimer = setTimeout(renderLive, 200);
+    }
+
+    lvInput.addEventListener('input', scheduleLive);
+    // Tab inserts two spaces instead of moving focus.
+    lvInput.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab') return;
+      e.preventDefault();
+      const s = lvInput.selectionStart, end = lvInput.selectionEnd;
+      lvInput.value = lvInput.value.slice(0, s) + '  ' + lvInput.value.slice(end);
+      lvInput.selectionStart = lvInput.selectionEnd = s + 2;
+      scheduleLive();
+    });
+    try { lvInput.value = localStorage.getItem(LV_KEY) || LV_SEED; } catch { lvInput.value = LV_SEED; }
+
+    /* ============ view switching ============ */
+    function setMode(next) {
+      mode = next;
+      seg.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.view === next));
+      document.getElementById('view-browser').classList.toggle('active', next === 'browser');
+      document.getElementById('view-gallery').classList.toggle('active', next === 'gallery');
+      document.getElementById('view-live').classList.toggle('active', next === 'live');
+      gxToggles.hidden = next !== 'gallery';
+      searchEl.hidden = next === 'live';
+      if (next === 'browser') { renderList(); renderMain(); }
+      else if (next === 'gallery') renderGallery();
+      else renderLive();
+    }
+
+    seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.view)));
+    denseBtn.addEventListener('click', () => { dense = !dense; denseBtn.classList.toggle('active', dense); renderGallery(); });
+    outlineBtn.addEventListener('click', () => { outline = !outline; outlineBtn.classList.toggle('active', outline); renderGallery(); });
+    searchEl.addEventListener('input', () => { if (mode === 'browser') { renderList(); renderMain(); } else if (mode === 'gallery') renderGallery(); });
+    window.addEventListener('resize', () => requestAnimationFrame(autosize));
+
+    setMode('browser');
   </script>
 </body>
 </html>
