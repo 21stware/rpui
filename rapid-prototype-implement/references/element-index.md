@@ -34,27 +34,31 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 | Element | Category | Description |
 |---------|----------|-------------|
 | search | Controls | Search field with state (default/focus/filled/error/disabled) and optional clear button |
-| input | Controls | Text input field with label, state, value, error-message |
-| textarea | Controls | Multi-line text input with rows and state |
-| select | Controls | Dropdown select; state collapsed/expanded/disabled; options as CSV |
+| input | Controls | Text input with label, state, value, optional leading icon, error, help |
+| textarea | Controls | Multi-line text input with rows, label, state, error, help |
+| select | Controls | Dropdown select; state collapsed/expanded/filled/error/disabled; options CSV; error |
 | button | Controls | Action button with variant (primary/secondary/ghost/danger/link), state, icon, size |
 | button-group | Controls | Container grouping related buttons |
-| checkbox | Controls | Checkbox with state (unchecked/checked/indeterminate/disabled) |
-| radio | Controls | Radio button with state (unchecked/checked/disabled) |
-| toggle | Controls | Toggle switch with state (on/off/disabled) |
+| checkbox | Controls | Checkbox with state (unchecked/checked/indeterminate/disabled/error) |
+| checkbox-group | Controls | Checkbox group with label, direction, and validation error |
+| radio | Controls | Radio button with state (unchecked/checked/disabled/error) |
+| radio-group | Controls | Radio group with label, direction, and validation error |
+| toggle | Controls | Toggle switch with state (on/off/disabled/error) |
+| password-input | Controls | Masked password field with optional eye toggle; full state matrix |
+| tag-input | Controls | Chip multi-input; tags CSV, placeholder, label, state, error |
 | form | Controls | Form container with layout (vertical/horizontal) |
-| form-item | Controls | Labeled form field wrapper with required and error attributes |
-| date-picker | Controls | Date picker input with state and value |
-| upload | Controls | File upload zone with state (empty/has-file/uploading) and progress |
+| form-item | Controls | Labeled form field wrapper with required, error, help |
+| date-picker | Controls | Date picker input with state, value, error, help |
+| upload | Controls | File upload zone with state (empty/has-file/uploading/error) and progress |
 | image-placeholder | Controls | Placeholder for images; use instead of external image URLs |
 | progress | Controls | Progress bar or circle with value, kind, and status |
-| slider | Controls | Single-thumb slider with value, min, max |
-| range | Controls | Dual-thumb range slider with low, high, min, max |
-| number-input | Controls | Numeric input with increment/decrement steppers |
-| rating | Controls | Star rating display with value and max |
-| pin-input | Controls | OTP/PIN cell input with length and value |
-| color-swatch | Controls | Color swatch chip with hex value and label |
-| autocomplete | Controls | Autocomplete input showing options; open attribute shows the list |
+| slider | Controls | Single-thumb slider with value, min, max; state error/disabled |
+| range | Controls | Dual-thumb range slider with low, high, min, max; state error/disabled |
+| number-input | Controls | Numeric input with +/- steppers; state error/disabled |
+| rating | Controls | Star rating display with value and max; state disabled |
+| pin-input | Controls | OTP/PIN cell input with length and value; state disabled |
+| color-swatch | Controls | Color swatch chip with hex value and label; state disabled |
+| autocomplete | Controls | Autocomplete input; open shows list; label, state, error |
 
 ## Navigation primitives
 
@@ -81,8 +85,14 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| table | Data display | Generated static table; columns CSV; has-checkbox and has-action add affordances |
-| table-row | Data display | Standalone table row with state (default/selected/unread/highlighted/disabled) |
+| table | Data display | Static table; columns CSV; has-checkbox and has-action add affordances; `<table-row>` children pin exact cell values, else sampled by `rows` |
+| table-row | Data display | `table` child declaring one explicit row; `content` CSV, optional `checked` |
+| table-list-row | Data display | Standalone row slice with `content` CSV and state (default/selected/unread/highlighted/disabled) |
+| chart | Data display | Static inline-SVG data viz; kind bar/line/area/donut/sparkline; data CSV; labels; height; color |
+| avatar-group | Data display | Overlapping avatar stack with +N overflow; items count or `<avatar>` children |
+| comment | Data display | Comment thread entry; author/avatar/time; body slot; nest for replies |
+| file-list | Data display | File attachment list container; items count or `<file-item>` children |
+| file-item | Data display | One file row; name (sets icon), size, state uploaded/uploading/error, progress |
 | bulk-action-bar | Data display | Bulk action bar shown when rows are selected; count and actions CSV |
 | empty | Data display | Empty state with label, description, and optional action |
 | loading | Data display | Loading placeholder; kind skeleton or spinner; rows count |
@@ -160,14 +170,14 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 |---------|----------|-------------|
 | chat | Agent | Conversation container wrapping the message stream |
 | user-message | Agent | Right-aligned user message bubble |
-| assistant-message | Agent | Left-aligned assistant message with optional rich children |
+| agent-message | Agent | Left-aligned agent message (default role "Agent") with optional rich children |
 | system-message | Agent | Centered system/context note |
-| tool-call | Agent | Tool/function call card with name, state (running/done/error), args |
+| tool-call | Agent | Tool call; shows the tool name as headline + 工具 tag + status; args on their own line |
 | agent-output | Agent | Command/code/tool output block (kind: text/code/terminal) |
 | reasoning | Agent | Collapsible thinking/reasoning block |
 | message-actions | Agent | Per-message action buttons (copy/retry/up/down/edit/share) |
 | suggestions | Agent | Suggested reply/prompt chips |
 | typing | Agent | Streaming typing indicator |
-| composer | Agent | Prompt input bar with state (idle/streaming) |
+| composer | Agent | Prompt input bar; attachments (files), mode toggles (thinking/web/code), model pill, state idle/streaming/disabled |
 | citation | Agent | Source reference chip with index and title |
 | token-usage | Agent | Token/context usage meter with used and limit |

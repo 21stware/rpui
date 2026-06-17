@@ -137,8 +137,9 @@ Keep annotation and enum-item sibling order intentional and stable: the generate
 
 ### Data and content display
 
-- `<table rows="6" columns="发件人,消息预览,时间,状态" has-checkbox has-action>` — generated static table. Cell text is sampled by the runtime from the column names, so you cannot specify exact cell values; describe precise data in the annotation instead.
-- `<table-row state="default|selected|unread|highlighted|disabled">` — standalone row slice.
+- `<table rows="6" columns="发件人,消息预览,时间,状态" has-checkbox has-action>` — static table. With no `<table-row>` children the runtime samples cell text from the column names; to pin exact cell values, add `<table-row>` children.
+- `<table-row content="张三,进行中" checked>` — a `table` child declaring one explicit row; `content` is comma-separated cells (count matches `columns`), `checked` ticks the checkbox. Present `<table-row>` children take priority over `rows` sampling.
+- `<table-list-row content="张三,zhang@example.com,管理员,激活" state="default|selected|unread|highlighted|disabled">` — standalone row slice for annotations/enums.
 - `<bulk-action-bar count="3" actions="标为已读,归档,删除">`.
 - `<empty label="暂无数据" description="..." has-action>`.
 - `<loading rows="4" kind="skeleton|spinner">` (`style="spinner"` also works for compatibility).
@@ -147,24 +148,32 @@ Keep annotation and enum-item sibling order intentional and stable: the generate
 - `<badge count="120" max="99">`.
 - `<tag label="已启用" color="green|orange|red" closable>`.
 - `<stat-card label="活跃用户" value="12,480" trend="up|down|flat" change="+12%">`.
+- `<chart kind="bar|line|area|donut|sparkline" data="12,28,18,34" labels="Q1,Q2,Q3,Q4" height="160" color="var(--rp-primary)">` — static inline-SVG data viz (offline, no CDN). Closes the dashboard gap; `sparkline` fits beside a metric.
+- `<avatar-group items="3" overflow="5" size="32">` — overlapping stacked avatars with `+N` overflow; or `<avatar>` children.
+- `<comment author="..." avatar="..." time="..." state="me">…body / nested <comment>…</comment>` — comment / discussion thread; nest `comment` for replies.
+- `<file-list items="3">` + `<file-item name="方案.pdf" size="1.2 MB" state="uploaded|uploading|error" progress="60">` — multi-file attachment list with states.
 
 ### Forms and controls
 
 All form states are explicit through attributes; there is no runtime focus or input behavior.
 
 - `<search state="default|focus|filled|error|disabled" placeholder="..." value="..." has-clear-button>`.
-- `<input state="default|focus|filled|error|disabled" label="..." placeholder="..." value="..." has-clear-button error-message="...">`.
-- `<textarea state="default|focus|filled|error|disabled" rows="3" placeholder="..." value="...">`.
-- `<select state="collapsed|expanded|disabled" label="..." value="..." options="A,B,C">`.
-- `<date-picker state="default|focus|filled|error|disabled" value="2026-06-07">`.
-- `<checkbox state="unchecked|checked|indeterminate|disabled" label="...">`.
-- `<radio state="unchecked|checked|disabled" label="...">`.
-- `<toggle state="on|off|disabled" label="...">`.
+- `<input state="default|focus|filled|error|disabled" label="..." placeholder="..." value="..." icon="user" has-clear-button error="..." help="...">` — `error` and `error-message` are both accepted (alias); `icon` adds a leading icon (no icon by default; `<search>` keeps its magnifier).
+- `<textarea state="default|focus|filled|error|disabled" rows="3" label="..." placeholder="..." value="..." error="..." help="...">`.
+- `<select state="collapsed|expanded|filled|error|disabled" label="..." value="..." options="A,B,C" error="...">`.
+- `<date-picker state="default|focus|filled|error|disabled" label="..." value="2026-06-07" error="...">`.
+- `<checkbox state="unchecked|checked|indeterminate|disabled|error" label="...">`.
+- `<checkbox-group label="..." direction="horizontal|vertical" error="...">…<checkbox>…</checkbox-group>` — choice group with group label + validation error.
+- `<radio state="unchecked|checked|disabled|error" label="...">`.
+- `<radio-group label="..." direction="horizontal|vertical" error="...">…<radio>…</radio-group>`.
+- `<toggle state="on|off|disabled|error" label="...">`.
+- `<password-input value="..." placeholder="..." label="..." state="default|focus|filled|error|disabled" has-show error="..." help="...">` — masked dots + optional eye toggle.
+- `<tag-input tags="A,B,C" placeholder="..." label="..." state="default|focus|filled|error|disabled" error="...">` — chip multi-input.
 - `<button label="..." variant="primary|secondary|ghost|danger|link" state="default|disabled|loading" icon="plus" size="sm|md|lg">`.
 - `<button-group>...</button-group>`.
 - `<form layout="vertical|horizontal">`.
-- `<form-item label="..." required error="...">...</form-item>`.
-- `<upload state="empty|has-file|uploading" file="document.pdf" progress="60">`.
+- `<form-item label="..." required error="..." help="...">...</form-item>`.
+- `<upload state="empty|has-file|uploading|error" file="document.pdf" progress="60" error="...">`.
 
 ### Feedback
 
@@ -178,13 +187,13 @@ All form states are explicit through attributes; there is no runtime focus or in
 
 ### Data input (additional)
 
-- `<slider value="60" min="0" max="100" label="..." show-value>`.
-- `<range low="20" high="70" min="0" max="100">` — dual-thumb range.
-- `<number-input value="42">` — input with +/- steppers.
-- `<rating value="3" max="5">` — star rating.
-- `<pin-input length="4" value="12">` — OTP/PIN cells.
-- `<color-swatch value="#2563eb" label="...">`.
-- `<autocomplete value="..." placeholder="..." options="A,B,C" open>`.
+- `<slider value="60" min="0" max="100" label="..." show-value state="default|error|disabled">`.
+- `<range low="20" high="70" min="0" max="100" state="default|error|disabled">` — dual-thumb range.
+- `<number-input value="42" state="default|error|disabled">` — input with +/- steppers.
+- `<rating value="3" max="5" state="default|disabled">` — star rating.
+- `<pin-input length="4" value="12" state="default|disabled">` — OTP/PIN cells.
+- `<color-swatch value="#2563eb" label="..." state="default|disabled">`.
+- `<autocomplete value="..." placeholder="..." options="A,B,C" open label="..." state="default|focus|filled|error|disabled" error="...">`.
 
 ### Data display (additional)
 
@@ -243,15 +252,15 @@ For chat, copilot, and agent prototypes:
 
 - `<chat>` — conversation container; wraps the message stream.
 - `<user-message text="..." initials="我">` — right-aligned user bubble (text attr or rich children).
-- `<assistant-message name="助手" text="...">` — left-aligned assistant message; children render as rich content (can contain tool-call/output/citation).
+- `<agent-message name="Agent" text="...">` — left-aligned agent message (default role label `Agent`); children render as rich content (can contain tool-call/output/citation).
 - `<system-message text="...">` — centered system/context note.
-- `<tool-call name="search" state="running|done|error" args="...">` — tool/function call card with status.
+- `<tool-call name="search" state="running|done|error" args="query=…">` — tool/function call. Renders the **tool name** as the headline with a `工具` tag and a status label; `args` is shown on its own line beneath — never as a `name(args)` method call.
 - `<agent-output kind="text|code|terminal" label="..." text="...">` — command/code/tool output block.
 - `<reasoning expanded>…</reasoning>` — collapsible thinking/reasoning block.
 - `<message-actions actions="copy,retry,up,down,edit,share">` — per-message action buttons.
 - `<suggestions items="A,B,C">` — suggested reply / prompt chips.
 - `<typing>` — streaming typing indicator.
-- `<composer value="..." placeholder="..." state="idle|streaming">` — prompt input bar (send button becomes stop while streaming).
+- `<composer value="..." placeholder="..." state="idle|streaming|disabled" modes="thinking,web" files="报告.pdf,数据.xlsx" model="GPT-4o">` — prompt input bar. `files` renders attachment chips; `modes` activates built-in toggle switches (深度思考/联网/代码 — `thinking|web|code`); `model` shows a model pill; send becomes stop while `streaming`.
 - `<citation index="1" title="...">` — source reference chip.
 - `<token-usage used="1840" limit="8000">` — token/context usage meter.
 

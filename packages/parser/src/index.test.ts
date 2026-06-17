@@ -30,6 +30,7 @@ describe('vocabulary map', () => {
     expect(toComponentTag('split-pane')).toBe('split-pane');
     expect(toComponentTag('command-palette')).toBe('command-palette');
     expect(toComponentTag('table-row')).toBe('table-row');
+    expect(toComponentTag('table-list-row')).toBe('table-list-row');
     expect(toComponentTag('ios-navbar')).toBe('ios-navbar');
     expect(toComponentTag('macos-window')).toBe('macos-window');
   });

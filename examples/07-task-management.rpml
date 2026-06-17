@@ -148,10 +148,10 @@
       </annotation>
       <annotation label="表格行状态">
         <enum>
-          <enum-item label="正常行"><table-row state="default"></table-row></enum-item>
-          <enum-item label="逾期行（高亮）"><table-row state="highlighted"></table-row></enum-item>
-          <enum-item label="已选择行"><table-row state="selected"></table-row></enum-item>
-          <enum-item label="已完成行（置灰）"><table-row state="disabled"></table-row></enum-item>
+          <enum-item label="正常行"><table-list-row content="API 接入,王五,待开始" state="default"></table-list-row></enum-item>
+          <enum-item label="逾期行（高亮）"><table-list-row content="数据看板,赵六,逾期" state="highlighted"></table-list-row></enum-item>
+          <enum-item label="已选择行"><table-list-row content="权限重构,张三,进行中" state="selected"></table-list-row></enum-item>
+          <enum-item label="已完成行（置灰）"><table-list-row content="登录改版,李四,已完成" state="disabled"></table-list-row></enum-item>
         </enum>
       </annotation>
       <annotation label="批量删除与结果反馈">

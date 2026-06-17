@@ -20,19 +20,19 @@ export const PRIMITIVES: readonly string[] = [
   // layout
   'viewport', 'layout', 'panel', 'sidebar', 'logo', 'split-pane', 'divider', 'spacer',
   // controls
-  'search', 'input', 'textarea', 'select', 'button', 'button-group', 'checkbox', 'radio', 'toggle', 'form', 'form-item', 'date-picker', 'upload', 'image-placeholder', 'progress', 'slider', 'range', 'number-input', 'rating', 'pin-input', 'color-swatch', 'autocomplete',
+  'search', 'input', 'textarea', 'select', 'button', 'button-group', 'checkbox', 'checkbox-group', 'radio', 'radio-group', 'toggle', 'password-input', 'tag-input', 'form', 'form-item', 'date-picker', 'upload', 'image-placeholder', 'progress', 'slider', 'range', 'number-input', 'rating', 'pin-input', 'color-swatch', 'autocomplete',
   // navigation
   'badge', 'avatar', 'list', 'list-item', 'tabs', 'tab', 'pagination', 'steps', 'breadcrumb', 'segmented', 'command-palette', 'context-menu', 'menu', 'menu-item', 'toc', 'kbd', 'anchor',
   // diagram
   'diagram',
   // data display
-  'table', 'table-row', 'bulk-action-bar', 'empty', 'loading', 'alert', 'toast', 'dropdown', 'popover', 'tooltip', 'modal', 'drawer', 'card', 'stat-card', 'tag', 'chip', 'tree', 'tree-item', 'timeline', 'timeline-item', 'calendar', 'kanban', 'kanban-column', 'kanban-card', 'code-block', 'diff', 'image-grid', 'key-value', 'kv-row', 'accordion', 'accordion-item', 'banner', 'skeleton', 'countdown', 'result', 'permission-gate', 'quota-bar', 'api-key', 'audit-row', 'workflow-node',
+  'table', 'table-row', 'table-list-row', 'bulk-action-bar', 'empty', 'loading', 'alert', 'toast', 'dropdown', 'popover', 'tooltip', 'modal', 'drawer', 'card', 'stat-card', 'tag', 'chip', 'tree', 'tree-item', 'timeline', 'timeline-item', 'calendar', 'kanban', 'kanban-column', 'kanban-card', 'code-block', 'diff', 'image-grid', 'key-value', 'kv-row', 'accordion', 'accordion-item', 'banner', 'skeleton', 'countdown', 'result', 'permission-gate', 'quota-bar', 'api-key', 'audit-row', 'workflow-node', 'chart', 'avatar-group', 'comment', 'file-list', 'file-item',
   // iOS
   'ios-navbar', 'ios-tabbar', 'ios-list', 'ios-list-item', 'ios-action-sheet', 'ios-alert', 'ios-switch', 'ios-segmented', 'ios-button', 'ios-search', 'ios-stepper',
   // macOS
   'macos-window', 'macos-toolbar', 'macos-menubar', 'macos-sidebar', 'macos-source-item', 'macos-segmented', 'macos-popover', 'macos-sheet', 'macos-stepper', 'macos-disclosure', 'macos-table',
   // agent / conversational UI
-  'chat', 'user-message', 'assistant-message', 'system-message', 'tool-call', 'agent-output', 'reasoning', 'message-actions', 'suggestions', 'typing', 'composer', 'citation', 'token-usage'
+  'chat', 'user-message', 'agent-message', 'system-message', 'tool-call', 'agent-output', 'reasoning', 'message-actions', 'suggestions', 'typing', 'composer', 'citation', 'token-usage'
 ];
 
 /** Component tag for a primitive: single words get `-el`, compounds are bare. */

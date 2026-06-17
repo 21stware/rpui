@@ -1,7 +1,7 @@
 <page
     title="即时消息"
     route="/chat"
-    description="移动端即时通讯 App 的消息列表页，涵盖会话列表、搜索、通知权限、已读未读状态、群聊与单聊区分、AI 助手入口和置顶会话逻辑。主快照为有新消息、搜索聚焦、通知弹层可见状态。">
+    description="移动端即时通讯 App 的消息列表页，涵盖会话列表、搜索、通知权限、已读未读状态、群聊与单聊区分、AI Agent入口和置顶会话逻辑。主快照为有新消息、搜索聚焦、通知弹层可见状态。">
 
     <view device="mobile" scale="0.9">
       <viewport device="mobile">
@@ -17,7 +17,7 @@
             <layout columns="repeat(4, 1fr)" gap="8">
               <button label="消息" variant="primary" size="sm" icon="message-square"></button>
               <button label="通讯录" variant="ghost" size="sm" icon="users"></button>
-              <button label="AI 助手" variant="ghost" size="sm" icon="shield"></button>
+              <button label="AI Agent" variant="ghost" size="sm" icon="shield"></button>
               <button label="更多" variant="ghost" size="sm" icon="settings"></button>
             </layout>
           </panel>
@@ -31,7 +31,7 @@
               <list-item label="产品 · 王总 📌" icon="message-square" badge="5" state="selected"></list-item>
               <list-item label="张三" icon="user" badge="2"></list-item>
               <list-item label="研发群 (38人)" icon="users" badge="99+"></list-item>
-              <list-item label="AI 助手" icon="shield"></list-item>
+              <list-item label="AI Agent" icon="shield"></list-item>
               <list-item label="李四" icon="user"></list-item>
               <list-item label="设计评审群" icon="users" badge="1"></list-item>
               <list-item label="运营 · 周报" icon="message-square"></list-item>
@@ -73,7 +73,7 @@
     </annotation>
 
     <annotation id="4" label="会话列表">
-      置顶会话（📌）固定在顶部，角标显示未读消息数，99+ 封顶。单聊头像使用 user 图标，群聊使用 users 图标。AI 助手是系统特殊会话，独占一个图标。
+      置顶会话（📌）固定在顶部，角标显示未读消息数，99+ 封顶。单聊头像使用 user 图标，群聊使用 users 图标。AI Agent是系统特殊会话，独占一个图标。
       <annotation label="未读状态规则">
         <enum>
           <enum-item label="未读（有角标）" description="展示红色角标，超过 99 显示 99+。"><list-item label="研发群" icon="users" badge="99+"></list-item></enum-item>

@@ -197,11 +197,11 @@
         行的视觉状态由「读取状态 + SLA + 选中」三维叠加决定。
         <annotation label="单维状态">
           <enum>
-            <enum-item label="已读默认"><table-row state="default"></table-row></enum-item>
-            <enum-item label="未读加粗" description="新分配或有新回复，蓝底加粗。"><table-row state="unread"></table-row></enum-item>
-            <enum-item label="选中" description="勾选行，蓝色描边，进入批量集合。"><table-row state="selected"></table-row></enum-item>
-            <enum-item label="超时高亮" description="SLA 已过期，整行黄底。"><table-row state="highlighted"></table-row></enum-item>
-            <enum-item label="已关闭置灰" description="不可再批量操作，半透明。"><table-row state="disabled"></table-row></enum-item>
+            <enum-item label="已读默认"><table-list-row content="张三,需求评审纪要,09:12,已读" state="default"></table-list-row></enum-item>
+            <enum-item label="未读加粗" description="新分配或有新回复，蓝底加粗。"><table-list-row content="李四,本周周报已发送,昨天,未读" state="unread"></table-list-row></enum-item>
+            <enum-item label="选中" description="勾选行，蓝色描边，进入批量集合。"><table-list-row content="王五,账号存在新登录,周二,未读" state="selected"></table-list-row></enum-item>
+            <enum-item label="超时高亮" description="SLA 已过期，整行黄底。"><table-list-row content="赵六,安全策略变更提醒,5月30日,未读" state="highlighted"></table-list-row></enum-item>
+            <enum-item label="已关闭置灰" description="不可再批量操作，半透明。"><table-list-row content="陈七,活动报名已通过审核,5月28日,已读" state="disabled"></table-list-row></enum-item>
           </enum>
         </annotation>
         <annotation label="SLA 倒计时列">
@@ -270,7 +270,7 @@
       完备原型必须覆盖极值与边界。横切关注点，不绑定单一 pin。
       <annotation label="数据规模">
         <enum>
-          <enum-item label="超长标题" description="单行截断 + 省略号，hover 显示全文。"><table-row state="default"></table-row></enum-item>
+          <enum-item label="超长标题" description="单行截断 + 省略号，hover 显示全文。"><table-list-row content="前端架构升级与渲染性能优化方案讨论纪要,张三,进行中" state="default"></table-list-row></enum-item>
           <enum-item label="海量结果" description=">5000 条提示精化筛选。"><pagination total="5280" current="1" page-size="20"></pagination></enum-item>
           <enum-item label="角标溢出" description="未读 >99 显示 99+。"><badge count="128" max="99"></badge></enum-item>
         </enum>
