@@ -12,12 +12,12 @@
  *    readable without touching the runtime stylesheet.
  */
 
-const THEME_STYLE_ID = 'rpml-theme-style';
-const ATTR = 'data-rpml-theme';
+const THEME_STYLE_ID = "rpml-theme-style";
+const ATTR = "data-rpml-theme";
 
 export const THEME_CSS = `
 :root {
-  --rpml-gx-border:#e5e7eb; --rpml-gx-side-bg:#fff; --rpml-gx-main-bg:#f4f6f8;
+  --rpml-gx-border:#e5e7eb; --rpml-gx-side-bg:#fff; --rpml-gx-main-bg:#ffffff;
   --rpml-gx-fg:#111827; --rpml-gx-muted:#6b7280; --rpml-gx-group:#9ca3af;
   --rpml-gx-hover:#f3f4f6; --rpml-gx-item:#374151; --rpml-gx-active-bg:#eff6ff;
   --rpml-gx-active-fg:#1d4ed8; --rpml-gx-copy-hover:#e5e7eb; --rpml-gx-ok:#059669;
@@ -43,27 +43,29 @@ html[${ATTR}="dark"] page-el { filter:invert(0.92) hue-rotate(180deg); }
 
 export function injectThemeStyle(): void {
   if (document.getElementById(THEME_STYLE_ID)) return;
-  const s = document.createElement('style');
+  const s = document.createElement("style");
   s.id = THEME_STYLE_ID;
   s.textContent = THEME_CSS;
   document.head.appendChild(s);
 }
 
-function themeFromUrl(): 'light' | 'dark' | null {
-  const t = new URLSearchParams(location.search).get('theme');
-  return t === 'dark' || t === 'light' ? t : null;
+function themeFromUrl(): "light" | "dark" | null {
+  const t = new URLSearchParams(location.search).get("theme");
+  return t === "dark" || t === "light" ? t : null;
 }
 
-export function currentTheme(): 'light' | 'dark' {
-  return document.documentElement.getAttribute(ATTR) === 'dark' ? 'dark' : 'light';
+export function currentTheme(): "light" | "dark" {
+  return document.documentElement.getAttribute(ATTR) === "dark"
+    ? "dark"
+    : "light";
 }
 
 /** Apply a theme to <html> and reflect it in the `theme` URL param. */
-export function setTheme(theme: 'light' | 'dark'): void {
+export function setTheme(theme: "light" | "dark"): void {
   document.documentElement.setAttribute(ATTR, theme);
   const url = new URL(location.href);
-  url.searchParams.set('theme', theme);
-  history.replaceState(history.state, '', url);
+  url.searchParams.set("theme", theme);
+  history.replaceState(history.state, "", url);
 }
 
 /** Seed the theme from the URL param, falling back to the OS preference.
@@ -71,9 +73,14 @@ export function setTheme(theme: 'light' | 'dark'): void {
  *  the user explicitly toggles. */
 export function initTheme(): void {
   const fromUrl = themeFromUrl();
-  if (fromUrl) { document.documentElement.setAttribute(ATTR, fromUrl); return; }
-  const prefersDark = typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches;
-  document.documentElement.setAttribute(ATTR, prefersDark ? 'dark' : 'light');
+  if (fromUrl) {
+    document.documentElement.setAttribute(ATTR, fromUrl);
+    return;
+  }
+  const prefersDark =
+    typeof matchMedia === "function" &&
+    matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute(ATTR, prefersDark ? "dark" : "light");
 }
 
 /** A floating top-right toggle, mirroring the sidebar-collapse FAB, so the theme
@@ -82,13 +89,15 @@ export function initTheme(): void {
 export function mountThemeFab(host: HTMLElement = document.body): void {
   injectThemeStyle();
   initTheme();
-  if (document.querySelector('.rpml-theme-fab')) return;
-  const btn = document.createElement('button');
-  btn.className = 'rpml-theme-fab';
-  btn.type = 'button';
-  btn.title = '切换亮色/暗色';
-  btn.setAttribute('aria-label', '切换亮色/暗色');
-  btn.textContent = '◑';
-  btn.addEventListener('click', () => setTheme(currentTheme() === 'dark' ? 'light' : 'dark'));
+  if (document.querySelector(".rpml-theme-fab")) return;
+  const btn = document.createElement("button");
+  btn.className = "rpml-theme-fab";
+  btn.type = "button";
+  btn.title = "切换亮色/暗色";
+  btn.setAttribute("aria-label", "切换亮色/暗色");
+  btn.textContent = "◑";
+  btn.addEventListener("click", () =>
+    setTheme(currentTheme() === "dark" ? "light" : "dark"),
+  );
   host.appendChild(btn);
 }
