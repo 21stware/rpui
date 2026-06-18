@@ -26,7 +26,7 @@ These are short and load-bearing — follow them even before opening the referen
 
 **Output contract (per file).** Each `.rpml` covers exactly one screen/region. Emit a bare `.rpml` file — root element `<page>`, **no HTML wrapper, no doctype**. The document holds:
 
-1. one `<page>` with `title`, `route`, and a `description` naming the representative state the snapshot captures,
+1. one `<page>` with `title`, `route` (the screen's URL path), and a `description` naming the representative state the snapshot captures — **or** `<page title="..." mode="doc">` for linear reference documents (release notes, specs) with no canvas or route,
 2. exactly one `<view device="web|ipad|mobile">` containing the main snapshot (usually inside a `<viewport device="…">`),
 3. snapshot content built with **RPML primitives only**,
 4. `data-pin="N"` on every meaningful region, numbered from 1 with no gaps,

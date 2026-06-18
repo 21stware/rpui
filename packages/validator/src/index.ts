@@ -15,9 +15,23 @@ export function validate(root: RpmlNode): ValidationError[] {
     errors.push({ path: '/', message: 'Root element must be <page>', severity: 'error' });
     return errors;
   }
+  // Document mode (<page mode="doc">) is a single top-to-bottom content flow:
+  // no <view>, no pins, no annotation pane. Skip the snapshot structure checks.
+  if (root.attrs.mode === 'doc') {
+    checkDocMode(root, errors);
+    return errors;
+  }
   checkStructural(root, errors);
   checkPins(root, errors);
   return errors;
+}
+
+/** Doc mode only needs a title; <view>, pins, and annotations don't apply. */
+function checkDocMode(root: RpmlNode, errors: ValidationError[]) {
+  if (!root.attrs.title)
+    errors.push({ path: '/page', message: 'page missing title attribute', severity: 'warning' });
+  if (root.children.some(c => c.tag === 'main-view'))
+    errors.push({ path: '/page', message: 'doc mode has no <view> (content flows top-to-bottom); remove it or drop mode="doc"', severity: 'warning' });
 }
 
 function checkStructural(root: RpmlNode, errors: ValidationError[]) {

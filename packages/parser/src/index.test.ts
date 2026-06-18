@@ -82,6 +82,14 @@ describe('rewriteTags', () => {
     expect(rewriteTags('<ios-navbar></ios-navbar>')).toBe('<ios-navbar></ios-navbar>');
   });
 
+  test('doc-mode typography primitives map verbatim (compounds)', () => {
+    expect(toComponentTag('doc-heading')).toBe('doc-heading');
+    expect(toComponentTag('doc-paragraph')).toBe('doc-paragraph');
+    expect(toComponentTag('doc-list')).toBe('doc-list');
+    expect(toComponentTag('doc-list-item')).toBe('doc-list-item');
+    expect(toComponentTag('doc-quote')).toBe('doc-quote');
+  });
+
   test('native HTML in text passes through', () => {
     expect(rewriteTags('<annotation>see <b>bold</b> here</annotation>'))
       .toBe('<annotation-el>see <b>bold</b> here</annotation-el>');

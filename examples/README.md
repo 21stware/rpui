@@ -13,6 +13,7 @@
 | [07-task-management.rpml](./07-task-management.rpml) | 高 | 任务管理看板（原 demo/index.html）；`annotation-global` 承载权限矩阵 |
 | [08-mobile-chat.rpml](./08-mobile-chat.rpml) | 中 | 移动端即时消息（原 demo/showcase.html） |
 | [09-checkout-flow/](./09-checkout-flow/) | 中 | 两屏结算流程；`anchor` 跨页跳转 + `diagram` 流程图 + `annotation-global` 流程总览 |
+| [10-doc-mode.rpml](./10-doc-mode.rpml) | 入门 | 文档模式（`mode="doc"`）：单栏自上而下的内容流，无 view / pin / 注释栏 |
 
 ## 打开方式
 

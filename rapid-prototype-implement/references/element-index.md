@@ -6,7 +6,7 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 
 | Element | Category | Description |
 |---------|----------|-------------|
-| page | Canvas | Root document shell; holds title, route, description; layouts main view left, annotations right |
+| page | Canvas | Root document shell; `title`, `route`, `description`, optional `mode`. Default (snapshot): main view left, annotations right. `mode="doc"`: single-column document flow, no route badge, no view/pins/pane |
 | view | Canvas | Scaled snapshot frame; device preset sets fixed width; scale attribute zooms the canvas |
 | annotation | Canvas | Specification block; top-level (id=N) links to data-pin="N"; nested adds sub-region spec |
 | annotation-global | Canvas | Page-level, pin-less note for cross-cutting concerns; renders at top of pane; no id/pin |

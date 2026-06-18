@@ -53,7 +53,7 @@ RPML is the authoring language. Its tags are clean single words (`page`, `view`,
 
 Tags:
 
-- `<page title="..." route="..." description="...">` — root document canvas. It keeps the title/main snapshot on the left and moves top-level annotations to the right-side scroll pane.
+- `<page title="..." route="..." description="..." mode="snapshot|doc">` — root document canvas. Default (`snapshot`) keeps the title/main snapshot on the left and moves top-level annotations to the right-side scroll pane. `mode="doc"` switches to a single top-to-bottom document column with no `route` badge (see "Document mode" below).
 - `<view device="web|ipad|mobile" width="..." height="auto|900" scale="0.65">` — scaled main snapshot frame. Device presets are fixed width with auto height unless a numeric `height` is provided.
 - `<viewport device="web|ipad|mobile" width="..." height="auto|900">` — snapshot viewport. Use the same `device` as the view for clarity.
 - `<annotation id="1" label="...">` — top-level annotation linked to `data-pin="1"`; rendered in the right annotation pane.
@@ -63,6 +63,31 @@ Tags:
 - `<enum-item label="..." description="...">` — one explicit state/variant card with optional short description.
 - `<anchor to="other.rpml" section="N" label="...">` — cross-page link to another prototype screen in the file set. `section` is optional and deep-links a specific annotation on the target page. Works in the gallery (playground / `serve` / compiled single-file) and degrades to a `?rpml=` reload in the standalone viewer.
 - `<diagram>` — renders Mermaid text (flowchart / state / sequence / class / ER) to inline SVG. Place inside an annotation to specify a flow or state machine. Put the diagram header on its own line.
+
+## Document mode
+
+Set `mode="doc"` on `<page>` to render a single top-to-bottom reading column instead of the snapshot canvas — like Markdown built from RPML elements. There is no scaled `<view>`, no `data-pin` overlays, no right-hand annotation pane, and no `route` badge (documents don't map to one screen). Every child flows in source order. Use this for linear prose (release notes, specs, requirements). For interaction states, permission variants, and hidden UI, keep the default snapshot mode.
+
+```html
+<page title="发布说明" mode="doc">
+  <doc-heading level="1">RPUI 0.9 发布说明</doc-heading>
+  <doc-paragraph>文档模式把页面渲染成单栏可读文档，每一块都是 RPML 原语。</doc-paragraph>
+  <doc-list type="bullet">
+    <doc-list-item>新增 <code>doc-*</code> 排版原语。</doc-list-item>
+    <doc-list-item>页面级 <code>mode="doc"</code> 切换文档流。</doc-list-item>
+  </doc-list>
+  <doc-quote cite="设计原则">文档模式用来排布说明，而非绘制 UI。</doc-quote>
+</page>
+```
+
+Document typography primitives (only meaningful inside `mode="doc"`):
+
+- `<doc-heading level="1|2|3|4|5|6">` — heading; `level` defaults to `1`, and `level="2"` and up get a bottom border.
+- `<doc-paragraph>` — paragraph; may contain inline `strong` / `em` / `code` / `a`.
+- `<doc-list type="bullet|number">` + `<doc-list-item>` — ordered/unordered list.
+- `<doc-quote cite="来源">` — blockquote; `cite` renders as a `— 来源` line below the quote.
+
+Ordinary snapshot primitives (e.g. `<alert>`, `<table>`, `<chart>`) can also appear in the document flow as inline examples; they render in source order. The validator skips `view`/pin/annotation requirements in doc mode and only checks for `title`.
 
 ## Pin rule
 
@@ -173,9 +198,18 @@ All form states are explicit through attributes; there is no runtime focus or in
 - `<button-group>...</button-group>`.
 - `<form layout="vertical|horizontal">`.
 - `<form-item label="..." required error="..." help="...">...</form-item>`.
+- `<form-field-description>` — field-level description/remark rendered below a field; accepts `text` attribute or child text.
+- `<radio-card label="..." description="..." state="unchecked|checked|disabled">` — selectable card with radio indicator; use inside a flex layout for option groups.
 - `<upload state="empty|has-file|uploading|error" file="document.pdf" progress="60" error="...">`.
 
-### Feedback
+### Design system
+
+Palette primitives for documenting design tokens. Use inside `mode="doc"` pages or annotations.
+
+- `<color-palette items="Primary:#09090b,Success:#059669,…">` — grid of color swatches with name and hex label.
+- `<font-palette items="Heading 1:32/800,Body:15/400,Caption:12/500,…">` — table of typography samples; each entry is `"Label:size/weight"`.
+- `<space-palette tokens="xs:4,sm:8,md:16,lg:24,xl:32,…">` — bar chart of spacing tokens; each entry is `"name:px"`.
+- `<radius-palette tokens="none:0px,sm:4px,md:8px,lg:16px,full:9999px,…">` — corner-radius swatches; each entry is `"name:value"`.
 
 - `<alert type="info|success|warning|error" title="..." message="..." closable>`.
 - `<toast type="info|success|warning|error" title="..." message="..." closable>`.

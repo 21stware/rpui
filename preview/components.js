@@ -144,5 +144,22 @@ export const COMPONENTS = [
   { group: 'Agent UI', name: 'composer', html: '<composer value="分析这份数据" modes="thinking,web" files="报告.pdf,数据.xlsx" model="GPT-4o" state="idle"></composer>', attrs: [['value', '输入值'], ['placeholder', '占位'], ['state', 'idle | streaming | disabled'], ['modes', '激活的开关：thinking | web | code'], ['files', '附件列表'], ['model', '模型名胶囊']] },
   { group: 'Agent UI', name: 'citation', html: '<citation index="1" title="工单 #TK-20593 处理记录"></citation>', attrs: [['index', '编号'], ['title', '来源标题']] },
   { group: 'Agent UI', name: 'token-usage', html: '<token-usage used="1840" limit="8000"></token-usage>', attrs: [['used', '已用 token'], ['limit', '上限']] },
+
+  // ---------- Document (mode="doc") ----------
+  { group: 'Document', name: 'doc-heading', html: '<doc-heading level="2">章节标题</doc-heading>', attrs: [['level', '1–6 标题级别，默认 1']] },
+  { group: 'Document', name: 'doc-paragraph', html: '<doc-paragraph>正文段落，可内嵌 <strong>加粗</strong> 与 <code>代码</code>。</doc-paragraph>', attrs: [['(子元素)', '行内文本 / strong / em / code / a']] },
+  { group: 'Document', name: 'doc-list', html: '<doc-list type="bullet"><doc-list-item>第一项</doc-list-item><doc-list-item>第二项</doc-list-item></doc-list>', attrs: [['type', 'bullet | number，默认 bullet']] },
+  { group: 'Document', name: 'doc-list-item', html: '<doc-list type="number"><doc-list-item>步骤一</doc-list-item><doc-list-item>步骤二</doc-list-item></doc-list>', attrs: [['(子元素)', '行内文本 / strong / code']] },
+  { group: 'Document', name: 'doc-quote', html: '<doc-quote cite="设计原则">文档模式用来排布说明，而非绘制 UI。</doc-quote>', attrs: [['cite', '可选来源，渲染为 — 来源']] },
+
+  // ---------- Design System ----------
+  { group: 'Design System', name: 'color-palette', html: '<color-palette items="Primary:#09090b,Muted:#71717a,Border:#e4e4e7,Success:#059669,Warning:#d97706,Danger:#dc2626"></color-palette>', attrs: [['items', '"Name:#hex,…" 逗号分隔色值列表']] },
+  { group: 'Design System', name: 'font-palette', html: '<font-palette items="Heading 1:32/800,Heading 2:24/700,Body:15/400,Small:13/400,Caption:12/500,Label:12/650"></font-palette>', attrs: [['items', '"用途:字号/字重,…" 逗号分隔']] },
+  { group: 'Design System', name: 'space-palette', html: '<space-palette tokens="xs:4,sm:8,md:16,lg:24,xl:32,2xl:48,3xl:64"></space-palette>', attrs: [['tokens', '"名称:px,…" 逗号分隔']] },
+  { group: 'Design System', name: 'radius-palette', html: '<radius-palette tokens="none:0px,sm:4px,md:8px,lg:16px,xl:24px,full:9999px"></radius-palette>', attrs: [['tokens', '"名称:值,…" 逗号分隔']] },
+
+  // ---------- Form extras ----------
+  { group: 'Data input', name: 'form-field-description', html: '<form-item label="用户名"><input state="filled" value="oboo_dev"></input><form-field-description>仅支持字母、数字和下划线，3–20 个字符。</form-field-description></form-item>', attrs: [['text', '说明文字（或放入子元素）']] },
+  { group: 'Data input', name: 'radio-card', html: '<div style="display:flex;gap:8px"><radio-card label="基础版" description="最多 5 人团队" state="unchecked"></radio-card><radio-card label="专业版" description="无限席位 + 高级功能" state="checked"></radio-card></div>', attrs: [['label', '选项标题'], ['description', '简短说明'], ['state', 'unchecked | checked | disabled']] },
 ];
 

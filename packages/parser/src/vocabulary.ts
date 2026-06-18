@@ -32,7 +32,13 @@ export const PRIMITIVES: readonly string[] = [
   // macOS
   'macos-window', 'macos-toolbar', 'macos-menubar', 'macos-sidebar', 'macos-source-item', 'macos-segmented', 'macos-popover', 'macos-sheet', 'macos-stepper', 'macos-disclosure', 'macos-table',
   // agent / conversational UI
-  'chat', 'user-message', 'agent-message', 'system-message', 'tool-call', 'agent-output', 'reasoning', 'message-actions', 'suggestions', 'typing', 'composer', 'citation', 'token-usage'
+  'chat', 'user-message', 'agent-message', 'system-message', 'tool-call', 'agent-output', 'reasoning', 'message-actions', 'suggestions', 'typing', 'composer', 'citation', 'token-usage',
+  // document (doc-mode typography)
+  'doc-heading', 'doc-paragraph', 'doc-list', 'doc-list-item', 'doc-quote',
+  // form extras
+  'form-field-description', 'radio-card',
+  // design-system palettes
+  'color-palette', 'font-palette', 'space-palette', 'radius-palette'
 ];
 
 /** Component tag for a primitive: single words get `-el`, compounds are bare. */

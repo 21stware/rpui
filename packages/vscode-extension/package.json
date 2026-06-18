@@ -1,7 +1,7 @@
 {
   "name": "rpml-vscode-extension",
   "displayName": "RPML",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "RPML (.rpml) language support: syntax highlighting, tag/attribute completion, validation, and live preview.",
   "type": "commonjs",
   "private": true,

@@ -25,7 +25,7 @@ export interface ElementDef {
 
 // Canvas tags are not in components.js; their authoring attributes live here.
 const canvas: ElementDef[] = [
-  { name: 'page', group: 'Canvas', desc: '根文档外壳：title / route / description', attrs: [['title', '页面标题（必填）'], ['route', '路由路径，如 /users'], ['description', '页面说明']] },
+  { name: 'page', group: 'Canvas', desc: '根文档外壳：title / route / description；mode=doc 切换文档流', attrs: [['title', '页面标题（必填）'], ['route', '路由路径，如 /users'], ['description', '页面说明'], ['mode', 'snapshot | doc；doc=单栏文档流，无 view/pin/annotation']] },
   { name: 'view', group: 'Canvas', desc: '缩放主快照画布；每页恰好一个', attrs: [['device', 'web | ipad | mobile 预设'], ['width', '显式宽度，覆盖预设'], ['height', 'auto 或数字固定高'], ['scale', '画布缩放，如 0.65']] },
   { name: 'annotation', group: 'Canvas', desc: '规格注释；顶层 id=N 对应 data-pin="N"，嵌套补充子区域规格', attrs: [['id', '顶层注释编号，匹配 data-pin'], ['label', '注释标题']] },
   { name: 'enum', group: 'Canvas', desc: '横向互斥状态/变体卡片容器', attrs: [] },

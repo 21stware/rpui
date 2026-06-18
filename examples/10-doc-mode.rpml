@@ -1,0 +1,37 @@
+<page title="文档模式示例" description="doc 模式：内容从上到下顺序排布，没有主快照画布、没有 pin、没有右侧注释栏。" mode="doc">
+
+  <doc-heading level="1">RPUI 0.9 发布说明</doc-heading>
+
+  <doc-paragraph>
+    文档模式（<code>mode="doc"</code>）把页面渲染成单栏、自上而下的可读文档，形态接近 Markdown，
+    但每一块内容都是 <strong>RPML 原语</strong>。适合写发布说明、规格说明、需求文档这类线性内容。
+  </doc-paragraph>
+
+  <doc-heading level="2">新增能力</doc-heading>
+
+  <doc-list type="bullet">
+    <doc-list-item>新的 <code>doc-heading</code> / <code>doc-paragraph</code> / <code>doc-list</code> / <code>doc-quote</code> 排版原语。</doc-list-item>
+    <doc-list-item>页面级 <code>mode="doc"</code> 切换为单栏文档流。</doc-list-item>
+    <doc-list-item>文档模式下校验器跳过 <strong>view / pin / annotation</strong> 的结构要求。</doc-list-item>
+  </doc-list>
+
+  <doc-heading level="2">何时使用</doc-heading>
+
+  <doc-paragraph>
+    需要展示交互状态、权限变体、隐藏 UI 时，仍使用默认的快照模式（带 <code>view</code> 与 pin 注释）。
+    当内容本质上是线性的说明文字时，再选择文档模式。
+  </doc-paragraph>
+
+  <doc-quote cite="RPUI 设计原则">
+    文档模式不是用来画 UI 的，而是用来把规格和说明以可读的顺序排布出来。
+  </doc-quote>
+
+  <doc-heading level="2">混排原语</doc-heading>
+
+  <doc-paragraph>
+    文档流里也可以直接放普通快照原语来举例，例如下面的提示框：
+  </doc-paragraph>
+
+  <alert type="info" title="提示" message="文档模式下，任何 RPML 原语都按源码顺序排布。"></alert>
+
+</page>
