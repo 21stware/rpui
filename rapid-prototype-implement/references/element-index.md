@@ -48,6 +48,8 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 | tag-input | Controls | Chip multi-input; tags CSV, placeholder, label, state, error |
 | form | Controls | Form container with layout (vertical/horizontal) |
 | form-item | Controls | Labeled form field wrapper with required, error, help |
+| form-field-description | Controls | Field-level remark rendered below a field; `text` attr or child text |
+| radio-card | Controls | Selectable card with radio indicator; label, description, state unchecked/checked/disabled |
 | date-picker | Controls | Date picker input with state, value, error, help |
 | upload | Controls | File upload zone with state (empty/has-file/uploading/error) and progress |
 | image-placeholder | Controls | Placeholder for images; use instead of external image URLs |
@@ -181,3 +183,22 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 | composer | Agent | Prompt input bar; attachments (files), mode toggles (thinking/web/code), model pill, state idle/streaming/disabled |
 | citation | Agent | Source reference chip with index and title |
 | token-usage | Agent | Token/context usage meter with used and limit |
+
+## Document mode primitives (mode="doc" pages only)
+
+| Element | Category | Description |
+|---------|----------|-------------|
+| doc-heading | Document | Heading level 1–6; level 2+ adds a bottom border |
+| doc-paragraph | Document | Body paragraph; inline `strong`, `em`, `code`, `a` allowed |
+| doc-list | Document | Ordered/unordered list; type `bullet` (default) or `number` |
+| doc-list-item | Document | List item inside `doc-list` |
+| doc-quote | Document | Block quote with optional `cite` attribution line |
+
+## Design system palette primitives
+
+| Element | Category | Description |
+|---------|----------|-------------|
+| color-palette | Design System | Grid of color swatches; `items="Name:#hex,…"` CSV |
+| font-palette | Design System | Typography sample table; `items="Label:size/weight,…"` CSV |
+| space-palette | Design System | Proportional bar chart of spacing tokens; `tokens="name:px,…"` CSV |
+| radius-palette | Design System | Corner-radius swatch grid; `tokens="name:value,…"` CSV |

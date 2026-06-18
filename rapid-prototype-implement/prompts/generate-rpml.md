@@ -86,7 +86,7 @@ For the full method — recursive decomposition (L1–L5), the coverage-matrix t
 
 - **Canvas:** `page`, `view`, `viewport`, `annotation`, `annotation-global`, `enum`, `enum-item`, `anchor`, `diagram`
 - **Layout:** `layout`, `panel`, `card`, `navigator`, `sidebar`, `split-pane`, `divider`, `spacer`
-- **Controls:** `input`, `search`, `textarea`, `select`, `button`, `button-group`, `checkbox`, `checkbox-group`, `radio`, `radio-group`, `toggle`, `password-input`, `tag-input`, `form`, `form-item`, `date-picker`, `upload`, `slider`, `range`, `number-input`, `rating`, `pin-input`, `color-swatch`, `autocomplete`
+- **Controls:** `input`, `search`, `textarea`, `select`, `button`, `button-group`, `checkbox`, `checkbox-group`, `radio`, `radio-group`, `radio-card`, `toggle`, `password-input`, `tag-input`, `form`, `form-item`, `form-field-description`, `date-picker`, `upload`, `slider`, `range`, `number-input`, `rating`, `pin-input`, `color-swatch`, `autocomplete`
 - **Navigation:** `tabs`, `tab`, `breadcrumb`, `pagination`, `steps`, `segmented`, `menu`, `menu-item`, `context-menu`, `command-palette`, `toc`, `kbd`, `list`, `list-item`, `badge`, `avatar`
 - **Display:** `table`, `table-row`, `table-list-row`, `bulk-action-bar`, `empty`, `loading`, `skeleton`, `stat-card`, `tag`, `chip`, `tree`, `tree-item`, `timeline`, `timeline-item`, `calendar`, `kanban`, `kanban-column`, `kanban-card`, `code-block`, `diff`, `image-grid`, `key-value`, `kv-row`, `accordion`, `accordion-item`, `image-placeholder`, `progress`, `chart`, `avatar-group`, `comment`, `file-list`, `file-item`
 - **Feedback/Overlays:** `alert`, `toast`, `banner`, `modal`, `drawer`, `dropdown`, `popover`, `tooltip`, `countdown`, `result`
@@ -94,3 +94,5 @@ For the full method — recursive decomposition (L1–L5), the coverage-matrix t
 - **iOS** (device="mobile"): `ios-navbar`, `ios-tabbar`, `ios-list`, `ios-list-item`, `ios-action-sheet`, `ios-alert`, `ios-switch`, `ios-segmented`, `ios-button`, `ios-search`, `ios-stepper`
 - **macOS** (device="web"): `macos-window`, `macos-toolbar`, `macos-menubar`, `macos-sidebar`, `macos-source-item`, `macos-segmented`, `macos-popover`, `macos-sheet`, `macos-stepper`, `macos-disclosure`, `macos-table`
 - **Agent/Chat:** `chat`, `user-message`, `agent-message`, `system-message`, `tool-call`, `agent-output`, `reasoning`, `message-actions`, `suggestions`, `typing`, `composer`, `citation`, `token-usage`
+- **Document** (`mode="doc"` pages): `doc-heading`, `doc-paragraph`, `doc-list`, `doc-list-item`, `doc-quote`
+- **Design System** (for token documentation): `color-palette`, `font-palette`, `space-palette`, `radius-palette`

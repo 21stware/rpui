@@ -1,6 +1,6 @@
 {
   "name": "@21stware/rpui-react",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "React binding for the RPUI/RPML Web Components runtime — incremental, scroll-preserving RPML rendering",
   "type": "module",
   "main": "dist/index.js",
@@ -28,7 +28,7 @@
     "react-dom": ">=18"
   },
   "dependencies": {
-    "@21stware/rpui": "^0.7.0"
+    "@21stware/rpui": "^0.9.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.0",
