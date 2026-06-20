@@ -28,7 +28,7 @@ html[${ATTR}="dark"] {
   --rpml-gx-hover:#1e293b; --rpml-gx-item:#cbd5e1; --rpml-gx-active-bg:#1e3a5f;
   --rpml-gx-active-fg:#93c5fd; --rpml-gx-copy-hover:#334155; --rpml-gx-ok:#34d399;
 }
-html[${ATTR}="dark"] body { background:#0b1120; }
+html[${ATTR}="dark"] .rpui-scope { background:#0b1120; }
 /* Invert the rendered prototype as a whole; hue-rotate keeps colors recognizable. */
 html[${ATTR}="dark"] page-el { filter:invert(0.92) hue-rotate(180deg); }
 

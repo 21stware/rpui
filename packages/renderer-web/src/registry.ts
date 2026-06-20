@@ -1,56 +1,395 @@
-import { define } from './core/dom';
-import { toComponentTag } from 'rpml-parser';
-import { RpAnnotation, RpAnnotationGlobal, RpEnum, RpEnumItem } from './canvas/annotation';
-import { RpMainView } from './canvas/main-view';
-import { RpPage } from './canvas/page';
-import { DividerElement, GenericElement, LayoutElement, LogoElement, NavbarElement, PanelElement, SidebarElement, SpacerElement, SplitPaneElement, ViewportElement } from './primitives/layout';
-import { AutocompleteElement, ButtonElement, CheckboxElement, ChoiceGroupElement, ColorSwatchElement, DatePickerElement, FieldElement, FormElement, FormFieldDescriptionElement, FormItemElement, ImagePlaceholderElement, NumberInputElement, PasswordInputElement, PinInputElement, ProgressElement, RadioCardElement, RadioElement, RangeElement, RatingElement, SelectElement, SliderElement, TagInputElement, TextareaElement, ToggleElement, UploadElement } from './primitives/controls';
-import { AvatarElement, BadgeElement, BreadcrumbElement, AnchorElement, CommandPaletteElement, ContextMenuElement, KbdElement, ListElement, ListItemElement, MenuElement, MenuItemElement, PaginationElement, SegmentedElement, StepsElement, TabElement, TabsElement, TocElement } from './primitives/navigation';
-import { AccordionElement, AccordionItemElement, AlertElement, ApiKeyElement, AuditRowElement, AvatarGroupElement, BannerElement, BulkActionBarElement, CalendarElement, CardElement, ChipElement, CodeBlockElement, CommentElement, CountdownElement, DiffElement, DrawerElement, EmptyElement, FileItemElement, FileListElement, ImageGridElement, KanbanCardElement, KanbanColumnElement, KanbanElement, KeyValueElement, KvRowElement, LoadingElement, ModalElement, OverlayElement, PermissionGateElement, QuotaBarElement, ResultElement, SkeletonElement, StatCardElement, TableElement, TableListRowElement, TableRowElement, TagElement, TimelineElement, TimelineItemElement, TooltipElement, TreeElement, TreeItemElement, WorkflowNodeElement } from './primitives/data-display';
-import { IosActionSheetElement, IosAlertElement, IosButtonElement, IosListElement, IosListItemElement, IosNavbarElement, IosSearchElement, IosSegmentedElement, IosStepperElement, IosSwitchElement, IosTabbarElement } from './primitives/ios';
-import { MacDisclosureElement, MacMenubarElement, MacPopoverElement, MacSegmentedElement, MacSheetElement, MacSidebarElement, MacSourceItemElement, MacStepperElement, MacTableElement, MacToolbarElement, MacWindowElement } from './primitives/macos';
-import { AgentMessageElement, AgentOutputElement, ChatElement, CitationElement, ComposerElement, MessageActionsElement, ReasoningElement, SuggestionsElement, SystemMessageElement, TokenUsageElement, ToolCallElement, TypingElement, UserMessageElement } from './primitives/agent';
-import { DiagramElement } from './primitives/diagram';
-import { ChartElement } from './primitives/chart';
-import { DocHeadingElement, DocListItemElement, DocListElement, DocParagraphElement, DocQuoteElement } from './primitives/doc';
-import { ColorPaletteElement, FontPaletteElement, SpacePaletteElement, RadiusPaletteElement } from './primitives/design-system';
+import { define } from "./core/dom";
+import { toComponentTag } from "rpml-parser";
+import {
+  RpAnnotation,
+  RpAnnotationGlobal,
+  RpEnum,
+  RpEnumItem,
+} from "./canvas/annotation";
+import { RpMainView } from "./canvas/main-view";
+import { RpPage } from "./canvas/page";
+import {
+  DividerElement,
+  GenericElement,
+  LayoutElement,
+  LogoElement,
+  NavbarElement,
+  PanelElement,
+  SidebarElement,
+  SpacerElement,
+  SplitPaneElement,
+  ViewportElement,
+} from "./primitives/layout";
+import {
+  AutocompleteElement,
+  ButtonElement,
+  CheckboxElement,
+  ChoiceGroupElement,
+  ColorSwatchElement,
+  DatePickerElement,
+  FieldElement,
+  FormElement,
+  FormFieldDescriptionElement,
+  FormItemElement,
+  ImagePlaceholderElement,
+  NumberInputElement,
+  PasswordInputElement,
+  PinInputElement,
+  ProgressElement,
+  RadioCardElement,
+  RadioElement,
+  RangeElement,
+  RatingElement,
+  SelectElement,
+  SliderElement,
+  TagInputElement,
+  TextareaElement,
+  ToggleElement,
+  UploadElement,
+} from "./primitives/controls";
+import {
+  AvatarElement,
+  BadgeElement,
+  BreadcrumbElement,
+  AnchorElement,
+  CommandPaletteElement,
+  ContextMenuElement,
+  KbdElement,
+  ListElement,
+  ListItemElement,
+  MenuElement,
+  MenuItemElement,
+  PaginationElement,
+  SegmentedElement,
+  StepsElement,
+  TabElement,
+  TabsElement,
+  TocElement,
+} from "./primitives/navigation";
+import {
+  AccordionElement,
+  AccordionItemElement,
+  AlertElement,
+  ApiKeyElement,
+  AuditRowElement,
+  AvatarGroupElement,
+  BannerElement,
+  BulkActionBarElement,
+  CalendarElement,
+  CardElement,
+  ChipElement,
+  CodeBlockElement,
+  CommentElement,
+  CountdownElement,
+  DiffElement,
+  DrawerElement,
+  EmptyElement,
+  FileItemElement,
+  FileListElement,
+  ImageGridElement,
+  KanbanCardElement,
+  KanbanColumnElement,
+  KanbanElement,
+  KeyValueElement,
+  KvRowElement,
+  LoadingElement,
+  ModalElement,
+  OverlayElement,
+  PermissionGateElement,
+  QuotaBarElement,
+  ResultElement,
+  SkeletonElement,
+  StatCardElement,
+  TableElement,
+  TableListRowElement,
+  TableRowElement,
+  TagElement,
+  TimelineElement,
+  TimelineItemElement,
+  TooltipElement,
+  TreeElement,
+  TreeItemElement,
+  WorkflowNodeElement,
+} from "./primitives/data-display";
+import {
+  IosActionSheetElement,
+  IosAlertElement,
+  IosButtonElement,
+  IosListElement,
+  IosListItemElement,
+  IosNavbarElement,
+  IosSearchElement,
+  IosSegmentedElement,
+  IosStepperElement,
+  IosSwitchElement,
+  IosTabbarElement,
+} from "./primitives/ios";
+import {
+  MacDisclosureElement,
+  MacMenubarElement,
+  MacPopoverElement,
+  MacSegmentedElement,
+  MacSheetElement,
+  MacSidebarElement,
+  MacSourceItemElement,
+  MacStepperElement,
+  MacTableElement,
+  MacToolbarElement,
+  MacWindowElement,
+} from "./primitives/macos";
+import {
+  AgentMessageElement,
+  AgentOutputElement,
+  ChatElement,
+  CitationElement,
+  ComposerElement,
+  MessageActionsElement,
+  ReasoningElement,
+  SuggestionsElement,
+  SystemMessageElement,
+  TokenUsageElement,
+  ToolCallElement,
+  TypingElement,
+  UserMessageElement,
+} from "./primitives/agent";
+import { DiagramElement } from "./primitives/diagram";
+import { ChartElement } from "./primitives/chart";
+import {
+  DocHeadingElement,
+  DocListItemElement,
+  DocListElement,
+  DocOrderedListElement,
+  DocUnorderedListElement,
+  DocParagraphElement,
+  DocQuoteElement,
+  BoldElement,
+  ItalicElement,
+  CodeInlineElement,
+} from "./primitives/doc";
+import {
+  ColorPaletteElement,
+  FontPaletteElement,
+  SpacePaletteElement,
+  RadiusPaletteElement,
+} from "./primitives/design-system";
+import {
+  CarouselElement,
+  CarouselItemElement,
+  ComboboxElement,
+  DataTableElement,
+  HoverCardElement,
+  InputGroupElement,
+  MenubarElement,
+  MenubarItemElement,
+  NavMenuElement,
+  NavMenuItemElement,
+  ScrollAreaElement,
+  ToggleGroupElement,
+  ToggleGroupItemElement,
+  CollapsibleElement,
+  AspectRatioElement,
+  ShadcnFieldElement,
+  SonnerElement,
+} from "./primitives/shadcn";
 
 /** Map a language tag to its Web Component tag via the shared vocabulary. */
 
 export function registerAll() {
-  define('page-el', RpPage);
-  define('main-view', RpMainView);
-  define('annotation-el', RpAnnotation);
-  define('annotation-global-el', RpAnnotationGlobal);
-  define('enum-el', RpEnum);
-  define('enum-item', RpEnumItem);
+  define("page-el", RpPage);
+  define("main-view", RpMainView);
+  define("annotation-el", RpAnnotation);
+  define("annotation-global-el", RpAnnotationGlobal);
+  define("enum-el", RpEnum);
+  define("enum-item", RpEnumItem);
   const pairs: Array<[string, CustomElementConstructor]> = [
     // layout
-    ['viewport', ViewportElement], ['layout', LayoutElement], ['panel', PanelElement], ['navigator', NavbarElement], ['sidebar', SidebarElement], ['logo', LogoElement], ['split-pane', SplitPaneElement], ['divider', DividerElement], ['spacer', SpacerElement],
+    ["viewport", ViewportElement],
+    ["layout", LayoutElement],
+    ["panel", PanelElement],
+    ["navigator", NavbarElement],
+    ["sidebar", SidebarElement],
+    ["logo", LogoElement],
+    ["split-pane", SplitPaneElement],
+    ["divider", DividerElement],
+    ["spacer", SpacerElement],
     // controls
-    ['search', FieldElement], ['input', FieldElement], ['textarea', TextareaElement], ['select', SelectElement], ['button', ButtonElement], ['button-group', GenericElement], ['checkbox', CheckboxElement], ['checkbox-group', ChoiceGroupElement], ['radio', RadioElement], ['radio-group', ChoiceGroupElement], ['toggle', ToggleElement], ['password-input', PasswordInputElement], ['tag-input', TagInputElement], ['form', FormElement], ['form-item', FormItemElement], ['form-field-description', FormFieldDescriptionElement], ['date-picker', DatePickerElement], ['upload', UploadElement], ['image-placeholder', ImagePlaceholderElement], ['progress', ProgressElement], ['slider', SliderElement], ['range', RangeElement], ['number-input', NumberInputElement], ['rating', RatingElement], ['pin-input', PinInputElement], ['color-swatch', ColorSwatchElement], ['autocomplete', AutocompleteElement], ['radio-card', RadioCardElement],
+    ["search", FieldElement],
+    ["input", FieldElement],
+    ["textarea", TextareaElement],
+    ["select", SelectElement],
+    ["button", ButtonElement],
+    ["button-group", GenericElement],
+    ["checkbox", CheckboxElement],
+    ["checkbox-group", ChoiceGroupElement],
+    ["radio", RadioElement],
+    ["radio-group", ChoiceGroupElement],
+    ["toggle", ToggleElement],
+    ["password-input", PasswordInputElement],
+    ["tag-input", TagInputElement],
+    ["form", FormElement],
+    ["form-item", FormItemElement],
+    ["form-field-description", FormFieldDescriptionElement],
+    ["date-picker", DatePickerElement],
+    ["upload", UploadElement],
+    ["image-placeholder", ImagePlaceholderElement],
+    ["progress", ProgressElement],
+    ["slider", SliderElement],
+    ["range", RangeElement],
+    ["number-input", NumberInputElement],
+    ["rating", RatingElement],
+    ["pin-input", PinInputElement],
+    ["color-swatch", ColorSwatchElement],
+    ["autocomplete", AutocompleteElement],
+    ["radio-card", RadioCardElement],
     // navigation
-    ['badge', BadgeElement], ['avatar', AvatarElement], ['list', ListElement], ['list-item', ListItemElement], ['tabs', TabsElement], ['tab', TabElement], ['pagination', PaginationElement], ['steps', StepsElement], ['breadcrumb', BreadcrumbElement], ['segmented', SegmentedElement], ['command-palette', CommandPaletteElement], ['context-menu', ContextMenuElement], ['menu', MenuElement], ['menu-item', MenuItemElement], ['toc', TocElement], ['kbd', KbdElement], ['anchor', AnchorElement],
+    ["badge", BadgeElement],
+    ["avatar", AvatarElement],
+    ["list", ListElement],
+    ["list-item", ListItemElement],
+    ["tabs", TabsElement],
+    ["tab", TabElement],
+    ["pagination", PaginationElement],
+    ["steps", StepsElement],
+    ["breadcrumb", BreadcrumbElement],
+    ["segmented", SegmentedElement],
+    ["command-palette", CommandPaletteElement],
+    ["context-menu", ContextMenuElement],
+    ["menu", MenuElement],
+    ["menu-item", MenuItemElement],
+    ["toc", TocElement],
+    ["kbd", KbdElement],
+    ["anchor", AnchorElement],
     // diagram
-    ['diagram', DiagramElement],
+    ["diagram", DiagramElement],
     // data display
-    ['table', TableElement], ['table-row', TableRowElement], ['table-list-row', TableListRowElement], ['bulk-action-bar', BulkActionBarElement], ['empty', EmptyElement], ['loading', LoadingElement], ['alert', AlertElement], ['toast', AlertElement], ['dropdown', OverlayElement], ['popover', OverlayElement], ['tooltip', TooltipElement], ['modal', ModalElement], ['drawer', DrawerElement], ['card', CardElement], ['stat-card', StatCardElement], ['tag', TagElement], ['chip', ChipElement], ['tree', TreeElement], ['tree-item', TreeItemElement], ['timeline', TimelineElement], ['timeline-item', TimelineItemElement], ['calendar', CalendarElement], ['kanban', KanbanElement], ['kanban-column', KanbanColumnElement], ['kanban-card', KanbanCardElement], ['code-block', CodeBlockElement], ['diff', DiffElement], ['image-grid', ImageGridElement], ['key-value', KeyValueElement], ['kv-row', KvRowElement], ['accordion', AccordionElement], ['accordion-item', AccordionItemElement], ['banner', BannerElement], ['skeleton', SkeletonElement], ['countdown', CountdownElement], ['result', ResultElement], ['permission-gate', PermissionGateElement], ['quota-bar', QuotaBarElement], ['api-key', ApiKeyElement], ['audit-row', AuditRowElement], ['workflow-node', WorkflowNodeElement], ['chart', ChartElement], ['avatar-group', AvatarGroupElement], ['comment', CommentElement], ['file-list', FileListElement], ['file-item', FileItemElement],
+    ["table", TableElement],
+    ["table-row", TableRowElement],
+    ["table-list-row", TableListRowElement],
+    ["bulk-action-bar", BulkActionBarElement],
+    ["empty", EmptyElement],
+    ["loading", LoadingElement],
+    ["alert", AlertElement],
+    ["toast", AlertElement],
+    ["dropdown", OverlayElement],
+    ["popover", OverlayElement],
+    ["tooltip", TooltipElement],
+    ["modal", ModalElement],
+    ["drawer", DrawerElement],
+    ["card", CardElement],
+    ["stat-card", StatCardElement],
+    ["tag", TagElement],
+    ["chip", ChipElement],
+    ["tree", TreeElement],
+    ["tree-item", TreeItemElement],
+    ["timeline", TimelineElement],
+    ["timeline-item", TimelineItemElement],
+    ["calendar", CalendarElement],
+    ["kanban", KanbanElement],
+    ["kanban-column", KanbanColumnElement],
+    ["kanban-card", KanbanCardElement],
+    ["code-block", CodeBlockElement],
+    ["diff", DiffElement],
+    ["image-grid", ImageGridElement],
+    ["key-value", KeyValueElement],
+    ["kv-row", KvRowElement],
+    ["accordion", AccordionElement],
+    ["accordion-item", AccordionItemElement],
+    ["banner", BannerElement],
+    ["skeleton", SkeletonElement],
+    ["countdown", CountdownElement],
+    ["result", ResultElement],
+    ["permission-gate", PermissionGateElement],
+    ["quota-bar", QuotaBarElement],
+    ["api-key", ApiKeyElement],
+    ["audit-row", AuditRowElement],
+    ["workflow-node", WorkflowNodeElement],
+    ["chart", ChartElement],
+    ["avatar-group", AvatarGroupElement],
+    ["comment", CommentElement],
+    ["file-list", FileListElement],
+    ["file-item", FileItemElement],
     // iOS
-    ['ios-navbar', IosNavbarElement], ['ios-tabbar', IosTabbarElement], ['ios-list', IosListElement], ['ios-list-item', IosListItemElement], ['ios-action-sheet', IosActionSheetElement], ['ios-alert', IosAlertElement], ['ios-switch', IosSwitchElement], ['ios-segmented', IosSegmentedElement], ['ios-button', IosButtonElement], ['ios-search', IosSearchElement], ['ios-stepper', IosStepperElement],
+    ["ios-navbar", IosNavbarElement],
+    ["ios-tabbar", IosTabbarElement],
+    ["ios-list", IosListElement],
+    ["ios-list-item", IosListItemElement],
+    ["ios-action-sheet", IosActionSheetElement],
+    ["ios-alert", IosAlertElement],
+    ["ios-switch", IosSwitchElement],
+    ["ios-segmented", IosSegmentedElement],
+    ["ios-button", IosButtonElement],
+    ["ios-search", IosSearchElement],
+    ["ios-stepper", IosStepperElement],
     // macOS
-    ['macos-window', MacWindowElement], ['macos-toolbar', MacToolbarElement], ['macos-menubar', MacMenubarElement], ['macos-sidebar', MacSidebarElement], ['macos-source-item', MacSourceItemElement], ['macos-segmented', MacSegmentedElement], ['macos-popover', MacPopoverElement], ['macos-sheet', MacSheetElement], ['macos-stepper', MacStepperElement], ['macos-disclosure', MacDisclosureElement], ['macos-table', MacTableElement],
+    ["macos-window", MacWindowElement],
+    ["macos-toolbar", MacToolbarElement],
+    ["macos-menubar", MacMenubarElement],
+    ["macos-sidebar", MacSidebarElement],
+    ["macos-source-item", MacSourceItemElement],
+    ["macos-segmented", MacSegmentedElement],
+    ["macos-popover", MacPopoverElement],
+    ["macos-sheet", MacSheetElement],
+    ["macos-stepper", MacStepperElement],
+    ["macos-disclosure", MacDisclosureElement],
+    ["macos-table", MacTableElement],
     // agent / conversational UI
-    ['chat', ChatElement], ['user-message', UserMessageElement], ['agent-message', AgentMessageElement], ['system-message', SystemMessageElement], ['tool-call', ToolCallElement], ['agent-output', AgentOutputElement], ['reasoning', ReasoningElement], ['message-actions', MessageActionsElement], ['suggestions', SuggestionsElement], ['typing', TypingElement], ['composer', ComposerElement], ['citation', CitationElement], ['token-usage', TokenUsageElement],
+    ["chat", ChatElement],
+    ["user-message", UserMessageElement],
+    ["agent-message", AgentMessageElement],
+    ["system-message", SystemMessageElement],
+    ["tool-call", ToolCallElement],
+    ["agent-output", AgentOutputElement],
+    ["reasoning", ReasoningElement],
+    ["message-actions", MessageActionsElement],
+    ["suggestions", SuggestionsElement],
+    ["typing", TypingElement],
+    ["composer", ComposerElement],
+    ["citation", CitationElement],
+    ["token-usage", TokenUsageElement],
     // document (doc-mode typography)
-    ['doc-heading', DocHeadingElement], ['doc-paragraph', DocParagraphElement], ['doc-list', DocListElement], ['doc-list-item', DocListItemElement], ['doc-quote', DocQuoteElement],
+    ["doc-heading", DocHeadingElement],
+    ["doc-paragraph", DocParagraphElement],
+    ["doc-list", DocListElement],
+    ["doc-list-item", DocListItemElement],
+    ["doc-quote", DocQuoteElement],
+    ["doc-ordered-list", DocOrderedListElement],
+    ["doc-unordered-list", DocUnorderedListElement],
+    ["bold", BoldElement],
+    ["italic", ItalicElement],
+    ["code-inline", CodeInlineElement],
     // design-system palettes
-    ['color-palette', ColorPaletteElement], ['font-palette', FontPaletteElement], ['space-palette', SpacePaletteElement], ['radius-palette', RadiusPaletteElement]
+    ["color-palette", ColorPaletteElement],
+    ["font-palette", FontPaletteElement],
+    ["space-palette", SpacePaletteElement],
+    ["radius-palette", RadiusPaletteElement],
+    // shadcn-aligned additions
+    ["carousel", CarouselElement],
+    ["carousel-item", CarouselItemElement],
+    ["combobox", ComboboxElement],
+    ["data-table", DataTableElement],
+    ["hover-card", HoverCardElement],
+    ["input-group", InputGroupElement],
+    ["menubar", MenubarElement],
+    ["menubar-item", MenubarItemElement],
+    ["nav-menu", NavMenuElement],
+    ["nav-menu-item", NavMenuItemElement],
+    ["scroll-area", ScrollAreaElement],
+    ["toggle-group", ToggleGroupElement],
+    ["toggle-group-item", ToggleGroupItemElement],
+    ["collapsible", CollapsibleElement],
+    ["aspect-ratio", AspectRatioElement],
+    ["field", ShadcnFieldElement],
+    ["sonner", SonnerElement],
   ];
   // Guard against vocabulary drift: every primitive must be in the shared map.
   // (A miss would silently register under the wrong tag via identity fallback.)
   for (const [suffix] of pairs) {
-    if (toComponentTag(suffix) === suffix && !suffix.includes('-'))
-      console.warn(`[rpui] registry tag "${suffix}" missing from RPML vocabulary`);
+    if (toComponentTag(suffix) === suffix && !suffix.includes("-"))
+      console.warn(
+        `[rpui] registry tag "${suffix}" missing from RPML vocabulary`,
+      );
   }
-  for (const [suffix, ctor] of pairs) { define(toComponentTag(suffix), ctor); }
+  for (const [suffix, ctor] of pairs) {
+    define(toComponentTag(suffix), ctor);
+  }
 }

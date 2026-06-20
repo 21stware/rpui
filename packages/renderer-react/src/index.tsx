@@ -1,6 +1,12 @@
-import { useEffect, useRef } from 'react';
-import { createDocRenderer, registerAll, ModeManager } from '@21stware/rpui';
-import type { DocRenderer, RpuiMode, RpuiTheme, PickInfo, ModeManagerOpts } from '@21stware/rpui';
+import { useEffect, useRef } from "react";
+import { createDocRenderer, registerAll, ModeManager } from "@21stware/rpui";
+import type {
+  DocRenderer,
+  RpuiMode,
+  RpuiTheme,
+  PickInfo,
+  ModeManagerOpts,
+} from "@21stware/rpui";
 
 export type { RpuiMode, RpuiTheme, PickInfo };
 
@@ -34,23 +40,37 @@ export interface RpmlRendererProps {
 let _registered = false;
 
 export function RpmlRenderer({
-  rpml, debounce = 0, mode = 'view', theme, selected, onPick,
-  className, style, onError,
+  rpml,
+  debounce = 0,
+  mode = "view",
+  theme,
+  selected,
+  onPick,
+  className,
+  style,
+  onError,
 }: RpmlRendererProps) {
-  const hostRef   = useRef<HTMLDivElement>(null);
+  const hostRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<DocRenderer | null>(null);
-  const managerRef  = useRef<ModeManager | null>(null);
-  const timerRef    = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const managerRef = useRef<ModeManager | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Keep callbacks stable without recreating managers
   const onErrorRef = useRef(onError);
-  const onPickRef  = useRef(onPick);
-  useEffect(() => { onErrorRef.current = onError; }, [onError]);
-  useEffect(() => { onPickRef.current  = onPick;  }, [onPick]);
+  const onPickRef = useRef(onPick);
+  useEffect(() => {
+    onErrorRef.current = onError;
+  }, [onError]);
+  useEffect(() => {
+    onPickRef.current = onPick;
+  }, [onPick]);
 
   // Mount: create renderer + mode manager
   useEffect(() => {
-    if (!_registered) { registerAll(); _registered = true; }
+    if (!_registered) {
+      registerAll();
+      _registered = true;
+    }
     const renderer = createDocRenderer(hostRef.current!, {
       onError: (msg) => onErrorRef.current?.(msg),
       annotateLines: true, // always annotate for potential pick use
@@ -63,25 +83,29 @@ export function RpmlRenderer({
     };
     const manager = new ModeManager(hostRef.current!, opts);
     rendererRef.current = renderer;
-    managerRef.current  = manager;
+    managerRef.current = manager;
     return () => {
       renderer.destroy();
       manager.destroy();
       rendererRef.current = null;
-      managerRef.current  = null;
+      managerRef.current = null;
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync mode
-  useEffect(() => { managerRef.current?.setMode(mode); }, [mode]);
+  useEffect(() => {
+    managerRef.current?.setMode(mode);
+  }, [mode]);
 
   // Sync theme
-  useEffect(() => { if (theme) managerRef.current?.setTheme(theme); }, [theme]);
+  useEffect(() => {
+    if (theme) managerRef.current?.setTheme(theme);
+  }, [theme]);
 
   // Render + re-apply selected after DOM is rebuilt
   useEffect(() => {
     const renderer = rendererRef.current;
-    const manager  = managerRef.current;
+    const manager = managerRef.current;
     if (!renderer) return;
     const run = () => {
       renderer.render(rpml);
@@ -100,5 +124,11 @@ export function RpmlRenderer({
     managerRef.current?.setSelected(selected ?? []);
   }, [selected]);
 
-  return <div ref={hostRef} className={className} style={style} />;
+  return (
+    <div
+      ref={hostRef}
+      className={`rpui-scope${className ? " " + className : ""}`}
+      style={style}
+    />
+  );
 }

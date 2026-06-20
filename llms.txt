@@ -147,6 +147,9 @@ Keep annotation and enum-item sibling order intentional and stable: the generate
 - `<dropdown width="300" title="...">` — static opened dropdown.
 - `<popover width="300" title="...">` — static opened popover.
 - `<tooltip text="..." position="top|bottom|left|right">` — visible tooltip bubble.
+- `<scroll-area height="200">…children…</scroll-area>` — custom-styled scrollable container.
+- `<collapsible label="..." expanded>…children…</collapsible>` — expand/collapse section.
+- `<aspect-ratio ratio="16/9">…children…</aspect-ratio>` — container maintaining width/height ratio.
 
 ### Navigation
 
@@ -228,6 +231,10 @@ Palette primitives for documenting design tokens. Use inside `mode="doc"` pages 
 - `<pin-input length="4" value="12" state="default|disabled">` — OTP/PIN cells.
 - `<color-swatch value="#2563eb" label="..." state="default|disabled">`.
 - `<autocomplete value="..." placeholder="..." options="A,B,C" open label="..." state="default|focus|filled|error|disabled" error="...">`.
+- `<combobox placeholder="..." options="A,B,C" value="A">` — search-select combo.
+- `<input-group prefix="https://" suffix=".com" placeholder="..." value="...">` — input with prefix/suffix addons.
+- `<toggle-group type="single|multiple" options="Bold,Italic,Underline" active="0">` + `<toggle-group-item label="..." active>` — toggle button group.
+- `<field label="..." description="..." error="...">…control…</field>` — Field wrapper (label + control + description/error).
 
 ### Data display (additional)
 
@@ -241,6 +248,10 @@ Palette primitives for documenting design tokens. Use inside `mode="doc"` pages 
 - `<key-value>` + `<kv-row label="..." value="...">` — description list.
 - `<accordion>` + `<accordion-item label="..." expanded>`.
 - `<chip label="..." icon="..." closable>` — compact token.
+- `<carousel>` + `<carousel-item>` — horizontal scrolling carousel with prev/next buttons.
+- `<data-table columns="Name,Email,Status" rows="Alice,alice@mail.com,Active;Bob,bob@mail.com,Inactive">` — sortable-header table; rows are semicolon-separated, cells comma-separated.
+- `<hover-card trigger="@user" title="..." description="...">` — inline trigger showing a card on hover.
+- `<sonner title="..." description="..." type="info|success|warning|error">` — toast notification card.
 
 ### Navigation & layout (additional)
 
@@ -251,6 +262,8 @@ Palette primitives for documenting design tokens. Use inside `mode="doc"` pages 
 - `<toc items="概述,安装,用法">` — table of contents.
 - `<kbd keys="⌘,K">` — keyboard shortcut chips.
 - `<split-pane columns="1fr 1fr">`, `<divider vertical>`, `<spacer size="16">`.
+- `<menubar>` + `<menubar-item label="File">` — horizontal menu bar.
+- `<nav-menu>` + `<nav-menu-item label="..." active>` — horizontal navigation menu with active indicator.
 
 ### Enterprise / SaaS
 

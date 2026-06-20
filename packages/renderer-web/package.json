@@ -1,6 +1,6 @@
 {
   "name": "@21stware/rpui",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "RPUI: static UI prototype renderer (RPML Web Components runtime)",
   "type": "module",
   "main": "dist/rpui.js",
