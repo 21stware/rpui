@@ -37,6 +37,7 @@ export interface PickInfo {
 
 const MODE_CSS = `
 [data-rp-mode="edit"] .rp-pin{display:none!important}
+[data-rp-mode="edit"] .annotation-el-pane,[data-rp-mode="pick"] .annotation-el-pane{position:relative!important;max-height:none!important;overflow:visible!important}
 [data-rp-mode="edit"] *{pointer-events:none!important;cursor:default!important}
 [data-rp-mode="pick"]{cursor:crosshair}
 [data-rp-mode="pick"] [data-rp-hover]{outline:2px solid var(--rpui-pick-hover-border,rgba(99,102,241,.8))!important;outline-offset:2px;background-color:var(--rpui-pick-hover,rgba(99,102,241,.07))!important}
