@@ -38,12 +38,13 @@ export class RpAnnotation extends HTMLElement {
     this.dataset.rpSection = sectionPath;
 
     const marker = document.createElement("span");
-    const kind = id ? "drop" : depth <= 1 ? "circle" : "triangle";
+    const kind = id ? "circle" : depth <= 1 ? "circle" : "triangle";
+    const pinParts = id ? id.split("-") : [];
+    const pinDisplay = pinParts[0] || id || sectionPath.split("-").pop() || "";
+    const pinLevel = pinParts.length > 1 ? parseInt(pinParts[1], 10) || 1 : 1;
     marker.className = `annotation-el-marker ${kind}`;
-    // Show the local index (last segment of the section path) inside every marker,
-    // so a UI slice annotated one level deeper can be referenced unambiguously.
-    const localIndex = id || sectionPath.split("-").pop() || "";
-    marker.innerHTML = `<span>${escapeHtml(localIndex)}</span>`;
+    if (id && pinLevel > 1) marker.classList.add(`pin-l${pinLevel}`);
+    marker.innerHTML = `<span>${escapeHtml(pinDisplay)}</span>`;
 
     const head = document.createElement("div");
     head.className = "annotation-el-head";

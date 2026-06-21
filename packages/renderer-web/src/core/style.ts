@@ -31,9 +31,12 @@ annotation-el annotation-el, annotation-el annotation-el, annotation-el annotati
 .annotation-el-head { display:flex; align-items:center; gap:8px; margin:0 0 4px; width:fit-content; }
 .annotation-el-title { font-weight:700; color:var(--rp-text); font-size:15px }
 .annotation-el-marker { display:inline-grid; place-items:center; flex:0 0 auto; color:#fff; font-size:10px; font-weight:700; line-height:1; }
-.annotation-el-marker.drop { width:22px; height:22px; background:var(--rp-primary); border-radius:50% 50% 50% 0; transform:rotate(-45deg); }
-.annotation-el-marker.drop > span { transform:rotate(45deg); }
-.annotation-el-marker.circle { width:16px; height:16px; background:var(--rp-purple); border-radius:50%; }
+.annotation-el-marker.circle { width:22px; height:22px; background:var(--rp-primary); border-radius:50%; }
+.annotation-el-marker.circle.pin-l2 { background:#f59e0b; }
+.annotation-el-marker.circle.pin-l3 { background:#10b981; }
+.annotation-el-marker.circle.pin-l4 { background:#8b5cf6; }
+.annotation-el-marker.circle.pin-l5 { background:#ec4899; }
+
 .annotation-el-marker.triangle { width:18px; height:16px; background:var(--rp-success); clip-path:polygon(50% 0, 100% 100%, 0 100%); }
 .annotation-el-marker.triangle > span { transform:translateY(2px); font-size:9px; }
 .annotation-el-marker.global { width:20px; height:20px; background:#0f172a; border-radius:6px; font-size:11px; }
