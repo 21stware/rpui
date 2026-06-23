@@ -134,6 +134,8 @@ export interface ModeManagerOpts {
   theme?: RpuiTheme;
   selected?: string[];
   onPick?: (info: PickInfo) => void;
+  /** Called when an `<anchor>` link is clicked; prevents the default URL navigation. */
+  onNavigate?: (to: string, section?: string) => void;
 }
 
 export class ModeManager {
@@ -141,14 +143,25 @@ export class ModeManager {
   private _mode: RpuiMode = "view";
   private _hovered: Element | null = null;
   onPick?: (info: PickInfo) => void;
+  onNavigate?: (to: string, section?: string) => void;
 
   private _over: (e: PointerEvent) => void;
   private _out: (e: PointerEvent) => void;
   private _click: (e: PointerEvent) => void;
+  private _anchor: (e: Event) => void;
 
   constructor(host: HTMLElement, opts: ModeManagerOpts = {}) {
     this.host = host;
     this.onPick = opts.onPick;
+    this.onNavigate = opts.onNavigate;
+
+    this._anchor = (e: Event) => {
+      if (!this.onNavigate) return;
+      const ev = e as CustomEvent<{ to: string; section?: string }>;
+      ev.preventDefault();
+      this.onNavigate(ev.detail.to, ev.detail.section);
+    };
+    host.addEventListener("rp-anchor", this._anchor);
 
     this._over = (e: PointerEvent) => {
       const target = closest(e.target as Element, this.host);
@@ -227,6 +240,7 @@ export class ModeManager {
 
   destroy() {
     this._detachPick();
+    this.host.removeEventListener("rp-anchor", this._anchor);
     delete this.host.dataset.rpMode;
   }
 }

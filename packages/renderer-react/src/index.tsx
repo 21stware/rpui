@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { createDocRenderer, registerAll, ModeManager } from "@21stware/rpui";
 import type {
   DocRenderer,
@@ -35,6 +36,13 @@ export interface RpmlRendererProps {
   style?: React.CSSProperties;
   /** Called with an error message on parse failure, null on recovery. */
   onError?: (msg: string | null) => void;
+  /** Called when an `<anchor>` link is clicked; prevents default URL navigation.
+   *  Receive the target document path and optional section id. */
+  onLinkNavigate?: (to: string, section?: string) => void;
+  /** Called when an element is selected in pick mode. Return a React node to
+   *  render it as a portal inside the selected element (e.g. an overlay or
+   *  inspector panel). Return null/undefined to render nothing. */
+  onElementSelectRender?: (info: PickInfo) => React.ReactNode;
 }
 
 let _registered = false;
@@ -49,6 +57,8 @@ export function RpmlRenderer({
   className,
   style,
   onError,
+  onLinkNavigate,
+  onElementSelectRender,
 }: RpmlRendererProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<DocRenderer | null>(null);
@@ -58,12 +68,25 @@ export function RpmlRenderer({
   // Keep callbacks stable without recreating managers
   const onErrorRef = useRef(onError);
   const onPickRef = useRef(onPick);
+  const onLinkNavigateRef = useRef(onLinkNavigate);
+  const onElementSelectRenderRef = useRef(onElementSelectRender);
   useEffect(() => {
     onErrorRef.current = onError;
   }, [onError]);
   useEffect(() => {
     onPickRef.current = onPick;
   }, [onPick]);
+  useEffect(() => {
+    onLinkNavigateRef.current = onLinkNavigate;
+  }, [onLinkNavigate]);
+  useEffect(() => {
+    onElementSelectRenderRef.current = onElementSelectRender;
+  }, [onElementSelectRender]);
+
+  const [selectPortal, setSelectPortal] = useState<{
+    target: Element;
+    info: PickInfo;
+  } | null>(null);
 
   // Mount: create renderer + mode manager
   useEffect(() => {
@@ -79,7 +102,17 @@ export function RpmlRenderer({
       mode,
       theme,
       selected,
-      onPick: (info) => onPickRef.current?.(info),
+      onPick: (info) => {
+        onPickRef.current?.(info);
+        if (onElementSelectRenderRef.current) {
+          setSelectPortal(
+            info.element.hasAttribute("data-rp-selected")
+              ? { target: info.element, info }
+              : null,
+          );
+        }
+      },
+      onNavigate: (to, section) => onLinkNavigateRef.current?.(to, section),
     };
     const manager = new ModeManager(hostRef.current!, opts);
     rendererRef.current = renderer;
@@ -108,6 +141,7 @@ export function RpmlRenderer({
     const manager = managerRef.current;
     if (!renderer) return;
     const run = () => {
+      setSelectPortal(null);
       renderer.render(rpml);
       if (selected?.length) manager?.setSelected(selected);
     };
@@ -125,10 +159,18 @@ export function RpmlRenderer({
   }, [selected]);
 
   return (
-    <div
-      ref={hostRef}
-      className={`rpui-scope${className ? " " + className : ""}`}
-      style={style}
-    />
+    <>
+      <div
+        ref={hostRef}
+        className={`rpui-scope${className ? " " + className : ""}`}
+        style={style}
+      />
+      {selectPortal &&
+        onElementSelectRender &&
+        createPortal(
+          onElementSelectRender(selectPortal.info),
+          selectPortal.target,
+        )}
+    </>
   );
 }
