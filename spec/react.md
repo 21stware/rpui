@@ -15,7 +15,7 @@ Both packages are required: `@21stware/rpui` provides the runtime and custom ele
 ## Basic usage
 
 ```tsx
-import { RpmlRenderer } from '@21stware/rpui-react';
+import { RpmlRenderer } from "@21stware/rpui-react";
 
 function App() {
   return (
@@ -39,18 +39,18 @@ function App() {
 When the RPML text changes on every keystroke (e.g. a live code editor), use `debounce` to avoid re-parsing on each character. The component preserves scroll position across updates.
 
 ```tsx
-import { useState } from 'react';
-import { RpmlRenderer } from '@21stware/rpui-react';
+import { useState } from "react";
+import { RpmlRenderer } from "@21stware/rpui-react";
 
 function Editor() {
-  const [rpml, setRpml] = useState('');
+  const [rpml, setRpml] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <div style={{ display: 'flex', gap: 16 }}>
-      <textarea value={rpml} onChange={e => setRpml(e.target.value)} />
+    <div style={{ display: "flex", gap: 16 }}>
+      <textarea value={rpml} onChange={(e) => setRpml(e.target.value)} />
       <div style={{ flex: 1 }}>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <RpmlRenderer rpml={rpml} debounce={150} onError={setError} />
       </div>
     </div>
@@ -83,7 +83,7 @@ In **pick mode** elements highlight on hover and show a solid outline when click
 <RpmlRenderer
   mode="pick"
   rpml={source}
-  selected={['navbar-el', '[data-pin="1"]']}
+  selected={["navbar-el", '[data-pin="1"]']}
   onPick={({ langTag, line, pin, attrs }) => revealLine(line)}
 />
 ```
@@ -94,50 +94,97 @@ Pass a `theme` object to override the default color palette. All fields are opti
 
 ```tsx
 const darkTheme: RpuiTheme = {
-  bg:         '#1e1e2e',
-  surface:    '#2a2a3c',
-  border:     '#3a3a4c',
-  text:       '#cdd6f4',
-  textMuted:  '#7f849c',
-  accent:     '#89b4fa',
+  bg: "#1e1e2e",
+  surface: "#2a2a3c",
+  border: "#3a3a4c",
+  text: "#cdd6f4",
+  textMuted: "#7f849c",
+  accent: "#89b4fa",
   // pick-mode highlights
-  pickHoverBorder:    'rgba(137,180,250,.8)',
-  pickHover:          'rgba(137,180,250,.08)',
-  pickSelectedBorder: 'rgba(166,227,161,1)',
-  pickSelected:       'rgba(166,227,161,.12)',
+  pickHoverBorder: "rgba(137,180,250,.8)",
+  pickHover: "rgba(137,180,250,.08)",
+  pickSelectedBorder: "rgba(166,227,161,1)",
+  pickSelected: "rgba(166,227,161,.12)",
 };
 
-<RpmlRenderer rpml={source} theme={darkTheme} />
+<RpmlRenderer rpml={source} theme={darkTheme} />;
 ```
 
 The theme keys map to CSS custom properties on the host element (`--rp-bg`, `--rp-surface`, etc.) which cascade into the prototype chrome (page background, annotation pane, header text, borders).
 
 ## Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `rpml` | `string` | required | RPML source text |
-| `debounce` | `number` | `0` | Delay in ms before re-rendering after prop change |
-| `mode` | `"view" \| "edit" \| "pick"` | `"view"` | Interaction mode |
-| `theme` | `RpuiTheme` | — | Color overrides applied as CSS vars on the host |
-| `selected` | `string[]` | — | CSS selectors to mark as selected (pick mode) |
-| `onPick` | `(info: PickInfo) => void` | — | Called when user clicks an element in pick mode |
-| `onError` | `(msg: string \| null) => void` | — | Parse error callback; `null` signals recovery |
-| `className` | `string` | — | CSS class on the host `<div>` |
-| `style` | `CSSProperties` | — | Inline style on the host `<div>` |
+| Prop                    | Type                                     | Default  | Description                                                                  |
+| ----------------------- | ---------------------------------------- | -------- | ---------------------------------------------------------------------------- |
+| `rpml`                  | `string`                                 | required | RPML source text                                                             |
+| `debounce`              | `number`                                 | `0`      | Delay in ms before re-rendering after prop change                            |
+| `mode`                  | `"view" \| "edit" \| "pick"`             | `"view"` | Interaction mode                                                             |
+| `theme`                 | `RpuiTheme`                              | —        | Color overrides applied as CSS vars on the host                              |
+| `selected`              | `string[]`                               | —        | CSS selectors to mark as selected (pick mode)                                |
+| `onPick`                | `(info: PickInfo) => void`               | —        | Called when user clicks an element in pick mode                              |
+| `onLinkNavigate`        | `(to: string, section?: string) => void` | —        | Called when an `<anchor>` link is clicked; prevents default URL navigation   |
+| `onElementSelectRender` | `(info: PickInfo) => ReactNode`          | —        | Return a React node to portal-render inside the selected element (pick mode) |
+| `onError`               | `(msg: string \| null) => void`          | —        | Parse error callback; `null` signals recovery                                |
+| `className`             | `string`                                 | —        | CSS class on the host `<div>`                                                |
+| `style`                 | `CSSProperties`                          | —        | Inline style on the host `<div>`                                             |
 
 ### PickInfo
 
 ```typescript
 interface PickInfo {
-  element: Element;   // the DOM element
-  tag: string;        // Web Component tag, e.g. "navbar-el"
-  langTag: string;    // RPML language tag, e.g. "navigator"
-  pin?: string;       // data-pin value if present
-  line?: number;      // 1-based source line in the original .rpml file
+  element: Element; // the DOM element
+  tag: string; // Web Component tag, e.g. "navbar-el"
+  langTag: string; // RPML language tag, e.g. "navigator"
+  pin?: string; // data-pin value if present
+  line?: number; // 1-based source line in the original .rpml file
   attrs: Record<string, string>;
 }
 ```
+
+## Link navigation override
+
+By default, `<anchor>` clicks navigate by reloading the page with `?rpml=<to>`. Pass `onLinkNavigate` to intercept and handle navigation in-app (e.g. with React Router):
+
+```tsx
+<RpmlRenderer
+  rpml={source}
+  onLinkNavigate={(to, section) => {
+    router.push(`/${to}${section ? `?section=${section}` : ""}`);
+  }}
+/>
+```
+
+When `onLinkNavigate` is provided, the default `location.href` reload is suppressed.
+
+## Element select render (pick mode)
+
+In pick mode, `onElementSelectRender` lets you render a React node as a portal inside the selected element — useful for inline inspectors, action menus, or overlays:
+
+```tsx
+<RpmlRenderer
+  rpml={source}
+  mode="pick"
+  onElementSelectRender={(info) => (
+    <div
+      style={{
+        position: "absolute",
+        top: 0,
+        right: 0,
+        background: "#fff",
+        border: "1px solid #ccc",
+        padding: 8,
+      }}
+    >
+      <p>
+        {info.langTag} (line {info.line})
+      </p>
+      <button onClick={() => console.log("edit", info)}>Edit</button>
+    </div>
+  )}
+/>
+```
+
+The portal is cleared when the element is deselected or when the RPML source changes.
 
 ## VS Code integration
 
