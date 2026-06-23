@@ -25,16 +25,21 @@ export function buildPlayground(ctx: Ctx): string {
   const body = `
 <div id="pg-drop">松开以加载 .rpml 文件或文件夹</div>
 
-<div class="page-intro" id="pg-hint">
-  <h1>Playground</h1>
-  <p>拖拽单个 <code>.rpml</code> 文件查看，或拖拽<strong>文件夹</strong>在预览窗中切换页面；也可用 URL 参数 <code>?rpml=examples/04-ticket-desk.rpml</code>。</p>
-  <div class="pg-zone" id="pg-picker">点击选择 <code>.rpml</code> 文件，或拖拽文件 / 文件夹到此处</div>
-  <input type="file" id="pg-file" accept=".rpml,.xml,text/plain" style="display:none" />
-  <p class="pg-eyebrow">从示例开始</p>
-  <ul class="pg-examples">
+<div class="pg-layout">
+  <div class="pg-sidebar" id="pg-sidebar">
+    <h1>Playground</h1>
+    <p class="pg-intro">拖拽 <code>.rpml</code> 文件或文件夹到预览区，或点击选择文件。</p>
+    <input type="file" id="pg-file" accept=".rpml,.xml,text/plain" style="display:none" />
+    <button class="pg-open-btn" id="pg-picker">选择文件…</button>
+    <p class="pg-eyebrow">示例</p>
+    <ul class="pg-examples" id="pg-examples">
       ${exLinks}
-  </ul>
-  <div class="pg-err" id="pg-err"></div>
+    </ul>
+    <div class="pg-err" id="pg-err"></div>
+  </div>
+  <div class="pg-stage" id="pg-stage">
+    <div class="pg-stage-hint" id="pg-stage-hint">拖拽 .rpml 文件到此处，或从左侧选择示例</div>
+  </div>
 </div>`;
 
   const head = `<style>
@@ -51,57 +56,71 @@ export function buildPlayground(ctx: Ctx): string {
   .pg-examples a:hover{color:var(--brand-ink)}
   .pg-err{color:#dc2626;margin-top:16px;font-family:ui-monospace,Menlo,monospace}
 
-  /* ── Figma-style preview shell ── */
-  .pg-shell{position:fixed;inset:0;z-index:100;background:#1e1e2e;overflow:hidden;
+  /* ── Playground layout: sidebar + stage ── */
+  .pg-layout{display:grid;grid-template-columns:280px 1fr;height:calc(100vh - 60px)}
+  .pg-sidebar{padding:24px 20px;overflow-y:auto;border-right:1px solid var(--line);background:var(--surface)}
+  .pg-sidebar h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+  .pg-intro{font-size:14px;color:var(--ink-2);margin:0 0 16px;line-height:1.5}
+  .pg-open-btn{display:inline-block;padding:8px 16px;border:1px solid var(--line);border-radius:8px;
+    background:var(--surface-warm);color:var(--ink);font-size:14px;cursor:pointer;margin-bottom:16px}
+  .pg-open-btn:hover{border-color:var(--brand);color:var(--brand-ink)}
+  .pg-examples{margin:0;padding:0;list-style:none}
+  .pg-examples li{margin-bottom:6px}
+  .pg-examples a{font-size:14px;color:var(--ink-2);cursor:pointer;text-decoration:none}
+  .pg-examples a:hover{color:var(--brand-ink)}
+  .pg-examples a.active{color:var(--brand-ink);font-weight:600}
+
+  /* ── Stage: Figma-style preview area ── */
+  .pg-stage{position:relative;background:#1e1e2e;overflow:hidden;
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-  /* Scrollable canvas pan area */
+  .pg-stage-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#6b7280;font-size:15px;pointer-events:none}
   .pg-viewport{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:auto}
-  /* Frame holds the RPML page at natural size, then scaled via transform */
-  .pg-frame{flex:none;transform-origin:center center;line-height:0}
+  .pg-frame{flex:none;transform-origin:center center;line-height:0;will-change:transform}
   .pg-frame > *{display:block}
   .pg-err-inline{padding:40px;color:#dc2626;font-family:ui-monospace,Menlo,monospace;background:#fff;border-radius:8px}
 
-  /* ── Bottom-left page switcher ── */
-  .pg-switcher{position:fixed;bottom:20px;left:20px;z-index:200;display:flex;align-items:center;gap:6px;
-    padding:7px 12px;border:1px solid rgba(255,255,255,.12);border-radius:8px;
+  /* ── Bottom-left page switcher (inside stage) ── */
+  .pg-switcher{position:absolute;bottom:16px;left:16px;z-index:10;display:flex;align-items:center;gap:6px;
+    padding:6px 11px;border:1px solid rgba(255,255,255,.12);border-radius:7px;
     background:rgba(24,24,32,.88);backdrop-filter:blur(12px);
-    color:#e2e8f0;font-size:13px;
+    color:#e2e8f0;font-size:12px;
     box-shadow:0 2px 12px rgba(0,0,0,.4);cursor:pointer;user-select:none;transition:border-color .15s}
   .pg-switcher:hover{border-color:rgba(255,255,255,.28)}
-  .pg-sw-label{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .pg-sw-arrow{opacity:.5;font-size:10px}
+  .pg-sw-label{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pg-sw-arrow{opacity:.5;font-size:9px}
 
-  .pg-dropdown{position:fixed;bottom:56px;left:20px;z-index:201;display:none;flex-direction:column;
-    width:260px;max-height:360px;overflow-y:auto;
-    border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  .pg-dropdown{position:absolute;bottom:50px;left:16px;z-index:11;display:none;flex-direction:column;
+    width:240px;max-height:320px;overflow-y:auto;
+    border:1px solid rgba(255,255,255,.12);border-radius:9px;
     background:rgba(24,24,32,.96);backdrop-filter:blur(12px);
     box-shadow:0 8px 32px rgba(0,0,0,.5);padding:4px}
   .pg-dropdown.open{display:flex}
-  .pg-dd-item{padding:8px 12px;border-radius:7px;color:#cbd5e1;font-size:13px;
+  .pg-dd-item{padding:7px 11px;border-radius:6px;color:#cbd5e1;font-size:12px;
     cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pg-dd-item:hover{background:rgba(255,255,255,.08)}
   .pg-dd-item.active{background:rgba(99,102,241,.2);color:#a5b4fc;font-weight:600}
-  .pg-dd-group{padding:10px 12px 4px;font-size:10px;font-weight:700;color:#6b7280;
+  .pg-dd-group{padding:8px 11px 3px;font-size:10px;font-weight:700;color:#6b7280;
     text-transform:uppercase;letter-spacing:.05em}
 
-  /* ── Bottom-right zoom controls ── */
-  .pg-zoom{position:fixed;bottom:20px;right:20px;z-index:200;display:flex;align-items:center;gap:2px}
-  .pg-zoom-btn{display:flex;align-items:center;justify-content:center;width:30px;height:30px;
-    border:1px solid rgba(255,255,255,.12);border-radius:7px;
+  /* ── Bottom-right zoom controls (inside stage) ── */
+  .pg-zoom{position:absolute;bottom:16px;right:16px;z-index:10;display:flex;align-items:center;gap:2px}
+  .pg-zoom-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;
+    border:1px solid rgba(255,255,255,.12);border-radius:6px;
     background:rgba(24,24,32,.88);backdrop-filter:blur(12px);
-    color:#e2e8f0;font-size:15px;cursor:pointer;transition:border-color .12s}
+    color:#e2e8f0;font-size:14px;cursor:pointer;transition:border-color .12s}
   .pg-zoom-btn:hover{border-color:rgba(255,255,255,.28)}
-  .pg-zoom-val{min-width:48px;text-align:center;height:30px;line-height:30px;
+  .pg-zoom-val{min-width:44px;text-align:center;height:28px;line-height:28px;
     border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12);
     background:rgba(24,24,32,.88);backdrop-filter:blur(12px);
-    color:#94a3b8;font-size:12px;font-weight:500;user-select:none}
+    color:#94a3b8;font-size:11px;font-weight:500;user-select:none}
 
-  /* ── Top-right toolbar ── */
-  .pg-toolbar{position:fixed;top:20px;right:20px;z-index:200;display:flex;gap:6px}
-  .pg-tb-btn{display:flex;align-items:center;justify-content:center;width:32px;height:32px;
-    border:1px solid rgba(255,255,255,.12);border-radius:8px;
+  /* ── Top-right toolbar (inside stage) ── */
+  .pg-toolbar{position:absolute;top:16px;right:16px;z-index:10;display:flex;gap:5px}
+  .pg-tb-btn{display:flex;align-items:center;justify-content:center;width:30px;height:30px;
+    border:1px solid rgba(255,255,255,.12);border-radius:7px;
     background:rgba(24,24,32,.88);backdrop-filter:blur(12px);
-    color:#e2e8f0;font-size:15px;cursor:pointer;
+    color:#e2e8f0;font-size:14px;cursor:pointer;
     transition:border-color .12s,background .12s}
   .pg-tb-btn:hover{border-color:rgba(255,255,255,.28)}
 </style>`;
@@ -110,13 +129,17 @@ export function buildPlayground(ctx: Ctx): string {
   import { parseToPage } from './dist/rpml-loader.js';
   import { initTheme, currentTheme, setTheme } from './dist/rpui.js';
 
-  let fileInput = document.getElementById('pg-file');
-  let picker = document.getElementById('pg-picker');
+  const fileInput = document.getElementById('pg-file');
+  const picker = document.getElementById('pg-picker');
+  const stage = document.getElementById('pg-stage');
+  const stageHint = document.getElementById('pg-stage-hint');
+  const errEl = document.getElementById('pg-err');
 
   // ── State ──
   let docs = [];
   let currentIdx = 0;
   let zoom = 1;
+  let stageBuilt = false;
 
   // ── Zoom helpers ──
   const STEPS = [.1,.15,.2,.25,.33,.5,.67,.75,1,1.25,1.5,2];
@@ -128,16 +151,16 @@ export function buildPlayground(ctx: Ctx): string {
     if (v) v.textContent = Math.round(zoom * 100) + '%';
   }
   function fitZoom() {
-    const shell = document.getElementById('pg-shell');
+    if (!stage) return;
     const frame = document.getElementById('pg-frame');
-    if (!shell || !frame) return;
+    if (!frame) return;
     const child = frame.firstElementChild;
     if (!child) return;
     frame.style.transform = 'none';
     const natW = child.offsetWidth || 1440;
     const natH = child.offsetHeight || 900;
-    const availW = shell.clientWidth - 80;
-    const availH = shell.clientHeight - 80;
+    const availW = stage.clientWidth - 60;
+    const availH = stage.clientHeight - 60;
     zoom = Math.max(Math.min(availW / natW, availH / natH, 1), 0.05);
     applyZoom();
   }
@@ -152,73 +175,6 @@ export function buildPlayground(ctx: Ctx): string {
     applyZoom();
   }
 
-  // ── Shell builder ──
-  function takeOver() {
-    document.body.innerHTML = '';
-
-    const shell = document.createElement('div');
-    shell.className = 'pg-shell'; shell.id = 'pg-shell';
-
-    const viewport = document.createElement('div');
-    viewport.className = 'pg-viewport'; viewport.id = 'pg-viewport';
-    const frame = document.createElement('div');
-    frame.className = 'pg-frame'; frame.id = 'pg-frame';
-    viewport.appendChild(frame);
-    shell.appendChild(viewport);
-
-    // Hidden file input
-    const fi = document.createElement('input');
-    fi.type = 'file'; fi.accept = '.rpml,.xml,text/plain'; fi.style.display = 'none';
-    shell.appendChild(fi);
-    fileInput = fi;
-    fi.addEventListener('change', () => { if (fi.files[0]) loadFile(fi.files[0]); fi.value = ''; });
-
-    // Top-right toolbar
-    const toolbar = document.createElement('div');
-    toolbar.className = 'pg-toolbar';
-    const themeBtn = makeBtn('◑', '切换亮色/暗色');
-    const openBtn  = makeBtn('⊕', '打开文件');
-    const closeBtn = makeBtn('✕', '返回');
-    toolbar.append(themeBtn, openBtn, closeBtn);
-    shell.appendChild(toolbar);
-
-    // Bottom-left page switcher (hidden when single file)
-    const switcher = document.createElement('div');
-    switcher.className = 'pg-switcher'; switcher.id = 'pg-switcher'; switcher.style.display = 'none';
-    switcher.innerHTML = '<span class="pg-sw-label" id="pg-sw-label">Page</span><span class="pg-sw-arrow">▲</span>';
-    const dropdown = document.createElement('div');
-    dropdown.className = 'pg-dropdown'; dropdown.id = 'pg-dropdown';
-    shell.append(switcher, dropdown);
-
-    // Bottom-right zoom bar
-    const zoomBar = document.createElement('div');
-    zoomBar.className = 'pg-zoom';
-    const zOutBtn = makeZBtn('−', '缩小');
-    const zVal    = document.createElement('span');
-    zVal.className = 'pg-zoom-val'; zVal.id = 'pg-zoom-val'; zVal.textContent = '100%';
-    const zInBtn  = makeZBtn('+', '放大');
-    const zFitBtn = makeZBtn('⤢', '适应窗口');
-    zoomBar.append(zOutBtn, zVal, zInBtn, zFitBtn);
-    shell.appendChild(zoomBar);
-
-    document.body.appendChild(shell);
-
-    initTheme();
-    themeBtn.addEventListener('click', () => setTheme(currentTheme() === 'dark' ? 'light' : 'dark'));
-    openBtn.addEventListener('click', () => fi.click());
-    closeBtn.addEventListener('click', () => location.href = 'playground.html');
-    zOutBtn.addEventListener('click', zoomOut);
-    zInBtn.addEventListener('click',  zoomIn);
-    zFitBtn.addEventListener('click', fitZoom);
-    window.addEventListener('keydown', e => {
-      if ((e.metaKey || e.ctrlKey) && e.key === '=') { e.preventDefault(); zoomIn(); }
-      if ((e.metaKey || e.ctrlKey) && e.key === '-') { e.preventDefault(); zoomOut(); }
-      if ((e.metaKey || e.ctrlKey) && e.key === '0') { e.preventDefault(); fitZoom(); }
-    });
-    switcher.addEventListener('click', e => { e.stopPropagation(); dropdown.classList.toggle('open'); });
-    document.addEventListener('click', () => dropdown.classList.remove('open'));
-  }
-
   function makeBtn(txt, title) {
     const b = document.createElement('button');
     b.className = 'pg-tb-btn'; b.type = 'button'; b.title = title; b.textContent = txt;
@@ -228,6 +184,63 @@ export function buildPlayground(ctx: Ctx): string {
     const b = document.createElement('button');
     b.className = 'pg-zoom-btn'; b.type = 'button'; b.title = title; b.textContent = txt;
     return b;
+  }
+
+  // ── Build preview UI inside #pg-stage (no body clearing) ──
+  function buildStage() {
+    if (stageBuilt || !stage) return;
+    stageBuilt = true;
+    stage.innerHTML = '';
+
+    const viewport = document.createElement('div');
+    viewport.className = 'pg-viewport'; viewport.id = 'pg-viewport';
+    const frame = document.createElement('div');
+    frame.className = 'pg-frame'; frame.id = 'pg-frame';
+    viewport.appendChild(frame);
+    stage.appendChild(viewport);
+
+    // Top-right toolbar
+    const toolbar = document.createElement('div');
+    toolbar.className = 'pg-toolbar';
+    const themeBtn = makeBtn('\\u25D1', '切换亮色/暗色');
+    const openBtn  = makeBtn('\\u2295', '打开文件');
+    toolbar.append(themeBtn, openBtn);
+    stage.appendChild(toolbar);
+
+    // Bottom-left page switcher
+    const switcher = document.createElement('div');
+    switcher.className = 'pg-switcher'; switcher.id = 'pg-switcher'; switcher.style.display = 'none';
+    switcher.innerHTML = '<span class="pg-sw-label" id="pg-sw-label">Page</span><span class="pg-sw-arrow">\\u25B2</span>';
+    const dropdown = document.createElement('div');
+    dropdown.className = 'pg-dropdown'; dropdown.id = 'pg-dropdown';
+    stage.append(switcher, dropdown);
+
+    // Bottom-right zoom bar
+    const zoomBar = document.createElement('div');
+    zoomBar.className = 'pg-zoom';
+    const zOutBtn = makeZBtn('\\u2212', '缩小');
+    const zVal    = document.createElement('span');
+    zVal.className = 'pg-zoom-val'; zVal.id = 'pg-zoom-val'; zVal.textContent = '100%';
+    const zInBtn  = makeZBtn('+', '放大');
+    const zFitBtn = makeZBtn('\\u2922', '适应窗口');
+    zoomBar.append(zOutBtn, zVal, zInBtn, zFitBtn);
+    stage.appendChild(zoomBar);
+
+    initTheme();
+    themeBtn.addEventListener('click', () => setTheme(currentTheme() === 'dark' ? 'light' : 'dark'));
+    openBtn.addEventListener('click', () => fileInput?.click());
+    zOutBtn.addEventListener('click', zoomOut);
+    zInBtn.addEventListener('click',  zoomIn);
+    zFitBtn.addEventListener('click', fitZoom);
+    switcher.addEventListener('click', e => { e.stopPropagation(); dropdown.classList.toggle('open'); });
+    document.addEventListener('click', () => dropdown.classList.remove('open'));
+
+    window.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === '=') { e.preventDefault(); zoomIn(); }
+      if ((e.metaKey || e.ctrlKey) && e.key === '-') { e.preventDefault(); zoomOut(); }
+      if ((e.metaKey || e.ctrlKey) && e.key === '0') { e.preventDefault(); fitZoom(); }
+    });
+    window.addEventListener('resize', () => { if (frame.firstElementChild) fitZoom(); });
   }
 
   // ── Render ──
@@ -245,14 +258,18 @@ export function buildPlayground(ctx: Ctx): string {
 
   function renderOne(source) {
     docs = [];
-    takeOver();
+    buildStage();
+    if (stageHint) stageHint.style.display = 'none';
     renderFrame(source);
+    const sw = document.getElementById('pg-switcher');
+    if (sw) sw.style.display = 'none';
   }
 
   function renderMulti(docList) {
     docs = docList;
     currentIdx = 0;
-    takeOver();
+    buildStage();
+    if (stageHint) stageHint.style.display = 'none';
     showPage(0);
   }
 
@@ -261,7 +278,6 @@ export function buildPlayground(ctx: Ctx): string {
     currentIdx = idx;
     renderFrame(docs[idx].source);
     updateSwitcher();
-    history.replaceState(null, '', '#' + docs[idx].path);
   }
 
   function docTitle(source, fallback) {
@@ -277,7 +293,7 @@ export function buildPlayground(ctx: Ctx): string {
     if (!sw || !dd) return;
     if (docs.length <= 1) { sw.style.display = 'none'; return; }
     sw.style.display = 'flex';
-    if (lb) lb.textContent = 'Page: ' + docTitle(docs[currentIdx].source, basename(docs[currentIdx].path).replace(/\\.rpml$/i, ''));
+    if (lb) lb.textContent = docTitle(docs[currentIdx].source, basename(docs[currentIdx].path).replace(/\\.rpml$/i, ''));
     let html = '';
     let lastGroup = null;
     for (let i = 0; i < docs.length; i++) {
@@ -325,17 +341,34 @@ export function buildPlayground(ctx: Ctx): string {
   async function loadFolder(rootEntry) {
     const collected = [];
     for (const child of await readDir(rootEntry)) await collectRpml(child, '', collected);
-    if (!collected.length) return;
+    if (!collected.length) { if (errEl) errEl.textContent = '文件夹内没有 .rpml 文件'; return; }
     collected.sort((a, b) => a.path.localeCompare(b.path));
     renderMulti(collected);
   }
 
-  // ── URL param ──
+  // ── Example links: intercept clicks, load inline ──
+  document.querySelectorAll('#pg-examples a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const url = a.getAttribute('href');
+      if (!url) return;
+      document.querySelectorAll('#pg-examples a').forEach(x => x.classList.remove('active'));
+      a.classList.add('active');
+      const rpml = new URLSearchParams(url.split('?')[1]).get('rpml');
+      if (rpml) {
+        fetch(rpml).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+          .then(renderOne)
+          .catch(e => { if (errEl) errEl.textContent = '加载失败：' + e.message; });
+      }
+    });
+  });
+
+  // ── URL param: load but stay on page ──
   const src = new URLSearchParams(location.search).get('rpml');
   if (src) {
     fetch(src).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
       .then(renderOne)
-      .catch(e => { document.body.innerHTML = '<p style="padding:40px;color:#dc2626">加载失败：' + e.message + '</p>'; });
+      .catch(e => { if (errEl) errEl.textContent = '加载失败：' + e.message; });
   }
 
   picker?.addEventListener('click', () => fileInput?.click());
