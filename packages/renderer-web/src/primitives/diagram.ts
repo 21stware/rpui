@@ -1,6 +1,5 @@
 import { injectStyle } from "../core/style";
 import { renderMermaidSVG, THEMES } from "beautiful-mermaid";
-import { attr } from "../core/dom";
 
 /** Strip common leading indentation so authors can indent the mermaid source
  *  inside `<diagram>` for readability without breaking the parser. Drops blank
@@ -28,9 +27,9 @@ export class DiagramElement extends HTMLElement {
       this.innerHTML = '<div class="diagram-block-empty">空图表</div>';
       return;
     }
-    const themeName = attr(this, "theme", "zinc-light");
-    const themeOpts =
-      THEMES[themeName as keyof typeof THEMES] ?? THEMES["zinc-light"];
+    const isDark =
+      document.documentElement.getAttribute("data-rpml-theme") === "dark";
+    const themeOpts = isDark ? THEMES["github-dark"] : THEMES["github-light"];
     try {
       const svg = renderMermaidSVG(source, themeOpts)
         // beautiful-mermaid embeds a Google Fonts @import; RPUI is offline /

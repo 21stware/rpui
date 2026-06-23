@@ -62,7 +62,7 @@ Tags:
 - `<enum>` — horizontal state/variant container.
 - `<enum-item label="..." description="...">` — one explicit state/variant card with optional short description.
 - `<anchor to="other.rpml" section="N" label="...">` — cross-page link to another prototype screen in the file set. `section` is optional and deep-links a specific annotation on the target page. Works in the gallery (playground / `serve` / compiled single-file) and degrades to a `?rpml=` reload in the standalone viewer.
-- `<diagram theme="zinc-light">` — renders Mermaid text (flowchart / state / sequence / class / ER) to inline SVG. Place inside an annotation to specify a flow or state machine. Put the diagram header on its own line. `theme` accepts: `zinc-light` (default), `zinc-dark`, `tokyo-night`, `tokyo-night-storm`, `tokyo-night-light`, `catppuccin-mocha`, `catppuccin-latte`, `nord`, `nord-light`, `dracula`, `github-light`, `github-dark`, `solarized-light`, `solarized-dark`, `one-dark`.
+- `<diagram>` — renders Mermaid text (flowchart / state / sequence / class / ER) to inline SVG. Place inside an annotation to specify a flow or state machine. Put the diagram header on its own line. Theme is automatically selected based on the current light/dark mode (github-light / github-dark).
 
 ## Document mode
 

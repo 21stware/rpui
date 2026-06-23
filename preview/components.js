@@ -667,10 +667,6 @@ export const COMPONENTS = [
     html: "<diagram>\ngraph LR\n  A[列表] --> B{有筛选?}\n  B -->|是| C[过滤结果]\n  B -->|否| D[全部数据]\n</diagram>",
     attrs: [
       ["(文本内容)", "Mermaid 源码：flowchart / state / sequence / class / ER"],
-      [
-        "theme",
-        "zinc-light（默认）| zinc-dark | tokyo-night | tokyo-night-storm | tokyo-night-light | catppuccin-mocha | catppuccin-latte | nord | nord-light | dracula | github-light | github-dark | solarized-light | solarized-dark | one-dark",
-      ],
       ["(注意)", "图表声明（graph TD 等）需单独成行"],
     ],
   },
