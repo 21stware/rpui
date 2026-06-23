@@ -91,24 +91,6 @@ function copyInto(srcRel: string, destRel: string, label: string) {
 
 mkdirSync(join(DOCS, "dist"), { recursive: true });
 copyInto("packages/renderer-web/dist/rpui.js", "dist/rpui.js", "");
-// Copy Vite code-split chunks (e.g. rpui2.js, rpui-*.mjs) referenced by rpui.js
-const distDir = join(ROOT, "packages/renderer-web/dist");
-if (existsSync(distDir)) {
-  for (const f of readdirSync(distDir)) {
-    if (f === "rpui.js" || f === "rpui.d.ts" || f.startsWith("rpui.js."))
-      continue;
-    if (
-      f.startsWith("rpui") &&
-      (f.endsWith(".js") ||
-        f.endsWith(".mjs") ||
-        f.endsWith(".js.map") ||
-        f.endsWith(".mjs.map"))
-    ) {
-      cpSync(join(distDir, f), join(DOCS, "dist", f));
-      console.log(`  ✓ docs/dist/${f}`);
-    }
-  }
-}
 copyInto(
   "packages/renderer-web/dist/rpml-loader.js",
   "dist/rpml-loader.js",
