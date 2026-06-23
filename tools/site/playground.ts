@@ -96,13 +96,12 @@ export function buildPlayground(ctx: Ctx): string {
 
   const script = `<script type="module">
   import { parseToPage } from './dist/rpml-loader.js';
-  import { liveRender } from './dist/rpui.js';
   import { initTheme, currentTheme, setTheme } from './dist/rpui.js';
 
-  const errEl = document.getElementById('pg-err');
-  const drop = document.getElementById('pg-drop');
-  const fileInput = document.getElementById('pg-file');
-  const picker = document.getElementById('pg-picker');
+  let errEl = document.getElementById('pg-err');
+  let drop = document.getElementById('pg-drop');
+  let fileInput = document.getElementById('pg-file');
+  let picker = document.getElementById('pg-picker');
 
   // ── State ──
   let docs = [];          // [{ path, source }] for multi-file; empty for single file
@@ -120,6 +119,14 @@ export function buildPlayground(ctx: Ctx): string {
     canvas.className = 'pg-canvas';
     canvas.id = 'pg-canvas';
     shell.appendChild(canvas);
+
+    // Hidden file input for open button
+    const fi = document.createElement('input');
+    fi.type = 'file'; fi.id = 'pg-file'; fi.accept = '.rpml,.xml,text/plain';
+    fi.style.display = 'none';
+    shell.appendChild(fi);
+    fileInput = fi;
+    fi.addEventListener('change', () => { if (fi.files[0]) loadFile(fi.files[0]); fi.value = ''; });
 
     // Toolbar (top-right): theme toggle + open file + close
     const toolbar = document.createElement('div');
@@ -149,7 +156,7 @@ export function buildPlayground(ctx: Ctx): string {
     // Wire toolbar
     initTheme();
     themeBtn.addEventListener('click', () => setTheme(currentTheme() === 'dark' ? 'light' : 'dark'));
-    openBtn.addEventListener('click', () => fileInput.click());
+    openBtn.addEventListener('click', () => fi.click());
     closeBtn.addEventListener('click', () => location.href = 'playground.html');
 
     // Wire switcher
@@ -278,12 +285,12 @@ export function buildPlayground(ctx: Ctx): string {
   }
 
   async function loadFolder(rootEntry) {
-    const docs = [];
+    const collected = [];
     const children = await readDir(rootEntry);
-    for (const child of children) await collectRpml(child, '', docs);
-    if (!docs.length) { if (errEl) errEl.textContent = '文件夹内没有 .rpml 文件'; return; }
-    docs.sort((a, b) => a.path.localeCompare(b.path));
-    renderMulti(docs);
+    for (const child of children) await collectRpml(child, '', collected);
+    if (!collected.length) { if (errEl) errEl.textContent = '文件夹内没有 .rpml 文件'; return; }
+    collected.sort((a, b) => a.path.localeCompare(b.path));
+    renderMulti(collected);
   }
 
   // ── URL param ──
@@ -296,16 +303,18 @@ export function buildPlayground(ctx: Ctx): string {
       });
   }
 
-  picker?.addEventListener('click', () => fileInput.click());
-  fileInput?.addEventListener('change', () => loadFile(fileInput.files[0]));
+  // ── idle state wiring (only relevant before takeOver) ──
+  picker?.addEventListener('click', () => fileInput?.click());
+  fileInput?.addEventListener('change', () => { if (fileInput && fileInput.files[0]) loadFile(fileInput.files[0]); });
 
   // ── drag and drop (file or folder) ──
   let depth = 0;
-  window.addEventListener('dragenter', e => { e.preventDefault(); depth++; if (drop) drop.classList.add('over'); });
+  window.addEventListener('dragenter', e => { e.preventDefault(); depth++; const d = document.getElementById('pg-drop'); if (d) d.classList.add('over'); });
   window.addEventListener('dragover', e => e.preventDefault());
-  window.addEventListener('dragleave', e => { e.preventDefault(); if (--depth <= 0 && drop) drop.classList.remove('over'); });
+  window.addEventListener('dragleave', e => { e.preventDefault(); if (--depth <= 0) { const d = document.getElementById('pg-drop'); if (d) d.classList.remove('over'); } });
   window.addEventListener('drop', e => {
-    e.preventDefault(); depth = 0; if (drop) drop.classList.remove('over');
+    e.preventDefault(); depth = 0;
+    const d = document.getElementById('pg-drop'); if (d) d.classList.remove('over');
     const item = e.dataTransfer?.items?.[0];
     const entry = item?.webkitGetAsEntry?.();
     if (entry?.isDirectory) { loadFolder(entry); return; }
