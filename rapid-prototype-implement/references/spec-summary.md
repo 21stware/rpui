@@ -15,7 +15,11 @@ Or load a standalone `.rpml` file at runtime via the playground (`?rpml=`), `npx
 Snapshot mode (default) — one screen with a scaled canvas and annotation pane:
 
 ```html
-<page title="..." route="/route" description="Snapshot shows [representative state]">
+<page
+  title="..."
+  route="/route"
+  description="Snapshot shows [representative state]"
+>
   <view device="web|ipad|mobile" scale="0.65">
     <viewport device="web|ipad|mobile">
       <!-- snapshot: RPML primitives only, data-pin="N" on meaningful regions -->
@@ -25,7 +29,9 @@ Snapshot mode (default) — one screen with a scaled canvas and annotation pane:
   <annotation id="1" label="Region Name">
     Spec prose.
     <enum>
-      <enum-item label="State A" description="Trigger/condition."><!-- RPML primitives --></enum-item>
+      <enum-item label="State A" description="Trigger/condition."
+        ><!-- RPML primitives --></enum-item
+      >
     </enum>
     <annotation label="Sub-region">Nested spec.</annotation>
   </annotation>
@@ -38,7 +44,9 @@ Document mode (`mode="doc"`) — linear prose, no canvas, no route:
 ```html
 <page title="..." mode="doc">
   <doc-heading level="1">Title</doc-heading>
-  <doc-paragraph>Body text with <strong>bold</strong> and <code>code</code>.</doc-paragraph>
+  <doc-paragraph
+    >Body text with <strong>bold</strong> and <code>code</code>.</doc-paragraph
+  >
   <doc-list type="bullet">
     <doc-list-item>Item one.</doc-list-item>
   </doc-list>
@@ -49,6 +57,7 @@ Document mode (`mode="doc"`) — linear prose, no canvas, no route:
 ## Two-layer model
 
 **Canvas layer** — document structure and specification:
+
 - `page` — root; `title`, `route` (snapshot mode), `description`, optional `mode` (`snapshot` default | `doc` for linear documents with no canvas/route/pins).
 - `view` — scaled snapshot frame; `device`, `scale`, optional `width`/`height`.
 - `viewport` — snapshot viewport; same `device` as view.
@@ -59,7 +68,7 @@ Document mode (`mode="doc"`) — linear prose, no canvas, no route:
 - `anchor` — cross-page link (`to`, optional `section`) to another screen in the file set.
 - `diagram` — Mermaid text → inline SVG; place inside an annotation.
 
-**Primitive layer** — static UI building blocks used inside `view` and inside annotation `enum-item` bodies. A broad library across layout, controls, navigation, data display, feedback, enterprise, iOS, macOS, and agent families. The full registered set is enumerated in `element-index.md`.
+**Primitive layer** — static UI building blocks used inside `view` and inside annotation `enum-item` bodies. A broad library across layout, controls, navigation, data display, feedback, iOS, and agent families. The full registered set is enumerated in `element-index.md`.
 
 ## Pin system
 
@@ -71,11 +80,11 @@ Document mode (`mode="doc"`) — linear prose, no canvas, no route:
 
 Annotations nest arbitrarily. The runtime auto-assigns `data-rp-section` paths (authors do not write them):
 
-| Depth | Example path | Marker |
-|-------|-------------|--------|
-| Top-level (has `id`) | `3` | Blue water-drop, shows id |
-| Nested depth 1 | `3-2` | Purple circle, shows local index `2` |
-| Nested depth ≥2 | `3-2-1` | Green triangle, shows local index `1` |
+| Depth                | Example path | Marker                                |
+| -------------------- | ------------ | ------------------------------------- |
+| Top-level (has `id`) | `3`          | Blue water-drop, shows id             |
+| Nested depth 1       | `3-2`        | Purple circle, shows local index `2`  |
+| Nested depth ≥2      | `3-2-1`      | Green triangle, shows local index `1` |
 
 Local index = 1-based position among annotation siblings under the same parent. Sibling order is significant.
 
@@ -83,13 +92,13 @@ Clicking a pin or annotation title sets `?section=<path>` in the URL. Loading a 
 
 ## Decomposition levels (L1–L5)
 
-| Level | What it describes |
-|-------|-------------------|
-| L1 | Page region (annotation with id) |
-| L2 | Element or concern inside the region (nested annotation) |
-| L3 | State family — mutually exclusive states (enum) |
-| L4 | Per-state rule — trigger, threshold, transition (enum-item + description) |
-| L5 | Boundary/exception — edge cases, overflow, permission denial |
+| Level | What it describes                                                         |
+| ----- | ------------------------------------------------------------------------- |
+| L1    | Page region (annotation with id)                                          |
+| L2    | Element or concern inside the region (nested annotation)                  |
+| L3    | State family — mutually exclusive states (enum)                           |
+| L4    | Per-state rule — trigger, threshold, transition (enum-item + description) |
+| L5    | Boundary/exception — edge cases, overflow, permission denial              |
 
 Not every region reaches L5. Let domain complexity decide depth.
 

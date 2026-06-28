@@ -132,18 +132,6 @@ export const PRIMITIVES: readonly string[] = [
   "ios-button",
   "ios-search",
   "ios-stepper",
-  // macOS
-  "macos-window",
-  "macos-toolbar",
-  "macos-menubar",
-  "macos-sidebar",
-  "macos-source-item",
-  "macos-segmented",
-  "macos-popover",
-  "macos-sheet",
-  "macos-stepper",
-  "macos-disclosure",
-  "macos-table",
   // agent / conversational UI
   "chat",
   "user-message",
@@ -190,11 +178,6 @@ export const PRIMITIVES: readonly string[] = [
   "aspect-ratio",
   "field",
   "sonner",
-  // design-system palettes
-  "color-palette",
-  "font-palette",
-  "space-palette",
-  "radius-palette",
 ];
 
 /** Component tag for a primitive: single words get `-el`, compounds are bare. */

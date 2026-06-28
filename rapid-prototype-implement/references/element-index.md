@@ -145,11 +145,11 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 | data-table      | Data display | Enhanced table with sortable headers; columns CSV, rows semicolon-separated                                                                  |
 | hover-card      | Data display | Inline trigger text that shows a card on hover; trigger, title, description                                                                  |
 | sonner          | Data display | Toast notification card; title, description, type (info/success/warning/error)                                                               |
-| permission-gate | Enterprise   | Locked content wrapper with reason label                                                                                                     |
-| quota-bar       | Enterprise   | Usage bar that turns red at ≥90%; label, used, limit                                                                                         |
-| api-key         | Enterprise   | Masked API key display with copy affordance                                                                                                  |
-| audit-row       | Enterprise   | Audit log row with actor, action, time                                                                                                       |
-| workflow-node   | Enterprise   | Workflow step node with label and state                                                                                                      |
+| permission-gate | Overlays     | Locked content wrapper with reason label                                                                                                     |
+| quota-bar       | Data display | Usage bar that turns red at ≥90%; label, used, limit                                                                                         |
+| api-key         | Data display | Masked API key display with copy affordance                                                                                                  |
+| audit-row       | Data display | Audit log row with actor, action, time                                                                                                       |
+| workflow-node   | Data display | Workflow step node with label and state                                                                                                      |
 
 ## iOS platform primitives (use with device="mobile")
 
@@ -166,22 +166,6 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 | ios-button       | iOS      | iOS-style button (filled/tinted/plain)                             |
 | ios-search       | iOS      | iOS search bar                                                     |
 | ios-stepper      | iOS      | iOS stepper control                                                |
-
-## macOS platform primitives (use with device="web")
-
-| Element           | Category | Description                                              |
-| ----------------- | -------- | -------------------------------------------------------- |
-| macos-window      | macOS    | macOS window chrome with traffic light buttons           |
-| macos-toolbar     | macOS    | macOS toolbar strip                                      |
-| macos-menubar     | macOS    | macOS menu bar with items                                |
-| macos-sidebar     | macOS    | macOS source list sidebar                                |
-| macos-source-item | macOS    | macOS sidebar source item with label, icon, group, state |
-| macos-segmented   | macOS    | macOS segmented control                                  |
-| macos-popover     | macOS    | macOS-style popover                                      |
-| macos-sheet       | macOS    | macOS sheet dialog                                       |
-| macos-stepper     | macOS    | macOS stepper control                                    |
-| macos-disclosure  | macOS    | macOS disclosure triangle with label and expanded state  |
-| macos-table       | macOS    | macOS-style table with sortable header look              |
 
 ## Agent / conversational UI primitives
 
@@ -210,12 +194,3 @@ All elements registered by the RPUI runtime. RPML authoring uses the bare langua
 | doc-list      | Document | Ordered/unordered list; type `bullet` (default) or `number` |
 | doc-list-item | Document | List item inside `doc-list`                                 |
 | doc-quote     | Document | Block quote with optional `cite` attribution line           |
-
-## Design system palette primitives
-
-| Element        | Category      | Description                                                        |
-| -------------- | ------------- | ------------------------------------------------------------------ |
-| color-palette  | Design System | Grid of color swatches; `items="Name:#hex,…"` CSV                  |
-| font-palette   | Design System | Typography sample table; `items="Label:size/weight,…"` CSV         |
-| space-palette  | Design System | Proportional bar chart of spacing tokens; `tokens="name:px,…"` CSV |
-| radius-palette | Design System | Corner-radius swatch grid; `tokens="name:value,…"` CSV             |

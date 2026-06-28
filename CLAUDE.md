@@ -26,27 +26,23 @@ packages/validator/      — structural + semantic validation + CLI (rpml-valida
 packages/compiler/       — compile a dir of .rpml → one self-contained HTML (rpml-compiler, private)
 packages/vscode-extension/ — VS Code extension (rpml-vscode-extension, WIP, private)
 spec/                    — RPML language specification
-examples/                — .rpml example files (01–08; viewer loads via ?rpml=)
+examples/                — .rpml example files (01–10)
 rapid-prototype-implement/ — generation skill: SKILL.md, prompts, references
-tools/                   — dev scripts; tools/build-site.ts + tools/site/ generate docs/
-preview/                 — dev component browser (served by vite dev server)
-docs/                    — GENERATED site portal (gitignored; CI rebuilds via `bun run site`)
+tools/                   — dev scripts (validate-examples.sh, check-spec-coverage.ts, patch-style.mjs)
+preview/                 — the dev application (component browser + gallery + examples + docs + live editor), served by the vite dev server
 dist/                    — root dist/ (synced from packages/renderer-web/dist/ at build)
 ```
 
-## Documentation site (docs/ portal)
+## Dev application (preview/)
 
-`docs/` is a **fully generated** static portal — do not hand-edit it (gitignored). `bun run site` (= `bun tools/build-site.ts`) reads `spec/`, `rapid-prototype-implement/`, and `preview/components.js` and emits:
+`preview/` is the single dev surface — there is no separate generated docs site (the former `docs/` portal, `tools/build-site.ts`, `tools/site/`, and the GitHub Pages deploy workflow were removed). `bun run dev` serves `preview/index.html` via Vite (root is the repo root), so it imports TypeScript source and raw assets directly — no build step. It has four primary sections in the top nav:
 
-- `index.html` — hero landing page
-- `guide.html` — docs reader: sidebar + Markdown-rendered `spec/` (11 docs) + `rapid-prototype-implement/` guides, with per-doc TOC and hash routing
-- `components.html` — component browser (reuses `components.js`)
-- `examples.html` — example gallery (live-scaled iframes → `playground.html`)
-- `api.html` — package exports, CLI usage, element index
-- `playground.html` — in-browser RPML viewer (single-file or folder-drop gallery)
-- `site.css` — shared styles (Inter + JetBrains Mono, modern tech aesthetic)
+- **组件** — component catalog with a sub-toggle: 浏览器 (detail: render + attrs + source) / 画廊 (bento gallery) / shadcn (styled card examples). Catalog data is `preview/components.js`; shadcn examples are `preview/shadcn.js`.
+- **示例** — examples gallery; each card renders a scaled live preview of an `examples/*.rpml`, click loads its source into the Live editor.
+- **文档** — docs reader (sidebar + per-doc TOC): `spec/` Markdown, `rapid-prototype-implement/` skill docs, and a synthetic API & CLI reference. Markdown is rendered by `preview/markdown.js`; doc lists + the API reference text live in `preview/docs-data.js`.
+- **Live** — RPML source editor with instant render (localStorage-backed).
 
-`spec/` Markdown is the **single source of truth** — never hand-copy spec content into HTML. The generator lives in `tools/build-site.ts` + `tools/site/` (markdown.ts converter, css.ts, chrome.ts shell, one module per page). `bun run site` emits the HTML **and** assembles the runtime assets the HTML references — it copies `packages/renderer-web/dist/*.js` → `docs/dist/`, plus `components.js`, `llms.txt`, and `examples/` into `docs/` (clearing stale copies first), so a local `bun run site` produces a working playground. Run `bun run build` first so the bundles exist. CI just runs `bun run build` then `bun run site` before deploying to GitHub Pages. `REPO` URL is set in `tools/site/chrome.ts`.
+`spec/` and `examples/` are loaded raw at runtime via Vite `import.meta.glob(..., { query: '?raw', eager: true })`, keyed by absolute repo path. `preview/markdown.js` is a dependency-free Markdown→HTML converter (ported from the old site generator); `preview/docs-data.js` holds `SPEC_DOCS`, `SKILL_DOCS`, `EXAMPLES`, and `API_DOC_MD`. `spec/` Markdown remains the single source of truth — never hand-copy spec content elsewhere.
 
 ## Development commands
 
@@ -61,7 +57,7 @@ bash tools/validate-examples.sh                # validate all examples/*.rpml
 bun run compile <dir> -o out.html              # compile a dir of .rpml → one HTML
 ```
 
-Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages/renderer-web/src/rpui.ts` via Vite (root is repo root). The generated `playground.html` imports `./dist/rpml-loader.js` + `./dist/gallery.js` — run the build first.
+Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages/renderer-web/src/rpui.ts` (and the parser, raw spec/examples) via Vite (root is repo root). No build step is needed for the dev app.
 
 ## TypeScript/build setup
 
@@ -71,8 +67,8 @@ Dev server (`bun run dev`) serves `preview/index.html`, which imports `/packages
   - `vite.gallery.config.ts` → `gallery.js`, a fully self-contained bundle (runtime + parser + gallery chrome, no shared chunks) so the compiler can inline it as one `<script>`.
   - `vite.serve.config.ts` → `serve.js`, the `rpui` CLI bundled to Node ESM (shebang, node: builtins external). Reads the sibling `gallery.js` at runtime. Exposed as the `rpui` bin with two subcommands: `npx @21stware/rpui serve .` hosts a directory of `.rpml` as one gallery (auto-opens the browser; `--no-open` to suppress), and `npx @21stware/rpui build .` compiles the directory into one self-contained HTML file (zero-dep, shares the serve HTML shape).
 - `packages/renderer-web/src/rpui.ts` is the public side-effect entry. Do not hand-edit `dist/`.
-- After building, sync root `dist/` manually: `cp packages/renderer-web/dist/*.js dist/` (CI does this automatically).
-- `rpml-validator` exports from `dist/` with `.d.ts`; `rpml-parser` exports directly from `src/` (all export conditions point at `src/index.ts`) so no pre-build is needed. `renderer-web` depends on `rpml-parser` (workspace:*) so Bun symlinks it for tsc/vite resolution.
+- After building, sync root `dist/` manually: `cp packages/renderer-web/dist/*.js dist/`.
+- `rpml-validator` exports from `dist/` with `.d.ts`; `rpml-parser` exports directly from `src/` (all export conditions point at `src/index.ts`) so no pre-build is needed. `renderer-web` depends on `rpml-parser` (workspace:\*) so Bun symlinks it for tsc/vite resolution.
 
 ## RPML language vs renderer tags
 
@@ -92,14 +88,13 @@ The parser applies the rewrite on the source string (`rewriteTags`, run after `e
 <rpml-app src="./my-page.rpml"></rpml-app>
 ```
 
-Or via URL param: `playground.html?rpml=examples/04-ticket-desk.rpml`
+Or load it in the dev app: `bun run dev`, then the **示例** section (for bundled examples) or the **Live** editor.
 
-## Playground & compiler
+## Compiler & CLI gallery
 
-- `playground.html` (generated into `docs/` by `bun run site`, source in `tools/site/playground.ts`): drag a single `.rpml` to render it; drag a **folder** to build a sidebar gallery (nav tree from file paths, hash routing `#<path>`, `index.rpml` as default home, no localStorage). Also supports `?rpml=` and a file picker.
 - `bun run compile <dir> -o out.html`: recursively reads `.rpml`, validates (errors abort, warnings print), inlines all sources as `globalThis.__RPML_DOCS__` plus `gallery.js` into one self-contained HTML that works from `file://`. `index.rpml` is the default home.
-- Shared logic lives in `packages/renderer-web/src/gallery.ts` (`mountGallery(docs, host)`); both the playground and compiler consume it — single source of truth.
-
+- `npx @21stware/rpui serve <dir>` / `build <dir>`: the `rpui` CLI hosts or compiles a directory of `.rpml` as one sidebar gallery (see TypeScript/build setup below).
+- Shared logic lives in `packages/renderer-web/src/gallery.ts` (`mountGallery(docs, host)`); the compiler and the `rpui` CLI consume it — single source of truth.
 
 Validate with: `bun packages/validator/src/cli.ts <file.rpml>`
 
@@ -109,7 +104,7 @@ Runtime source lives in `packages/renderer-web/src/`, bundled into one browser f
 
 - `src/core/` — inline icons, runtime CSS injection, DOM/attribute helpers, device sizing helpers.
 - `src/canvas/` — `RpPage`, `RpMainView`, `RpAnnotation`, `RpEnum`, and `RpEnumItem`.
-- `src/primitives/` — snapshot primitive component groups: `layout.ts`, `controls.ts`, `navigation.ts`, `data-display.ts` (general web primitives), plus `ios.ts` (`ios-*`, Apple HIG iOS) and `macos.ts` (`macos-*`, Apple HIG macOS).
+- `src/primitives/` — snapshot primitive component groups: `layout.ts`, `controls.ts`, `navigation.ts`, `data-display.ts` (general web primitives), plus `ios.ts` (`ios-*`, Apple HIG iOS).
 - `src/registry.ts` — central custom-element registration; maps RPML language tags to Web Component tags via `toComponentTag` from `rpml-parser`.
 
 The runtime is a client-side Web Components implementation that:
@@ -156,7 +151,7 @@ For state coverage, consider loaded, empty, loading, error/retry, search default
 
 ## Demo/reference files
 
-- `playground.html` (generated into `docs/`) — in-browser RPML viewer: load any `.rpml` via `?rpml=examples/04-ticket-desk.rpml`, drag-and-drop, or file picker.
-- `examples/` — all 8 prototype examples as `.rpml` files (01–08); see `examples/README.md`.
+- `preview/` (via `bun run dev`) — the dev application; the **示例** and **Live** sections are the in-browser RPML viewers.
+- `examples/` — all prototype examples as `.rpml` files (01–10); see `examples/README.md`.
 - `llms.txt` is the component/tag reference for generated prototypes.
 - `rapid-prototype-implement/SKILL.md` documents the prototype implementation workflow, recursive decomposition method, overlay-trigger pattern, and quality bar.

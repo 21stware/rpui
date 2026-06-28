@@ -1,15 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { createDocRenderer, registerAll, ModeManager } from "@21stware/rpui";
+import {
+  createDocRenderer,
+  registerAll,
+  ModeManager,
+  CanvasController,
+} from "@21stware/rpui";
 import type {
   DocRenderer,
   RpuiMode,
   RpuiTheme,
   PickInfo,
   ModeManagerOpts,
+  CanvasControllerOpts,
 } from "@21stware/rpui";
 
-export type { RpuiMode, RpuiTheme, PickInfo };
+export type { RpuiMode, RpuiTheme, PickInfo, CanvasControllerOpts };
+export { CanvasController };
 
 export interface RpmlRendererProps {
   /** RPML source text. Updates trigger incremental re-render with scroll preserved. */
@@ -43,6 +50,12 @@ export interface RpmlRendererProps {
    *  render it as a portal inside the selected element (e.g. an overlay or
    *  inspector panel). Return null/undefined to render nothing. */
   onElementSelectRender?: (info: PickInfo) => React.ReactNode;
+  /** Options for the CanvasController (zoom/pan/fit). When provided, the host
+   *  element is wrapped in a canvas structure and the controller is exposed via
+   *  `canvasControllerRef`. */
+  canvasOpts?: CanvasControllerOpts;
+  /** Ref to access the CanvasController instance programmatically. */
+  canvasControllerRef?: React.MutableRefObject<CanvasController | null>;
 }
 
 let _registered = false;
@@ -59,6 +72,8 @@ export function RpmlRenderer({
   onError,
   onLinkNavigate,
   onElementSelectRender,
+  canvasOpts,
+  canvasControllerRef,
 }: RpmlRendererProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<DocRenderer | null>(null);
@@ -117,7 +132,17 @@ export function RpmlRenderer({
     const manager = new ModeManager(hostRef.current!, opts);
     rendererRef.current = renderer;
     managerRef.current = manager;
+
+    // Create CanvasController if opts provided
+    let canvasCtl: CanvasController | null = null;
+    if (canvasOpts && hostRef.current) {
+      canvasCtl = new CanvasController(hostRef.current, canvasOpts);
+      canvasControllerRef && (canvasControllerRef.current = canvasCtl);
+    }
+
     return () => {
+      canvasCtl?.destroy();
+      canvasControllerRef && (canvasControllerRef.current = null);
       renderer.destroy();
       manager.destroy();
       rendererRef.current = null;
@@ -125,9 +150,12 @@ export function RpmlRenderer({
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Sync mode
+  // Sync mode: also update canvas pan enabled
   useEffect(() => {
     managerRef.current?.setMode(mode);
+    if (canvasControllerRef?.current) {
+      canvasControllerRef.current.setPanEnabled(mode !== "pick");
+    }
   }, [mode]);
 
   // Sync theme
@@ -144,6 +172,9 @@ export function RpmlRenderer({
       setSelectPortal(null);
       renderer.render(rpml);
       if (selected?.length) manager?.setSelected(selected);
+      if (canvasControllerRef?.current) {
+        requestAnimationFrame(() => canvasControllerRef.current?.fit());
+      }
     };
     if (debounce > 0) {
       clearTimeout(timerRef.current);

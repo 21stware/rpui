@@ -1,6 +1,6 @@
 # RPML Generation Practices
 
-The single reference for *how* to decompose a page into a complete RPML prototype. `SKILL.md` routes here for method depth; the runnable system prompt is `prompts/generate-rpml.md`.
+The single reference for _how_ to decompose a page into a complete RPML prototype. `SKILL.md` routes here for method depth; the runnable system prompt is `prompts/generate-rpml.md`.
 
 ## 1. Inputs to gather before generating
 
@@ -18,13 +18,13 @@ If any input is missing, infer common SaaS/product states and make every assumpt
 
 Apply this top-down to every pinned region. Stop when further splitting adds no implementation value.
 
-| Level | Element | Purpose |
-|-------|---------|---------|
-| L1 | `<annotation id="N">` (pinned) | Structural area of the page: navbar, sidebar, filter bar, table, drawer |
-| L2 | Nested `<annotation>` | Distinct responsibility inside the region: one column, a form field group, the bulk-action bar |
-| L3 | `<enum>` or nested annotation containing one | Mutually exclusive states for that element: default/focus/filled/error; collapsed/expanded |
-| L4 | `<enum-item>` + `description` | What each state means: trigger, threshold, transition, permission gate |
-| L5 | Deepest annotation/enum | Extremes and failure modes: 0/empty/overflow values, race conditions, permission denials |
+| Level | Element                                      | Purpose                                                                                        |
+| ----- | -------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| L1    | `<annotation id="N">` (pinned)               | Structural area of the page: navbar, sidebar, filter bar, table, drawer                        |
+| L2    | Nested `<annotation>`                        | Distinct responsibility inside the region: one column, a form field group, the bulk-action bar |
+| L3    | `<enum>` or nested annotation containing one | Mutually exclusive states for that element: default/focus/filled/error; collapsed/expanded     |
+| L4    | `<enum-item>` + `description`                | What each state means: trigger, threshold, transition, permission gate                         |
+| L5    | Deepest annotation/enum                      | Extremes and failure modes: 0/empty/overflow values, race conditions, permission denials       |
 
 A simple stat card may stop at L3. A data table with a detail drawer routinely reaches L5. Let the domain decide depth; let completeness decide breadth.
 
@@ -32,7 +32,7 @@ A simple stat card may stop at L3. A data table with a detail drawer routinely r
 
 Completeness in complex apps is combinatorial, not a flat list. When two or more axes interact, enumerate the **product**, not each axis alone:
 
-- **permission × state** — detail-drawer buttons differ by role *and* by ticket status.
+- **permission × state** — detail-drawer buttons differ by role _and_ by ticket status.
 - **role × data-size** — admin view of 5000 rows vs agent view of 7 rows.
 - **flow-step × validation** — each wizard step × (valid / invalid / pending).
 - **read-state × SLA × selection** — a table row's appearance is the product of all three.
@@ -78,7 +78,8 @@ Some notes don't belong to any single pinned region: a role/permission matrix th
 A prototype meets the bar when a reviewer reading it has no remaining "but what happens when…" questions.
 
 Concrete targets:
-- **One annotation per pinned region — no target count.** Pin and annotate every meaningful region the page actually has. A dense admin page has many; a simple form has few. Never pad to a number, never drop a real region to stay under one. *Completeness decides breadth; the page decides the count.*
+
+- **One annotation per pinned region — no target count.** Pin and annotate every meaningful region the page actually has. A dense admin page has many; a simple form has few. Never pad to a number, never drop a real region to stay under one. _Completeness decides breadth; the page decides the count._
 - **Depth follows complexity.** Nest as deep as the region warrants — a stat card stays shallow, a data table with a detail drawer goes deep. Don't force uniform depth.
 - **Strict pin↔annotation parity.** Every `data-pin="N"` ↔ exactly one numbered `<annotation id="N">`, both directions. A numbered annotation with no pin is a defect. Cross-cutting notes go in `<annotation-global>` (see §4.1), not an orphan numbered annotation.
 - **Every conditional branch** in `<enum>` — states, permission variants, validation outcomes, async results.
@@ -94,7 +95,7 @@ Reference: [`example-reference.rpml`](example-reference.rpml) (bundled with this
 - Do not use `position:absolute` or `position:fixed` in snapshot content. RPUI owns pin positioning.
 - Do not place overlays (`modal`, `drawer`, `dropdown`, `popover`, `tooltip`, `toast`) in the main snapshot. Pin the trigger; render the overlay inside its annotation enum.
 - Do not stack mutually exclusive states (empty + loading + modal) side by side in the snapshot.
-- Use bare RPML tags. Single-word elements have no suffix (`button`, `table`); compound names keep their hyphen (`list-item`, `table-row`); platform primitives use `ios-*` / `macos-*`.
+- Use bare RPML tags. Single-word elements have no suffix (`button`, `table`); compound names keep their hyphen (`list-item`, `table-row`); platform primitives use `ios-*`.
 - Do not omit a plausible state because the input didn't mention it; infer and annotate.
 
 ## 7. Validation
@@ -106,6 +107,7 @@ bun run validate <file.rpml>
 ```
 
 The validator checks:
+
 - Every `data-pin="N"` has a matching top-level `<annotation id="N">`.
 - Pin numbers are continuous from 1 with no gaps.
 - Structural constraints (page root, exactly one view, etc.).

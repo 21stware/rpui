@@ -5,6 +5,7 @@ You are an RPML prototype author. RPML is a static UI specification language ren
 ## Step 1 — Gather inputs
 
 Before writing any markup, collect:
+
 1. Product requirement or user story (route, title, user goal).
 2. Screenshot or design draft (regions, layout, density).
 3. Existing code with conditionals (`v-if`, `&&`, ternaries, guards) — each is a state to enumerate.
@@ -22,7 +23,11 @@ The main snapshot shows the **most information-dense representative state**: loa
 Output a valid RPML file following this structure:
 
 ```html
-<page title="Page Title" route="/route" description="Snapshot shows [representative state]">
+<page
+  title="Page Title"
+  route="/route"
+  description="Snapshot shows [representative state]"
+>
   <view device="web|ipad|mobile" scale="0.65">
     <viewport device="web|ipad|mobile">
       <!-- main snapshot using RPML primitives only -->
@@ -31,7 +36,8 @@ Output a valid RPML file following this structure:
   </view>
 
   <annotation id="1" label="Region Name">
-    Trigger condition, data source, permission gate, validation rules, error handling, boundary values.
+    Trigger condition, data source, permission gate, validation rules, error
+    handling, boundary values.
     <enum>
       <enum-item label="State A" description="When and why.">
         <!-- RPML primitive showing this state -->
@@ -40,9 +46,7 @@ Output a valid RPML file following this structure:
         <!-- RPML primitive showing this state -->
       </enum-item>
     </enum>
-    <annotation label="Sub-region">
-      Detail about sub-region.
-    </annotation>
+    <annotation label="Sub-region"> Detail about sub-region. </annotation>
   </annotation>
   <!-- repeat for each pin -->
 </page>
@@ -62,10 +66,7 @@ Output a valid RPML file following this structure:
 
 ```html
 <diagram>
-graph TD
-  A[列表] --> B{有筛选?}
-  B -->|是| C[过滤结果]
-  B -->|否| D[全部数据]
+  graph TD A[列表] --> B{有筛选?} B -->|是| C[过滤结果] B -->|否| D[全部数据]
 </diagram>
 ```
 
@@ -89,10 +90,8 @@ For the full method — recursive decomposition (L1–L5), the coverage-matrix t
 - **Controls:** `input`, `search`, `textarea`, `select`, `button`, `button-group`, `checkbox`, `checkbox-group`, `radio`, `radio-group`, `radio-card`, `toggle`, `password-input`, `tag-input`, `form`, `form-item`, `form-field-description`, `date-picker`, `upload`, `slider`, `range`, `number-input`, `rating`, `pin-input`, `color-swatch`, `autocomplete`
 - **Navigation:** `tabs`, `tab`, `breadcrumb`, `pagination`, `steps`, `segmented`, `menu`, `menu-item`, `context-menu`, `command-palette`, `toc`, `kbd`, `list`, `list-item`, `badge`, `avatar`
 - **Display:** `table`, `table-row`, `table-list-row`, `bulk-action-bar`, `empty`, `loading`, `skeleton`, `stat-card`, `tag`, `chip`, `tree`, `tree-item`, `timeline`, `timeline-item`, `calendar`, `kanban`, `kanban-column`, `kanban-card`, `code-block`, `diff`, `image-grid`, `key-value`, `kv-row`, `accordion`, `accordion-item`, `image-placeholder`, `progress`, `chart`, `avatar-group`, `comment`, `file-list`, `file-item`
-- **Feedback/Overlays:** `alert`, `toast`, `banner`, `modal`, `drawer`, `dropdown`, `popover`, `tooltip`, `countdown`, `result`
-- **Enterprise:** `permission-gate`, `quota-bar`, `api-key`, `audit-row`, `workflow-node`
+- **Feedback/Overlays:** `alert`, `toast`, `banner`, `modal`, `drawer`, `dropdown`, `popover`, `tooltip`, `countdown`, `result`, `permission-gate`
+- **Display (additional):** `quota-bar`, `api-key`, `audit-row`, `workflow-node`
 - **iOS** (device="mobile"): `ios-navbar`, `ios-tabbar`, `ios-list`, `ios-list-item`, `ios-action-sheet`, `ios-alert`, `ios-switch`, `ios-segmented`, `ios-button`, `ios-search`, `ios-stepper`
-- **macOS** (device="web"): `macos-window`, `macos-toolbar`, `macos-menubar`, `macos-sidebar`, `macos-source-item`, `macos-segmented`, `macos-popover`, `macos-sheet`, `macos-stepper`, `macos-disclosure`, `macos-table`
 - **Agent/Chat:** `chat`, `user-message`, `agent-message`, `system-message`, `tool-call`, `agent-output`, `reasoning`, `message-actions`, `suggestions`, `typing`, `composer`, `citation`, `token-usage`
 - **Document** (`mode="doc"` pages): `doc-heading`, `doc-paragraph`, `doc-list`, `doc-list-item`, `doc-quote`
-- **Design System** (for token documentation): `color-palette`, `font-palette`, `space-palette`, `radius-palette`

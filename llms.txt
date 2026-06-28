@@ -150,6 +150,7 @@ Keep annotation and enum-item sibling order intentional and stable: the generate
 - `<scroll-area height="200">…children…</scroll-area>` — custom-styled scrollable container.
 - `<collapsible label="..." expanded>…children…</collapsible>` — expand/collapse section.
 - `<aspect-ratio ratio="16/9">…children…</aspect-ratio>` — container maintaining width/height ratio.
+- `<permission-gate reason="需管理员权限">…locked slot…</permission-gate>` — wraps content with a lock overlay.
 
 ### Navigation
 
@@ -180,6 +181,10 @@ Keep annotation and enum-item sibling order intentional and stable: the generate
 - `<avatar-group items="3" overflow="5" size="32">` — overlapping stacked avatars with `+N` overflow; or `<avatar>` children.
 - `<comment author="..." avatar="..." time="..." state="me">…body / nested <comment>…</comment>` — comment / discussion thread; nest `comment` for replies.
 - `<file-list items="3">` + `<file-item name="方案.pdf" size="1.2 MB" state="uploaded|uploading|error" progress="60">` — multi-file attachment list with states.
+- `<quota-bar label="API 调用" used="920" limit="1000">` — turns red at ≥90%.
+- `<api-key value="sk_live_••••3f9a">` — masked key with copy affordance.
+- `<audit-row actor="..." action="..." time="...">` — audit log entry.
+- `<workflow-node label="..." state="default|active|done|error">` — workflow state node.
 
 ### Forms and controls
 
@@ -205,14 +210,6 @@ All form states are explicit through attributes; there is no runtime focus or in
 - `<radio-card label="..." description="..." state="unchecked|checked|disabled">` — selectable card with radio indicator; use inside a flex layout for option groups.
 - `<upload state="empty|has-file|uploading|error" file="document.pdf" progress="60" error="...">`.
 
-### Design system
-
-Palette primitives for documenting design tokens. Use inside `mode="doc"` pages or annotations.
-
-- `<color-palette items="Primary:#09090b,Success:#059669,…">` — grid of color swatches with name and hex label.
-- `<font-palette items="Heading 1:32/800,Body:15/400,Caption:12/500,…">` — table of typography samples; each entry is `"Label:size/weight"`.
-- `<space-palette tokens="xs:4,sm:8,md:16,lg:24,xl:32,…">` — bar chart of spacing tokens; each entry is `"name:px"`.
-- `<radius-palette tokens="none:0px,sm:4px,md:8px,lg:16px,full:9999px,…">` — corner-radius swatches; each entry is `"name:value"`.
 
 - `<alert type="info|success|warning|error" title="..." message="..." closable>`.
 - `<toast type="info|success|warning|error" title="..." message="..." closable>`.
@@ -265,13 +262,6 @@ Palette primitives for documenting design tokens. Use inside `mode="doc"` pages 
 - `<menubar>` + `<menubar-item label="File">` — horizontal menu bar.
 - `<nav-menu>` + `<nav-menu-item label="..." active>` — horizontal navigation menu with active indicator.
 
-### Enterprise / SaaS
-
-- `<permission-gate reason="需管理员权限">…locked slot…</permission-gate>`.
-- `<quota-bar label="API 调用" used="920" limit="1000">` — turns red at ≥90%.
-- `<api-key value="sk_live_••••3f9a">` — masked key with copy affordance.
-- `<audit-row actor="..." action="..." time="...">`.
-- `<workflow-node label="..." state="default|active|done|error">`.
 
 ### iOS platform (`ios-*`, use with device="mobile")
 
@@ -283,15 +273,6 @@ Palette primitives for documenting design tokens. Use inside `mode="doc"` pages 
 - `<ios-switch label="...">`, `<ios-segmented options="A,B" active="0">`.
 - `<ios-button label="..." variant="filled|tinted|plain">`, `<ios-search>`, `<ios-stepper>`.
 
-### macOS platform (`macos-*`, use with device="web")
-
-- `<macos-window title="...">` — window chrome with traffic lights.
-- `<macos-menubar items="文件,编辑,显示">`, `<macos-toolbar>`.
-- `<macos-sidebar>` + `<macos-source-item label="..." icon="..." group state="selected">`.
-- `<macos-segmented options="A,B,C" active="0">`.
-- `<macos-popover title="...">`, `<macos-sheet title="...">`.
-- `<macos-stepper>`, `<macos-disclosure label="..." expanded>`.
-- `<macos-table columns="名称,大小" rows="5">` — sortable-header table look.
 
 ### Agent / conversational UI
 

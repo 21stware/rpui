@@ -125,19 +125,6 @@ import {
   IosTabbarElement,
 } from "./primitives/ios";
 import {
-  MacDisclosureElement,
-  MacMenubarElement,
-  MacPopoverElement,
-  MacSegmentedElement,
-  MacSheetElement,
-  MacSidebarElement,
-  MacSourceItemElement,
-  MacStepperElement,
-  MacTableElement,
-  MacToolbarElement,
-  MacWindowElement,
-} from "./primitives/macos";
-import {
   AgentMessageElement,
   AgentOutputElement,
   ChatElement,
@@ -166,12 +153,6 @@ import {
   ItalicElement,
   CodeInlineElement,
 } from "./primitives/doc";
-import {
-  ColorPaletteElement,
-  FontPaletteElement,
-  SpacePaletteElement,
-  RadiusPaletteElement,
-} from "./primitives/design-system";
 import {
   CarouselElement,
   CarouselItemElement,
@@ -320,18 +301,6 @@ export function registerAll() {
     ["ios-button", IosButtonElement],
     ["ios-search", IosSearchElement],
     ["ios-stepper", IosStepperElement],
-    // macOS
-    ["macos-window", MacWindowElement],
-    ["macos-toolbar", MacToolbarElement],
-    ["macos-menubar", MacMenubarElement],
-    ["macos-sidebar", MacSidebarElement],
-    ["macos-source-item", MacSourceItemElement],
-    ["macos-segmented", MacSegmentedElement],
-    ["macos-popover", MacPopoverElement],
-    ["macos-sheet", MacSheetElement],
-    ["macos-stepper", MacStepperElement],
-    ["macos-disclosure", MacDisclosureElement],
-    ["macos-table", MacTableElement],
     // agent / conversational UI
     ["chat", ChatElement],
     ["user-message", UserMessageElement],
@@ -357,11 +326,6 @@ export function registerAll() {
     ["bold", BoldElement],
     ["italic", ItalicElement],
     ["code-inline", CodeInlineElement],
-    // design-system palettes
-    ["color-palette", ColorPaletteElement],
-    ["font-palette", FontPaletteElement],
-    ["space-palette", SpacePaletteElement],
-    ["radius-palette", RadiusPaletteElement],
     // shadcn-aligned additions
     ["carousel", CarouselElement],
     ["carousel-item", CarouselItemElement],

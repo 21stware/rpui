@@ -8,8 +8,7 @@
     "build:all": "bun run --cwd packages/renderer-web build && bun run --cwd packages/parser build && bun run --cwd packages/validator build",
     "typecheck": "bun run --cwd packages/renderer-web typecheck",
     "validate": "bun packages/validator/src/cli.ts",
-    "compile": "bun packages/compiler/src/cli.ts",
-    "site": "bun tools/build-site.ts"
+    "compile": "bun packages/compiler/src/cli.ts"
   },
   "devDependencies": {
     "@types/node": "^25.9.2",

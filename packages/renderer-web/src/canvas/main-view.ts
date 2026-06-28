@@ -8,6 +8,22 @@ import {
   usesAutoHeight,
 } from "../core/dom";
 
+// main-view canvas + pins: component styles, assembled into the global runtime
+// stylesheet by core/style.ts. References design tokens via var(--rp-*).
+export const mainViewStyle = `
+main-view, main-view { display:block; width:fit-content; margin:0 0 28px; position:relative; }
+.rp-main-shell { position:relative; overflow:visible; border:1px solid var(--rp-border-strong); border-radius:var(--rp-radius-md); background:var(--rp-surface); box-shadow:var(--rp-shadow); }
+.rp-main-stage-clip { overflow:hidden; border-radius:var(--rp-radius-md); }
+.rp-main-stage { position:relative; transform-origin:top left; background:var(--rp-surface); }
+.rp-pin { position:absolute; z-index:20; display:grid; place-items:center; width:22px; height:22px; color:var(--rp-c-white); font-size:11px; font-weight:700; background:var(--rp-primary); border-radius:50%; transform:translate(-5px,-5px); box-shadow:0 2px 8px var(--rp-a-black-14); cursor:pointer; }
+.rp-pin > span { display:grid; place-items:center; }
+.rp-pin:hover { opacity:0.85; }
+.rp-pin-l2 { width:18px; height:18px; font-size:10px; background:var(--rp-c-amber-500); transform:translate(-4px,-4px); }
+.rp-pin-l3 { width:16px; height:16px; font-size:9px; background:var(--rp-c-emerald-500); transform:translate(-3px,-3px); }
+.rp-pin-l4 { width:14px; height:14px; font-size:8px; background:var(--rp-c-violet-500); transform:translate(-3px,-3px); }
+.rp-pin-l5 { width:12px; height:12px; font-size:7px; background:var(--rp-c-pink-500); transform:translate(-2px,-2px); }
+`;
+
 export class RpMainView extends HTMLElement {
   private ro?: ResizeObserver;
   private frame = 0;

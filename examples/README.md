@@ -1,6 +1,6 @@
 # Examples
 
-每个 `.rpml` 文件可在站点 Playground 中加载（`bun run site` 后打开 `docs/playground.html`），或直接用 `bun packages/validator/src/cli.ts <file>` 验证。
+每个 `.rpml` 文件可在 dev 应用中查看（`bun run dev` 后打开 **示例** 区，点击卡片即在 Live 编辑器中加载），或直接用 `bun packages/validator/src/cli.ts <file>` 验证。
 
 | 文件 | 复杂度 | 说明 |
 |------|--------|------|

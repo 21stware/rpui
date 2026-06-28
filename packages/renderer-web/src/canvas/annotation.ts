@@ -1,6 +1,54 @@
 import { injectStyle } from "../core/style";
 import { attr, escapeHtml } from "../core/dom";
 
+// annotation + enum: component styles, assembled into the global runtime
+// stylesheet by core/style.ts. References design tokens via var(--rp-*).
+export const annotationStyle = `
+.annotation-el-pane { min-width:380px; max-width:680px; position:sticky; top:32px; height:auto; min-height:calc(100vh - 64px); max-height:calc(100vh - 64px); overflow-y:auto; overflow-x:auto; padding:0 0 48px 0; align-self:start; }
+.annotation-el-pane-inner { padding:4px 12px 24px 6px; }
+annotation-el, annotation-el { display:block; width:fit-content; max-width:980px; margin:30px 0; line-height:2; color:var(--rp-text); font-size:13.5px; }
+annotation-el annotation-el, annotation-el annotation-el, annotation-el annotation-el, annotation-el annotation-el { margin:10px 0 8px 22px; }
+.annotation-el-head { display:flex; align-items:center; gap:8px; margin:0 0 4px; width:fit-content; }
+.annotation-el-title { font-weight:700; color:var(--rp-text); font-size:15px }
+.annotation-el-marker { display:inline-grid; place-items:center; flex:0 0 auto; color:var(--rp-c-white); font-size:10px; font-weight:700; line-height:1; }
+.annotation-el-marker.circle { width:22px; height:22px; background:var(--rp-primary); border-radius:50%; }
+.annotation-el-marker.circle.pin-l2 { background:var(--rp-c-amber-500); }
+.annotation-el-marker.circle.pin-l3 { background:var(--rp-c-emerald-500); }
+.annotation-el-marker.circle.pin-l4 { background:var(--rp-c-violet-500); }
+.annotation-el-marker.circle.pin-l5 { background:var(--rp-c-pink-500); }
+
+.annotation-el-marker.triangle { width:18px; height:16px; background:var(--rp-success); clip-path:polygon(50% 0, 100% 100%, 0 100%); }
+.annotation-el-marker.triangle > span { transform:translateY(2px); font-size:9px; }
+.annotation-el-marker.global { width:20px; height:20px; background:var(--rp-c-slate-900); border-radius:6px; font-size:11px; }
+annotation-global-el, annotation-global-el { display:block; width:fit-content; max-width:980px; margin:0 0 18px; padding:10px 12px 12px; line-height:1.65; color:var(--rp-c-gray-800); font-size:14px; background:var(--rp-surface-soft); border:1px solid var(--rp-border); border-radius:var(--rp-radius-md); }
+.annotation-el-pane annotation-global-el, .annotation-el-pane annotation-global-el { max-width:none; }
+.annotation-el-pane annotation-global-el .annotation-el-body { max-width:none; }
+.annotation-el-body { display:block; position:relative; width:fit-content; max-width:920px; }
+.rp-pin-slice { width:18px; height:18px; font-size:10px; box-shadow:0 1px 5px var(--rp-a-black-18); }
+.annotation-el-body > :not(annotation-el):not(annotation-el):not(enum-el):not(enum-el) { max-width:820px; }
+.annotation-el-pane annotation-el, .annotation-el-pane annotation-el { max-width:none; font-size:13.5px; color:var(--rp-c-gray-600); }
+.annotation-el-pane .annotation-el-body { max-width:none; }
+.annotation-el-pane .annotation-el-body > :not(annotation-el):not(annotation-el):not(enum-el):not(enum-el) { max-width:420px; }
+.annotation-el-body p, .annotation-el-body doc-paragraph { margin:0 0 8px; }
+.annotation-el-body ul, .annotation-el-body ol, .annotation-el-body doc-unordered-list, .annotation-el-body doc-ordered-list { margin:6px 0 10px; padding-left:20px; }
+.annotation-el-body li, .annotation-el-body doc-list-item { margin:0 0 5px; line-height:1.55; }
+.annotation-el-body li::marker, .annotation-el-body doc-list-item::marker { color:var(--rp-c-gray-400); }
+.annotation-el-body strong, .annotation-el-body bold-el { color:var(--rp-c-gray-800); font-weight:680; }
+.annotation-el-body em, .annotation-el-body italic-el { font-style:italic; }
+.annotation-el-body code, .annotation-el-body code-inline { padding:1px 5px; border-radius:4px; background:var(--rp-c-zinc-100); color:var(--rp-primary); font-weight:650; font-family:ui-monospace,Menlo,monospace; font-size:.92em; }
+enum-el, enum-el { display:flex; align-items:flex-start; flex-wrap:wrap; gap:10px; width:fit-content; margin:8px 0 12px; }
+.annotation-el-pane enum-el, .annotation-el-pane enum-el { flex-wrap:wrap; }
+enum-item, enum-item { display:block; flex:0 0 auto; width:fit-content; min-width:180px; max-width:600px; border:1px solid var(--rp-c-neutral-100); border-radius:var(--rp-radius-md); background:var(--rp-c-white); overflow:hidden; }
+.enum-el-label { display:flex; align-items:flex-start; gap:6px; padding:5px 9px 4px; font-size:12px; font-weight:650; color:var(--rp-c-gray-700); }
+.enum-el-index { display:inline-grid; place-items:center; min-width:16px; height:16px; padding:0 4px; background:var(--rp-c-gray-900); color:var(--rp-c-white); font-size:10px; font-weight:750; border-radius:3px; flex:0 0 auto; margin-top:1px; }
+.enum-el-label-text { display:block; }
+.enum-el-description { display:block; margin-top:2px; font-size:11px; line-height:1.35; font-weight:400; color:var(--rp-muted); }
+.enum-el-content { display:block; width:fit-content; padding:8px; }
+.annotation-el-title { font-weight:700; color:var(--rp-c-gray-900); cursor:pointer; font-size:15px }
+.annotation-el-title:hover { color:var(--rp-primary); }
+.rp-section-focus { outline:2px dashed var(--rp-primary); outline-offset:4px; border-radius:4px; }
+`;
+
 export class RpAnnotation extends HTMLElement {
   private ro?: ResizeObserver;
   private frame = 0;

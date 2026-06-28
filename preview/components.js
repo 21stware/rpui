@@ -713,6 +713,41 @@ export const COMPONENTS = [
       ["type", "info | success | warning | error"],
     ],
   },
+  {
+    group: "Data display",
+    name: "quota-bar",
+    html: '<quota-bar label="API 调用" used="920" limit="1000"></quota-bar>',
+    attrs: [
+      ["label", "标签"],
+      ["used", "已用"],
+      ["limit", "上限（≥90% 标红）"],
+    ],
+  },
+  {
+    group: "Data display",
+    name: "api-key",
+    html: '<api-key value="sk_live_••••••••3f9a"></api-key>',
+    attrs: [["value", "掩码后的密钥"]],
+  },
+  {
+    group: "Data display",
+    name: "audit-row",
+    html: '<audit-row actor="张明" action="将工单标记为已解决" time="2 分钟前"></audit-row>',
+    attrs: [
+      ["actor", "操作者"],
+      ["action", "动作描述"],
+      ["time", "时间"],
+    ],
+  },
+  {
+    group: "Data display",
+    name: "workflow-node",
+    html: '<workflow-node label="审批" state="active"></workflow-node>',
+    attrs: [
+      ["label", "节点名"],
+      ["state", "default | active | done | error"],
+    ],
+  },
 
   // ---------- Navigation ----------
   {
@@ -967,48 +1002,11 @@ export const COMPONENTS = [
       ["position", "top | bottom | left | right"],
     ],
   },
-
-  // ---------- Enterprise ----------
   {
-    group: "Enterprise",
+    group: "Overlays",
     name: "permission-gate",
     html: '<permission-gate reason="需管理员权限"><button label="删除组织" variant="danger"></button></permission-gate>',
     attrs: [["reason", "锁定原因"]],
-  },
-  {
-    group: "Enterprise",
-    name: "quota-bar",
-    html: '<quota-bar label="API 调用" used="920" limit="1000"></quota-bar>',
-    attrs: [
-      ["label", "标签"],
-      ["used", "已用"],
-      ["limit", "上限（≥90% 标红）"],
-    ],
-  },
-  {
-    group: "Enterprise",
-    name: "api-key",
-    html: '<api-key value="sk_live_••••••••3f9a"></api-key>',
-    attrs: [["value", "掩码后的密钥"]],
-  },
-  {
-    group: "Enterprise",
-    name: "audit-row",
-    html: '<audit-row actor="张明" action="将工单标记为已解决" time="2 分钟前"></audit-row>',
-    attrs: [
-      ["actor", "操作者"],
-      ["action", "动作描述"],
-      ["time", "时间"],
-    ],
-  },
-  {
-    group: "Enterprise",
-    name: "workflow-node",
-    html: '<workflow-node label="审批" state="active"></workflow-node>',
-    attrs: [
-      ["label", "节点名"],
-      ["state", "default | active | done | error"],
-    ],
   },
 
   // ---------- iOS ----------
@@ -1103,77 +1101,6 @@ export const COMPONENTS = [
     name: "ios-stepper",
     html: "<ios-stepper></ios-stepper>",
     attrs: [["value", "数值"]],
-  },
-
-  // ---------- macOS ----------
-  {
-    group: "macOS",
-    name: "macos-window",
-    html: '<macos-window title="访达"><macos-toolbar><macos-segmented options="图标,列表,分栏" active="1"></macos-segmented></macos-toolbar><macos-table columns="名称,大小" rows="4"></macos-table></macos-window>',
-    attrs: [["title", "窗口标题"]],
-  },
-  {
-    group: "macOS",
-    name: "macos-menubar",
-    html: '<macos-menubar items="文件,编辑,显示,窗口,帮助"></macos-menubar>',
-    attrs: [["items", "逗号分隔菜单"]],
-  },
-  {
-    group: "macOS",
-    name: "macos-toolbar",
-    html: '<macos-toolbar><macos-segmented options="A,B,C" active="0"></macos-segmented></macos-toolbar>',
-    attrs: [["(slot)", "放入工具项"]],
-  },
-  {
-    group: "macOS",
-    name: "macos-sidebar",
-    html: '<macos-sidebar><macos-source-item group label="收藏夹"></macos-source-item><macos-source-item label="最近使用" icon="clock" state="selected"></macos-source-item><macos-source-item label="下载" icon="download"></macos-source-item></macos-sidebar>',
-    attrs: [["(子) macos-source-item", "label / icon / group / state"]],
-  },
-  {
-    group: "macOS",
-    name: "macos-segmented",
-    html: '<macos-segmented options="全部,未读,标记" active="0"></macos-segmented>',
-    attrs: [
-      ["options", "逗号分隔"],
-      ["active", "索引"],
-    ],
-  },
-  {
-    group: "macOS",
-    name: "macos-popover",
-    html: '<macos-popover title="快速操作"><macos-stepper></macos-stepper></macos-popover>',
-    attrs: [["title", "标题"]],
-  },
-  {
-    group: "macOS",
-    name: "macos-sheet",
-    html: '<macos-sheet title="导出文档"><key-value><kv-row label="格式" value="PDF"></kv-row></key-value></macos-sheet>',
-    attrs: [["title", "标题"]],
-  },
-  {
-    group: "macOS",
-    name: "macos-disclosure",
-    html: '<macos-disclosure label="高级选项" expanded>展开内容</macos-disclosure>',
-    attrs: [
-      ["label", "标签"],
-      ["expanded", "展开态"],
-    ],
-  },
-  {
-    group: "macOS",
-    name: "macos-stepper",
-    html: "<macos-stepper></macos-stepper>",
-    attrs: [["value", "数值"]],
-  },
-  {
-    group: "macOS",
-    name: "macos-table",
-    html: '<macos-table columns="名称,修改日期,大小" rows="5"></macos-table>',
-    attrs: [
-      ["columns", "逗号分隔列名"],
-      ["rows", "行数"],
-    ],
   },
 
   // ---------- Agent / 对话式 UI ----------
@@ -1343,31 +1270,5 @@ export const COMPONENTS = [
     name: "code-inline",
     html: "<doc-paragraph>使用 <code-inline>npm install</code-inline> 安装依赖。</doc-paragraph>",
     attrs: [["(子元素)", "行内代码文本"]],
-  },
-
-  // ---------- Design System ----------
-  {
-    group: "Design System",
-    name: "color-palette",
-    html: '<color-palette items="Primary:#09090b,Muted:#71717a,Border:#e4e4e7,Success:#059669,Warning:#d97706,Danger:#dc2626"></color-palette>',
-    attrs: [["items", '"Name:#hex,…" 逗号分隔色值列表']],
-  },
-  {
-    group: "Design System",
-    name: "font-palette",
-    html: '<font-palette items="Heading 1:32/800,Heading 2:24/700,Body:15/400,Small:13/400,Caption:12/500,Label:12/650"></font-palette>',
-    attrs: [["items", '"用途:字号/字重,…" 逗号分隔']],
-  },
-  {
-    group: "Design System",
-    name: "space-palette",
-    html: '<space-palette tokens="xs:4,sm:8,md:16,lg:24,xl:32,2xl:48,3xl:64"></space-palette>',
-    attrs: [["tokens", '"名称:px,…" 逗号分隔']],
-  },
-  {
-    group: "Design System",
-    name: "radius-palette",
-    html: '<radius-palette tokens="none:0px,sm:4px,md:8px,lg:16px,xl:24px,full:9999px"></radius-palette>',
-    attrs: [["tokens", '"名称:值,…" 逗号分隔']],
   },
 ];

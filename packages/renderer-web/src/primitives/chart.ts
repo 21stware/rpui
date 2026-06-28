@@ -1,6 +1,15 @@
 import { injectStyle } from '../core/style';
 import { attr, csv, escapeHtml, intAttr } from '../core/dom';
 
+// chart: component styles, assembled into the global runtime
+// stylesheet by core/style.ts. References design tokens via var(--rp-*).
+export const chartStyle = `
+/* --- chart / avatar-group / comment / file-list --- */
+chart-el, chart-el { display:block; width:100%; max-width:560px; }
+.rp-chart-svg { display:block; width:100%; height:auto; overflow:visible; }
+.rp-chart-label { fill:var(--rp-muted); font-size:9px; font-family:var(--rp-font); }
+`;
+
 /** `<chart>` — static data-visualization primitive. Renders inline SVG (offline,
  *  no CDN, same self-contained philosophy as `<diagram>`) from a `data` csv.
  *  Kinds: bar | line | area | donut | sparkline. */

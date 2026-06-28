@@ -68,7 +68,7 @@ A side panel that is a _permanently docked_ structural region may appear open in
 
 **Forbidden.** No `div`/`button`/`input`/`table` for product UI (use RPML primitives; plain text in annotations is fine). No `onclick`, event attributes, timers, API calls, runtime focus, or hover behavior. No external CSS, image CDNs, or icon CDNs (the runtime ships inline SVG icons). No `position:absolute`/`fixed` in snapshot content — RPUI owns pin positioning.
 
-**Bare tags.** Single-word elements have no suffix (`button`, `table`); compound names keep their hyphen (`list-item`, `table-row`); platform primitives use `ios-*` / `macos-*`. Never write the underlying component tags (`page-el`, `main-view`).
+**Bare tags.** Single-word elements have no suffix (`button`, `table`); compound names keep their hyphen (`list-item`, `table-row`); platform primitives use `ios-*`. Never write the underlying component tags (`page-el`, `main-view`).
 
 ## References (single sources of truth)
 

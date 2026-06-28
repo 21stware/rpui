@@ -1,6 +1,17 @@
 import { injectStyle } from "../core/style";
 import { renderMermaidSVG, THEMES } from "beautiful-mermaid";
 
+// diagram: component styles, assembled into the global runtime
+// stylesheet by core/style.ts. References design tokens via var(--rp-*).
+export const diagramStyle = `
+diagram-block, diagram-block { display:block; width:100%; max-width:100%; min-width:0; margin:10px 0; padding:12px; background:var(--rp-c-white); border:1px solid var(--rp-border); border-radius:var(--rp-radius-md); overflow:auto; }
+.diagram-block-svg { display:flex; justify-content:center; }
+.diagram-block-svg svg { max-width:100%; height:auto; }
+.diagram-block-empty, .diagram-block-err { font-size:13px; color:var(--rp-muted); }
+.diagram-block-err { color:var(--rp-danger); margin-bottom:6px; }
+.diagram-block-raw { margin:0; font-family:ui-monospace,Menlo,monospace; font-size:12px; line-height:1.5; color:var(--rp-c-gray-700); white-space:pre; overflow:auto; }
+`;
+
 /** Strip common leading indentation so authors can indent the mermaid source
  *  inside `<diagram>` for readability without breaking the parser. Drops blank
  *  leading/trailing lines, then removes the smallest shared indent. */
@@ -29,7 +40,12 @@ export class DiagramElement extends HTMLElement {
     }
     const isDark =
       document.documentElement.getAttribute("data-rpml-theme") === "dark";
-    const themeOpts = isDark ? THEMES["github-dark"] : THEMES["github-light"];
+    // beautiful-mermaid's stock github-light uses a soft fg (#1f2328) and a
+    // light muted (#59636e) for edge labels, which read faint in a prototype
+    // snapshot. Darken both for crisper diagram text; keep the dark theme stock.
+    const themeOpts = isDark
+      ? THEMES["github-dark"]
+      : { ...THEMES["github-light"], fg: "#111827", muted: "#4b5563" };
     try {
       const svg = renderMermaidSVG(source, themeOpts)
         // beautiful-mermaid embeds a Google Fonts @import; RPUI is offline /

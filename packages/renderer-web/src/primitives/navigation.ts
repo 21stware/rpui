@@ -2,6 +2,70 @@ import { injectStyle } from '../core/style';
 import { attr, csv, intAttr, escapeHtml } from '../core/dom';
 import { icon } from '../core/icons';
 
+// navigation: component styles, assembled into the global runtime
+// stylesheet by core/style.ts. References design tokens via var(--rp-*).
+export const navigationStyle = `
+badge-el, badge-el { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:var(--rp-c-zinc-900); color:var(--rp-c-white); font-size:11px; font-weight:750; }
+avatar-el, avatar-el { display:inline-grid; place-items:center; width:var(--snap-size,32px); height:var(--snap-size,32px); border-radius:999px; background:var(--rp-c-zinc-100); color:var(--rp-c-gray-700); font-size:12px; font-weight:800; }
+list-el, list-el { display:flex; flex-direction:column; gap:4px; width:100%; }
+list-item, list-item { display:flex; align-items:center; gap:8px; width:100%; min-width:180px; height:36px; padding:0 10px; border-radius:8px; color:var(--rp-c-gray-700); }
+list-item[state="selected"], list-item[state="selected"] { background:var(--rp-c-zinc-100); color:var(--rp-c-zinc-950); font-weight:700; }
+list-item[state="disabled"], list-item[state="disabled"] { opacity:.5; }
+.list-el-label { flex:1 1 auto; }
+.list-el-badge { margin-left:auto; min-width:18px; height:18px; border-radius:999px; display:grid; place-items:center; padding:0 6px; background:var(--rp-c-gray-200); color:var(--rp-c-gray-700); font-size:11px; font-weight:700; }
+tabs-el, tabs-el { display:flex; gap:6px; border-bottom:1px solid var(--rp-border); margin-bottom:12px; width:fit-content; }
+tab-el, tab-el { display:inline-flex; align-items:center; gap:6px; padding:9px 13px; border-bottom:2px solid transparent; color:var(--rp-c-gray-500); font-size:14px; }
+tab-el.tab-el-active, tab-el.tab-el-active { color:var(--rp-primary); border-bottom-color:var(--rp-primary); font-weight:700; }
+pagination-el, pagination-el { display:inline-flex; align-items:center; gap:6px; width:fit-content; font-size:13px; }
+.page-el-btn { display:inline-grid; place-items:center; min-width:30px; height:30px; padding:0 8px; border:1px solid var(--rp-border); border-radius:6px; background:var(--rp-c-white); color:var(--rp-c-gray-700); }
+.page-el-btn.active { border-color:var(--rp-primary); background:var(--rp-primary); color:var(--rp-c-white); font-weight:750; }
+steps-el, steps-el { display:flex; align-items:center; gap:8px; width:fit-content; }
+.rp-step { display:inline-flex; align-items:center; gap:6px; color:var(--rp-c-gray-500); font-size:13px; }
+.rp-step-dot { display:inline-grid; place-items:center; width:22px; height:22px; border-radius:999px; border:1px solid var(--rp-border-strong); background:var(--rp-c-white); color:var(--rp-c-gray-500); font-size:11px; font-weight:750; }
+.rp-step.active { color:var(--rp-primary); font-weight:750; }
+.rp-step.active .rp-step-dot { border-color:var(--rp-primary); background:var(--rp-primary); color:var(--rp-c-white); }
+.rp-step.done .rp-step-dot { border-color:var(--rp-success); background:var(--rp-success); color:var(--rp-c-white); }
+.rp-step-sep { width:28px; height:1px; background:var(--rp-border); }
+breadcrumb-el, breadcrumb-el { display:inline-flex; align-items:center; gap:6px; color:var(--rp-c-gray-500); font-size:13px; }
+.breadcrumb-el-current { color:var(--rp-c-gray-900); font-weight:650; }
+avatar-group, avatar-group { display:inline-flex; align-items:center; width:fit-content; }
+avatar-group > avatar-el, avatar-group > avatar-el { margin-left:-10px; border:2px solid var(--rp-c-white); border-radius:50%; background:var(--rp-c-white); position:relative; }
+avatar-group > avatar-el:first-child { margin-left:0; }
+.rp-avatar-overflow { display:inline-grid; place-items:center; width:var(--snap-size,32px); height:var(--snap-size,32px); margin-left:-10px; border:2px solid var(--rp-c-white); border-radius:50%; background:var(--rp-c-gray-100); color:var(--rp-c-gray-500); font-size:11px; font-weight:700; }
+
+/* --- navigation & layout additions --- */
+segmented-el, segmented-el { display:inline-flex; width:fit-content; padding:2px; border-radius:8px; background:var(--rp-c-gray-100); gap:2px; }
+.rp-seg-item { padding:5px 14px; border-radius:6px; font-size:13px; color:var(--rp-c-gray-500); }
+.rp-seg-item.active { background:var(--rp-c-white); color:var(--rp-c-gray-900); font-weight:650;  }
+command-palette, command-palette { display:block; width:520px; border:1px solid var(--rp-border); border-radius:12px; background:var(--rp-c-white); overflow:hidden; }
+.rp-cmdk-input { display:flex; align-items:center; gap:10px; padding:14px 16px; border-bottom:1px solid var(--rp-border); }
+.rp-cmdk-list { padding:6px; }
+.rp-cmdk-item { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; font-size:13px; color:var(--rp-c-gray-700); }
+.rp-cmdk-item.active { background:var(--rp-c-zinc-100); color:var(--rp-c-zinc-950); }
+context-menu, context-menu, menu-el, menu-el { display:inline-flex; flex-direction:column; min-width:180px; padding:5px; border:1px solid var(--rp-border); border-radius:10px; background:var(--rp-c-white); }
+.menu-item, menu-item, menu-item { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:6px; font-size:13px; color:var(--rp-c-gray-700); }
+.menu-item.danger, menu-item.danger, menu-item.danger { color:var(--rp-danger); }
+.menu-item.disabled, menu-item.disabled, menu-item.disabled { opacity:.45; }
+.menu-el-label { flex:1; }
+.menu-el-shortcut { color:var(--rp-c-gray-400); font-size:12px; }
+toc-el, toc-el { display:flex; flex-direction:column; gap:2px; width:fit-content; min-width:160px; border-left:2px solid var(--rp-border); }
+.toc-el-item { padding:4px 12px; font-size:13px; color:var(--rp-c-gray-500); border-left:2px solid transparent; margin-left:-2px; }
+.toc-el-item.active { color:var(--rp-primary); border-left-color:var(--rp-primary); font-weight:650; }
+kbd-el, kbd-el { display:inline-flex; align-items:center; gap:3px; }
+.kbd-el-key { display:inline-grid; place-items:center; min-width:20px; height:20px; padding:0 5px; border:1px solid var(--rp-border-strong); border-bottom-width:2px; border-radius:5px; background:var(--rp-c-gray-50); font-size:11px; font-family:var(--rp-font); color:var(--rp-c-gray-700); }
+.kbd-el-plus { color:var(--rp-c-gray-400); font-size:11px; }
+
+/* menubar */
+menubar-el, menubar-el { display:flex; align-items:center; gap:2px; width:fit-content; padding:4px; border:1px solid var(--rp-border); border-radius:8px; background:var(--rp-c-white); }
+.rp-menubar-item, menubar-item { display:flex; align-items:center; gap:4px; padding:6px 12px; border-radius:6px; font-size:13px; color:var(--rp-c-gray-700); }
+.rp-menubar-label { font-weight:500; }
+
+/* nav-menu */
+nav-menu, nav-menu { display:flex; align-items:center; gap:0; width:fit-content; border-bottom:1px solid var(--rp-border); }
+.rp-navmenu-item, nav-menu-item { display:flex; align-items:center; padding:9px 16px; border-bottom:2px solid transparent; font-size:14px; color:var(--rp-c-gray-500); }
+.rp-navmenu-label.active { color:var(--rp-primary); border-bottom-color:var(--rp-primary); font-weight:650; }
+`;
+
 export class BadgeElement extends HTMLElement { connectedCallback() { injectStyle(); const count = attr(this,'count','0'); const max = intAttr(this,'max',99); const n = Number(count); this.textContent = Number.isFinite(n) && n > max ? `${max}+` : count; } }
 export class AvatarElement extends HTMLElement { connectedCallback() { injectStyle(); const size = attr(this,'size','32'); this.style.setProperty('--snap-size', `${size}px`); if (!this.textContent?.trim()) this.textContent = attr(this,'initials','U'); } }
 export class ListElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady || this.children.length) return; this.dataset.rpReady='true'; const items = intAttr(this,'items',3); const state = attr(this,'state'); this.innerHTML = Array.from({length: items}, (_,i)=>`<list-item label="${['全部','未读','@ 我','已归档','设置'][i] || `Item ${i+1}`}" icon="${['inbox','message-square','at-sign','archive','settings'][i] || 'file'}"${state === 'first-selected' && i === 0 ? ' state="selected"' : ''}></list-item>`).join(''); } }
