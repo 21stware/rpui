@@ -131,6 +131,14 @@ radio-card[state="disabled"], radio-card[state="disabled"] { opacity:.5; }
 .radio-card-body { flex:1; min-width:0; }
 .radio-card-label { display:block; font-size:13px; font-weight:650; color:var(--rp-text); }
 .radio-card-desc { display:block; font-size:12px; color:var(--rp-muted); margin-top:2px; }
+
+/* bank-card-input — credit card number display with brand icon */
+bank-card-input, bank-card-input { display:inline-flex; align-items:center; gap:10px; width:320px; min-height:40px; padding:0 14px; border:1px solid var(--rp-border-strong); border-radius:10px; background:var(--rp-c-white); color:var(--rp-c-gray-900); font-size:15px; font-family:ui-monospace,Menlo,monospace; letter-spacing:1px; }
+bank-card-input[state="focus"], bank-card-input[state="focus"] { border-color:var(--rp-primary); box-shadow:0 0 0 3px var(--rp-a-black-06); }
+bank-card-input[state="error"], bank-card-input[state="error"] { border-color:var(--rp-danger); box-shadow:0 0 0 3px var(--rp-a-red-10); }
+bank-card-input[state="disabled"], bank-card-input[state="disabled"] { opacity:.55; background:var(--rp-c-gray-100); }
+.rp-bc-number { flex:1; min-width:0; }
+.rp-bc-brand { flex:0 0 auto; color:var(--rp-c-gray-400); }
 `;
 
 export class FieldElement extends HTMLElement {
@@ -465,5 +473,19 @@ export class RadioCardElement extends HTMLElement {
     const description = attr(this, "description", "");
     const isChecked = attr(this, "state", "") === "checked";
     this.innerHTML = `<div class="radio-card-dot${isChecked ? " checked" : ""}"></div><div class="radio-card-body"><span class="radio-card-label">${escapeHtml(label)}</span>${description ? `<span class="radio-card-desc">${escapeHtml(description)}</span>` : ""}</div>`;
+  }
+}
+
+export class BankCardInputElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const value = attr(this, "value", "4242 4242 4242 4242");
+    const placeholder = attr(this, "placeholder", "0000 0000 0000 0000");
+    const state = attr(this, "state", "default");
+    if (state !== "default") this.setAttribute("state", state);
+    const display = value || placeholder;
+    this.innerHTML = `<span class="rp-bc-number">${escapeHtml(display)}</span><span class="rp-bc-brand">${icon("credit-card", 20)}</span>`;
   }
 }

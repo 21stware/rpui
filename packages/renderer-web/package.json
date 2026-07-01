@@ -1,6 +1,6 @@
 {
   "name": "@21stware/rpui",
-  "version": "0.9.9",
+  "version": "0.9.12",
   "description": "RPUI: static UI prototype renderer (RPML Web Components runtime)",
   "type": "module",
   "main": "dist/rpui.js",
@@ -25,7 +25,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite --open /preview/ --config vite.config.ts",
+    "dev": "vite --open /preview/ --config vite.dev.config.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "build:js": "vite build --config vite.config.ts && vite build --config vite.gallery.config.ts && vite build --config vite.serve.config.ts",
     "build:types": "tsc -p tsconfig.types.json",
@@ -34,6 +34,21 @@
     "release": "bun run build"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "tailwindcss": "^4.1.11",
+    "@codemirror/autocomplete": "^6.20.3",
+    "@codemirror/commands": "^6.10.4",
+    "@codemirror/lang-xml": "^6.1.0",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/search": "^6.7.1",
+    "@codemirror/state": "^6.7.0",
+    "@codemirror/view": "^6.43.4",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "4.3.4",
+    "codemirror": "^6.0.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "rpml-parser": "workspace:*",
     "typescript": "^5.8.3",
     "vite": "^5.4.11"

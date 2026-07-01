@@ -81,6 +81,24 @@ export const COMPONENTS = [
     ],
   },
 
+  // ---------- Layout (new primitives) ----------
+  {
+    group: "Layout",
+    name: "separator",
+    html: '<layout columns="1fr" gap="0"><panel padding="12">上方内容</panel><separator></separator><panel padding="12">下方内容</panel></layout>',
+    attrs: [["orientation", "horizontal | vertical"]],
+  },
+  {
+    group: "Layout",
+    name: "icon",
+    html: '<layout columns="auto auto auto auto" gap="12" align="center"><icon type="home" size="24"></icon><icon type="user" size="24" mode="fill"></icon><icon type="settings" size="32"></icon><icon size="32" mode="fill"></icon></layout>',
+    attrs: [
+      ["type", "图标名（如 home, user, settings）；不传则显示默认占位"],
+      ["mode", "line（默认描边）| fill（带背景方块）"],
+      ["size", "尺寸 px，默认 32"],
+    ],
+  },
+
   // ---------- Layout (additional) ----------
   {
     group: "Layout",
@@ -312,6 +330,17 @@ export const COMPONENTS = [
       ["label", "标签"],
       ["state", "同 input"],
       ["error", "错误文案"],
+    ],
+  },
+  {
+    group: "Data input",
+    name: "bank-card-input",
+    html: '<bank-card-input value="4242 4242 4242 4242" state="focus"></bank-card-input>',
+    attrs: [
+      ["value", "卡号（等宽字体显示）"],
+      ["placeholder", "占位卡号"],
+      ["state", "default | focus | error | disabled"],
+      ["label", "标签"],
     ],
   },
   {
@@ -654,6 +683,38 @@ export const COMPONENTS = [
   },
   {
     group: "Data display",
+    name: "image",
+    html: '<layout columns="auto auto" gap="12" align="center"><image src="https://placehold.co/320x200" width="320" height="200" label="Loaded"></image><image width="320" height="200" label="No src"></image></layout>',
+    attrs: [
+      ["src", "图片 URL；无效或缺失时显示山水占位"],
+      ["width", "宽 px，默认 320"],
+      ["height", "高 px，默认 200"],
+      ["label", "占位文字（可选）"],
+    ],
+  },
+  {
+    group: "Data display",
+    name: "spinner",
+    html: '<layout columns="auto auto auto auto" gap="16" align="center"><spinner size="16"></spinner><spinner size="32"></spinner><spinner size="48" variant="ring"></spinner><spinner size="48" variant="dots"></spinner></layout>',
+    attrs: [
+      ["size", "尺寸 px，默认 32"],
+      ["variant", "ios（默认，放射线条）| ring（圆环）| dots（三点）"],
+    ],
+  },
+  {
+    group: "Data display",
+    name: "marquee",
+    html: '<panel padding="12"><marquee>最新公告：系统将于今晚 22:00 进行例行维护，请提前保存工作内容</marquee></panel>',
+    attrs: [["text", "滚动文字（也可用子文本）"]],
+  },
+  {
+    group: "Data display",
+    name: "qrcode",
+    html: '<layout columns="auto auto" gap="16" align="center"><qrcode size="120"></qrcode><qrcode size="80"></qrcode></layout>',
+    attrs: [["size", "尺寸 px，默认 120"]],
+  },
+  {
+    group: "Data display",
     name: "bulk-action-bar",
     html: '<bulk-action-bar count="3" actions="归档,删除,导出"></bulk-action-bar>',
     attrs: [
@@ -804,6 +865,31 @@ export const COMPONENTS = [
     name: "context-menu",
     html: '<context-menu items="复制,重命名,移动到,删除"></context-menu>',
     attrs: [["items", "逗号分隔（含「删除」自动标红）"]],
+  },
+  {
+    group: "Navigation",
+    name: "header-notification",
+    html: '<header-notification type="warning" title="系统维护通知" message="今晚 22:00-23:00 进行例行维护，请提前保存工作内容" action="查看详情" closable></header-notification>',
+    attrs: [
+      ["type", "info（默认）| success | warning | error"],
+      ["title", "标题"],
+      ["message", "描述文字（可选）"],
+      ["action", "操作链接文字（可选）"],
+      ["closable", "显示关闭按钮"],
+    ],
+  },
+  {
+    group: "Navigation",
+    name: "dropdown-menu",
+    html: '<dropdown-menu label="File" open items="New:⌘N,Open:⌘O,|,Save:⌘S,Delete:⌘⌫"></dropdown-menu>',
+    attrs: [
+      ["label", "触发按钮文字"],
+      ["open", "展开菜单面板"],
+      [
+        "items",
+        "逗号分隔；item:shortcut 格式渲染快捷键；| 分隔线；含 Delete/删除 自动标红",
+      ],
+    ],
   },
   {
     group: "Navigation",

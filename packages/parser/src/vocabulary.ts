@@ -21,6 +21,9 @@ export const PRIMITIVES: readonly string[] = [
   "viewport",
   "layout",
   "panel",
+  "section",
+  "row",
+  "col",
   "sidebar",
   "logo",
   "split-pane",
@@ -178,6 +181,17 @@ export const PRIMITIVES: readonly string[] = [
   "aspect-ratio",
   "field",
   "sonner",
+  // additional primitives
+  "separator",
+  "icon",
+  "bank-card-input",
+  "image",
+  "spinner",
+  "dropdown-menu",
+  // supplementary primitives
+  "header-notification",
+  "marquee",
+  "qrcode",
 ];
 
 /** Component tag for a primitive: single words get `-el`, compounds are bare. */
@@ -201,6 +215,8 @@ const EXPLICIT: Record<string, string> = {
   navigator: "navbar-el",
   // compound component tag that reads cleaner as a single word in the language
   diagram: "diagram-block",
+  // alias: "space" maps to the same component as "spacer"
+  space: "spacer-el",
 };
 
 /** Language tag → Web Component tag. */

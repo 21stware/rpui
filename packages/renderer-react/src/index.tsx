@@ -173,7 +173,9 @@ export function RpmlRenderer({
       renderer.render(rpml);
       if (selected?.length) manager?.setSelected(selected);
       if (canvasControllerRef?.current) {
-        requestAnimationFrame(() => canvasControllerRef.current?.fit());
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => canvasControllerRef.current?.reset()),
+        );
       }
     };
     if (debounce > 0) {

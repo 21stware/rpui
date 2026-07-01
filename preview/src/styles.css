@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  body {
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* CodeMirror — cannot be expressed with Tailwind utilities */
+.cm-editor {
+  height: 100%;
+  font-size: 12.5px;
+}
+
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+
+.cm-scroller {
+  overflow: auto;
+  font-family:
+    "JetBrains Mono", "Fira Code", ui-monospace, Menlo, monospace !important;
+  line-height: 1.65 !important;
+}

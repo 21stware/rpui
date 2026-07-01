@@ -1,6 +1,6 @@
-import { injectStyle } from '../core/style';
-import { attr, csv, escapeHtml, intAttr } from '../core/dom';
-import { icon } from '../core/icons';
+import { injectStyle } from "../core/style";
+import { attr, csv, escapeHtml, intAttr } from "../core/dom";
+import { icon } from "../core/icons";
 
 // data display: component styles, assembled into the global runtime
 // stylesheet by core/style.ts. References design tokens via var(--rp-*).
@@ -169,70 +169,784 @@ file-item[state="error"], file-item[state="error"] { border-color:var(--rp-c-red
 .rp-file-err { color:var(--rp-danger); font-size:12px; flex:0 0 auto; }
 .rp-file-progress { width:80px; height:6px; border-radius:999px; background:var(--rp-c-gray-100); overflow:hidden; flex:0 0 auto; }
 .rp-file-bar { display:block; height:100%; background:var(--rp-primary); border-radius:999px; }
+
+/* image — displays src or falls back to a landscape placeholder */
+image-el, image-el { display:grid; place-items:center; width:var(--snap-width,320px); height:var(--snap-height,200px); border-radius:8px; overflow:hidden; background:var(--rp-c-gray-100); border:1px solid var(--rp-border); color:var(--rp-c-gray-400); }
+.rp-img-photo { width:100%; height:100%; object-fit:cover; display:block; }
+.rp-img-fallback { display:grid; place-items:center; gap:0; width:100%; height:100%; color:var(--rp-c-gray-300); }
+.rp-img-fallback svg { width:60%; height:60%; }
+.rp-img-fallback-label { font-size:12px; color:var(--rp-c-gray-400); margin-top:4px; }
+
+/* spinner — iOS-style radiating lines by default, also ring and dots */
+spinner-el, spinner-el { display:inline-flex; align-items:center; justify-content:center; width:var(--snap-size,32px); height:var(--snap-size,32px); color:var(--rp-c-gray-500); }
+.rp-spinner-ios { display:block; width:100%; height:100%; position:relative; }
+.rp-spinner-ios-line { position:absolute; left:50%; top:50%; width:max(1.5px,calc(var(--snap-size,32px)/16)); height:calc(var(--snap-size,32px)/4); margin-left:calc(max(1.5px,calc(var(--snap-size,32px)/16))/-2); margin-top:calc(var(--snap-size,32px)/-4); border-radius:999px; background:currentColor; transform-origin:center calc(var(--snap-size,32px)/4); opacity:.15; }
+.rp-spinner-ring { display:block; width:100%; height:100%; border:2.5px solid var(--rp-c-gray-200); border-top-color:var(--rp-primary); border-radius:50%; }
+.rp-spinner-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--rp-primary); }
+
+/* marquee — static representation of scrolling text */
+marquee-el, marquee-el { display:flex; align-items:center; gap:8px; width:100%; overflow:hidden; white-space:nowrap; padding:8px 0; }
+.rp-marquee-track { display:inline-flex; align-items:center; gap:0; flex:0 0 auto; }
+.rp-marquee-text { display:inline-block; padding-right:48px; color:var(--rp-c-gray-700); font-size:13px; }
+.rp-marquee-fade { flex:0 0 auto; width:40px; height:1.5em; background:linear-gradient(90deg,transparent,var(--rp-c-white)); margin-left:-40px; position:relative; z-index:1; pointer-events:none; }
+
+/* qrcode — placeholder grid block */
+qrcode-el, qrcode-el { display:inline-grid; place-items:center; width:var(--snap-size,120px); height:var(--snap-size,120px); background:var(--rp-c-white); border:1px solid var(--rp-border); border-radius:8px; padding:8px; }
+.rp-qr-placeholder { width:100%; height:100%; display:grid; grid-template-columns:repeat(8,1fr); grid-template-rows:repeat(8,1fr); gap:1px; }
+.rp-qr-cell { background:var(--rp-c-gray-900); border-radius:1px; }
+.rp-qr-cell.off { background:transparent; }
 `;
 
 const CELL_SAMPLES = {
-  name: ['张三','李四','王五','赵六','陈七','周八'],
-  preview: ['请确认新的项目评审时间','本周周报已发送','你的账号存在新的登录','活动报名已通过审核','附件已更新','安全策略变更提醒'],
-  time: ['09:12','昨天','周二','5月30日','5月28日','5月20日'],
-  status: ['进行中','已完成','已取消','待审核','处理中','失败'],
-  num: ['128','256','64','1,024','512','89'],
-  cat: ['高','中','低','P0','P1','P2'],
+  name: ["张三", "李四", "王五", "赵六", "陈七", "周八"],
+  preview: [
+    "请确认新的项目评审时间",
+    "本周周报已发送",
+    "你的账号存在新的登录",
+    "活动报名已通过审核",
+    "附件已更新",
+    "安全策略变更提醒",
+  ],
+  time: ["09:12", "昨天", "周二", "5月30日", "5月28日", "5月20日"],
+  status: ["进行中", "已完成", "已取消", "待审核", "处理中", "失败"],
+  num: ["128", "256", "64", "1,024", "512", "89"],
+  cat: ["高", "中", "低", "P0", "P1", "P2"],
 };
-export function sampleCell(c:string, _j:number, i:number) {
+export function sampleCell(c: string, _j: number, i: number) {
   const s = c.toLowerCase();
-  const has = (...k:string[]) => k.some(x => c.includes(x) || s.includes(x));
-  if (has('发件','name','名称','姓名','负责人','用户','账号','标题','商品','任务','功能模块','工作区','分配给','编号','sku')) return CELL_SAMPLES.name[i%6];
-  if (has('预览','内容','消息','描述','preview')) return CELL_SAMPLES.preview[i%6];
-  if (has('时间','日期','time')) return CELL_SAMPLES.time[i%6];
-  if (has('状态','status')) return CELL_SAMPLES.status[i%6];
-  if (has('价格','小计','SLA','环比','请求','次数','数','量','库存')) return CELL_SAMPLES.num[i%6];
-  if (has('分类','级别','类型','渠道','优先级','套餐','范围','kind','type')) return CELL_SAMPLES.cat[i%6];
-  return `Data ${i+1}-${_j+1}`;
+  const has = (...k: string[]) => k.some((x) => c.includes(x) || s.includes(x));
+  if (
+    has(
+      "发件",
+      "name",
+      "名称",
+      "姓名",
+      "负责人",
+      "用户",
+      "账号",
+      "标题",
+      "商品",
+      "任务",
+      "功能模块",
+      "工作区",
+      "分配给",
+      "编号",
+      "sku",
+    )
+  )
+    return CELL_SAMPLES.name[i % 6];
+  if (has("预览", "内容", "消息", "描述", "preview"))
+    return CELL_SAMPLES.preview[i % 6];
+  if (has("时间", "日期", "time")) return CELL_SAMPLES.time[i % 6];
+  if (has("状态", "status")) return CELL_SAMPLES.status[i % 6];
+  if (has("价格", "小计", "SLA", "环比", "请求", "次数", "数", "量", "库存"))
+    return CELL_SAMPLES.num[i % 6];
+  if (
+    has(
+      "分类",
+      "级别",
+      "类型",
+      "渠道",
+      "优先级",
+      "套餐",
+      "范围",
+      "kind",
+      "type",
+    )
+  )
+    return CELL_SAMPLES.cat[i % 6];
+  return `Data ${i + 1}-${_j + 1}`;
 }
-export class TableElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const cols = csv(this,'columns','Name,Preview,Time,Status'); const hasCheckbox = this.hasAttribute('has-checkbox'); const hasAction = this.hasAttribute('has-action'); const finalCols = hasAction ? [...cols, '操作'] : cols; const headCells = `${hasCheckbox ? '<span class="table-el-cell">✓</span>' : ''}${finalCols.map(c=>`<span class="table-el-cell">${escapeHtml(c)}</span>`).join('')}`; const rowEls = Array.from(this.querySelectorAll(':scope > table-row')) as HTMLElement[]; const rowHtml = (cells: string[], checked: boolean) => `${hasCheckbox ? `<span class="table-el-cell"><span class="rp-box">${checked ? icon('check',12) : ''}</span></span>` : ''}${cells.map(c=>`<span class="table-el-cell">${escapeHtml(c)}</span>`).join('')}${hasAction ? `<span class="table-el-cell"><button-el label="查看" variant="link"></button-el></span>` : ''}`; let body: string; if (rowEls.length) { body = rowEls.map(row => `<div class="table-row">${rowHtml(csv(row,'content',''), row.hasAttribute('checked') || attr(row,'state')==='selected')}</div>`).join(''); } else { const rows = intAttr(this,'rows',4); body = Array.from({length: rows}, (_,i) => `<div class="table-row">${rowHtml(finalCols.filter(c=>c!=='操作').map((c,j)=>sampleCell(c,j,i)), i===1)}</div>`).join(''); } this.innerHTML = `<div class="table-row table-el-head">${headCells}</div>${body}`; } }
-export class TableRowElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; if (this.closest('table-el')) return; const items = csv(this,'content',''); this.style.display='grid'; this.style.alignItems='center'; this.style.gridTemplateColumns = items.map(() => 'minmax(120px,1fr)').join(' '); this.innerHTML = items.map(c => `<span>${escapeHtml(c)}</span>`).join(''); } }
-export class TableListRowElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const state = attr(this,'state','default'); const items = csv(this,'content',''); const cells = items.length ? items : ['张三','消息内容预览文本','09:12', state]; const selected = state === 'selected'; this.style.gridTemplateColumns = `44px ${cells.map(() => 'minmax(120px,1fr)').join(' ')}`; this.innerHTML = `<span><span class="rp-box">${selected ? icon('check',12) : ''}</span></span>${cells.map(c => `<span>${escapeHtml(c)}</span>`).join('')}`; } }
-export class BulkActionBarElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const count = attr(this,'count','1'); const actions = csv(this,'actions','确认,取消'); this.innerHTML = `${icon('check')}<span>已选 ${escapeHtml(count)} 项</span>${actions.map(a=>`<button-el label="${escapeHtml(a)}" variant="ghost"></button-el>`).join('')}`; } }
-export class EmptyElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; this.innerHTML = `${icon('empty',28)}<span class="empty-el-title">${escapeHtml(attr(this,'label','暂无数据'))}</span><span class="empty-el-desc">${escapeHtml(attr(this,'description',''))}</span>${this.hasAttribute('has-action') ? '<button-el label="新建" variant="primary" icon="plus"></button-el>' : ''}`; } }
-export class LoadingElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const rows = intAttr(this,'rows',3); this.innerHTML = attr(this,'kind') === 'spinner' || attr(this,'style') === 'spinner' ? `<span class="rp-spinner">${icon('loader',24)}</span>` : Array.from({length: rows}, (_,i)=>`<span class="skeleton-el-line" style="width:${220 - i*24}px"></span>`).join(''); } }
-export class AlertElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const type = attr(this,'type','info'); const title = attr(this,'title', type === 'error' ? '错误' : '提示'); const message = attr(this,'message',''); const ic = type === 'error' ? 'circle-alert' : type === 'warning' ? 'alert-triangle' : type === 'success' ? 'circle-check' : 'info'; this.innerHTML = `${icon(ic)}<span><strong>${escapeHtml(title)}</strong>${message ? `<br>${escapeHtml(message)}` : ''}</span>${this.hasAttribute('closable') ? icon('x',14) : ''}`; } }
-export class OverlayElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady = 'true'; const children = Array.from(this.childNodes); const title = attr(this,'title'); if (!title) return; const head = document.createElement('div'); head.className = 'rp-overlay-title'; head.textContent = title; this.prepend(head); children.forEach(n => this.appendChild(n)); } }
-export class TooltipElement extends HTMLElement { connectedCallback() { injectStyle(); if (!this.textContent?.trim()) this.textContent = attr(this,'text','提示内容'); } }
-export class ModalElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady = 'true'; this.style.setProperty('--snap-width', `${attr(this,'width','480')}px`); const children = Array.from(this.childNodes); const body = document.createElement('div'); body.className = 'modal-el-body'; children.forEach(n => body.appendChild(n)); this.innerHTML = `<div class="modal-el-head"><span>${escapeHtml(attr(this,'title','标题'))}</span>${icon('x',14)}</div>`; this.appendChild(body); if (this.hasAttribute('has-footer')) this.insertAdjacentHTML('beforeend', '<div class="modal-el-footer"><button-el label="取消"></button-el><button-el label="确认" variant="primary"></button-el></div>'); } }
-export class DrawerElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady = 'true'; this.style.setProperty('--snap-width', `${attr(this,'width','360')}px`); const children = Array.from(this.childNodes); const body = document.createElement('div'); body.className = 'drawer-el-body'; children.forEach(n => body.appendChild(n)); this.innerHTML = `<div class="drawer-el-head"><span>${escapeHtml(attr(this,'title','抽屉'))}</span>${icon('x',14)}</div>`; this.appendChild(body); } }
-export class CardElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady = 'true'; const children = Array.from(this.childNodes); const title = attr(this,'title'); const subtitle = attr(this,'subtitle'); this.innerHTML = `${this.hasAttribute('has-image') ? `<span class="card-el-image">${icon('image')} Image</span>` : ''}${title ? `<span class="card-el-title">${escapeHtml(title)}</span>` : ''}${subtitle ? `<span class="card-el-subtitle">${escapeHtml(subtitle)}</span>` : ''}`; children.forEach(n => this.appendChild(n)); if (this.hasAttribute('has-footer')) this.insertAdjacentHTML('beforeend', '<span class="card-el-footer"><button-el label="查看" variant="secondary"></button-el></span>'); } }
-export class StatCardElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady = 'true'; this.innerHTML = `<span class="rp-stat-label">${escapeHtml(attr(this,'label','指标'))}</span><span class="rp-stat-value">${escapeHtml(attr(this,'value','128'))}</span><span class="rp-stat-change">${escapeHtml(attr(this,'change','0%'))}</span>`; } }
-export class TagElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady = 'true'; const label = attr(this,'label', this.textContent?.trim() || 'Tag'); this.innerHTML = `<span>${escapeHtml(label)}</span>${this.hasAttribute('closable') ? icon('x',12) : ''}`; } }
+export class TableElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const cols = csv(this, "columns", "Name,Preview,Time,Status");
+    const hasCheckbox = this.hasAttribute("has-checkbox");
+    const hasAction = this.hasAttribute("has-action");
+    const finalCols = hasAction ? [...cols, "操作"] : cols;
+    const headCells = `${hasCheckbox ? '<span class="table-el-cell">✓</span>' : ""}${finalCols.map((c) => `<span class="table-el-cell">${escapeHtml(c)}</span>`).join("")}`;
+    const rowEls = Array.from(
+      this.querySelectorAll(":scope > table-row"),
+    ) as HTMLElement[];
+    const rowHtml = (cells: string[], checked: boolean) =>
+      `${hasCheckbox ? `<span class="table-el-cell"><span class="rp-box">${checked ? icon("check", 12) : ""}</span></span>` : ""}${cells.map((c) => `<span class="table-el-cell">${escapeHtml(c)}</span>`).join("")}${hasAction ? `<span class="table-el-cell"><button-el label="查看" variant="link"></button-el></span>` : ""}`;
+    let body: string;
+    if (rowEls.length) {
+      body = rowEls
+        .map(
+          (row) =>
+            `<div class="table-row">${rowHtml(csv(row, "content", ""), row.hasAttribute("checked") || attr(row, "state") === "selected")}</div>`,
+        )
+        .join("");
+    } else {
+      const rows = intAttr(this, "rows", 4);
+      body = Array.from(
+        { length: rows },
+        (_, i) =>
+          `<div class="table-row">${rowHtml(
+            finalCols
+              .filter((c) => c !== "操作")
+              .map((c, j) => sampleCell(c, j, i)),
+            i === 1,
+          )}</div>`,
+      ).join("");
+    }
+    this.innerHTML = `<div class="table-row table-el-head">${headCells}</div>${body}`;
+  }
+}
+export class TableRowElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    if (this.closest("table-el")) return;
+    const items = csv(this, "content", "");
+    this.style.display = "grid";
+    this.style.alignItems = "center";
+    this.style.gridTemplateColumns = items
+      .map(() => "minmax(120px,1fr)")
+      .join(" ");
+    this.innerHTML = items.map((c) => `<span>${escapeHtml(c)}</span>`).join("");
+  }
+}
+export class TableListRowElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const state = attr(this, "state", "default");
+    const items = csv(this, "content", "");
+    const cells = items.length
+      ? items
+      : ["张三", "消息内容预览文本", "09:12", state];
+    const selected = state === "selected";
+    this.style.gridTemplateColumns = `44px ${cells.map(() => "minmax(120px,1fr)").join(" ")}`;
+    this.innerHTML = `<span><span class="rp-box">${selected ? icon("check", 12) : ""}</span></span>${cells.map((c) => `<span>${escapeHtml(c)}</span>`).join("")}`;
+  }
+}
+export class BulkActionBarElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const count = attr(this, "count", "1");
+    const actions = csv(this, "actions", "确认,取消");
+    this.innerHTML = `${icon("check")}<span>已选 ${escapeHtml(count)} 项</span>${actions.map((a) => `<button-el label="${escapeHtml(a)}" variant="ghost"></button-el>`).join("")}`;
+  }
+}
+export class EmptyElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    this.innerHTML = `${icon("empty", 28)}<span class="empty-el-title">${escapeHtml(attr(this, "label", "暂无数据"))}</span><span class="empty-el-desc">${escapeHtml(attr(this, "description", ""))}</span>${this.hasAttribute("has-action") ? '<button-el label="新建" variant="primary" icon="plus"></button-el>' : ""}`;
+  }
+}
+export class LoadingElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const rows = intAttr(this, "rows", 3);
+    this.innerHTML =
+      attr(this, "kind") === "spinner" || attr(this, "style") === "spinner"
+        ? `<span class="rp-spinner">${icon("loader", 24)}</span>`
+        : Array.from(
+            { length: rows },
+            (_, i) =>
+              `<span class="skeleton-el-line" style="width:${220 - i * 24}px"></span>`,
+          ).join("");
+  }
+}
+export class AlertElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const type = attr(this, "type", "info");
+    const title = attr(this, "title", type === "error" ? "错误" : "提示");
+    const message = attr(this, "message", "");
+    const ic =
+      type === "error"
+        ? "circle-alert"
+        : type === "warning"
+          ? "alert-triangle"
+          : type === "success"
+            ? "circle-check"
+            : "info";
+    this.innerHTML = `${icon(ic)}<span><strong>${escapeHtml(title)}</strong>${message ? `<br>${escapeHtml(message)}` : ""}</span>${this.hasAttribute("closable") ? icon("x", 14) : ""}`;
+  }
+}
+export class OverlayElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const children = Array.from(this.childNodes);
+    const title = attr(this, "title");
+    if (!title) return;
+    const head = document.createElement("div");
+    head.className = "rp-overlay-title";
+    head.textContent = title;
+    this.prepend(head);
+    children.forEach((n) => this.appendChild(n));
+  }
+}
+export class TooltipElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (!this.textContent?.trim())
+      this.textContent = attr(this, "text", "提示内容");
+  }
+}
+export class ModalElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    this.style.setProperty("--snap-width", `${attr(this, "width", "480")}px`);
+    const children = Array.from(this.childNodes);
+    const body = document.createElement("div");
+    body.className = "modal-el-body";
+    children.forEach((n) => body.appendChild(n));
+    this.innerHTML = `<div class="modal-el-head"><span>${escapeHtml(attr(this, "title", "标题"))}</span>${icon("x", 14)}</div>`;
+    this.appendChild(body);
+    if (this.hasAttribute("has-footer"))
+      this.insertAdjacentHTML(
+        "beforeend",
+        '<div class="modal-el-footer"><button-el label="取消"></button-el><button-el label="确认" variant="primary"></button-el></div>',
+      );
+  }
+}
+export class DrawerElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    this.style.setProperty("--snap-width", `${attr(this, "width", "360")}px`);
+    const children = Array.from(this.childNodes);
+    const body = document.createElement("div");
+    body.className = "drawer-el-body";
+    children.forEach((n) => body.appendChild(n));
+    this.innerHTML = `<div class="drawer-el-head"><span>${escapeHtml(attr(this, "title", "抽屉"))}</span>${icon("x", 14)}</div>`;
+    this.appendChild(body);
+  }
+}
+export class CardElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const children = Array.from(this.childNodes);
+    const title = attr(this, "title");
+    const subtitle = attr(this, "subtitle");
+    this.innerHTML = `${this.hasAttribute("has-image") ? `<span class="card-el-image">${icon("image")} Image</span>` : ""}${title ? `<span class="card-el-title">${escapeHtml(title)}</span>` : ""}${subtitle ? `<span class="card-el-subtitle">${escapeHtml(subtitle)}</span>` : ""}`;
+    children.forEach((n) => this.appendChild(n));
+    if (this.hasAttribute("has-footer"))
+      this.insertAdjacentHTML(
+        "beforeend",
+        '<span class="card-el-footer"><button-el label="查看" variant="secondary"></button-el></span>',
+      );
+  }
+}
+export class StatCardElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    this.innerHTML = `<span class="rp-stat-label">${escapeHtml(attr(this, "label", "指标"))}</span><span class="rp-stat-value">${escapeHtml(attr(this, "value", "128"))}</span><span class="rp-stat-change">${escapeHtml(attr(this, "change", "0%"))}</span>`;
+  }
+}
+export class TagElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const label = attr(this, "label", this.textContent?.trim() || "Tag");
+    this.innerHTML = `<span>${escapeHtml(label)}</span>${this.hasAttribute("closable") ? icon("x", 12) : ""}`;
+  }
+}
 
-export class ChipElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const label = attr(this,'label', this.textContent?.trim() || 'Chip'); const ic = attr(this,'icon'); this.innerHTML = `${ic ? icon(ic,12) : ''}<span>${escapeHtml(label)}</span>${this.hasAttribute('closable') ? icon('x',11) : ''}`; } }
-export class TreeElement extends HTMLElement { connectedCallback() { injectStyle(); } }
-export class TreeItemElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const level = intAttr(this,'level',0); const label = attr(this,'label','Node'); const ic = attr(this,'icon'); const expandable = this.hasAttribute('expanded') || this.hasAttribute('collapsed'); const expanded = this.hasAttribute('expanded'); const caret = expandable ? icon(expanded ? 'chevron-down' : 'chevron-right',12) : '<span class="tree-el-spacer"></span>'; this.style.setProperty('--tree-level', String(level)); this.innerHTML = `<span class="tree-el-row${attr(this,'state')==='selected' ? ' selected' : ''}">${caret}${icon(ic || (expandable ? 'folder' : 'file'),14)}<span class="tree-el-label">${escapeHtml(label)}</span></span>`; } }
-export class TimelineElement extends HTMLElement { connectedCallback() { injectStyle(); } }
-export class TimelineItemElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const children = Array.from(this.childNodes); const label = attr(this,'label'); const time = attr(this,'time'); const state = attr(this,'state','default'); const dot = `<span class="timeline-el-dot ${state}"></span>`; const head = `<div class="timeline-el-head"><span class="timeline-el-label">${escapeHtml(label)}</span>${time ? `<span class="timeline-el-time">${escapeHtml(time)}</span>` : ''}</div>`; const body = document.createElement('div'); body.className = 'timeline-el-content'; children.forEach(n=>body.appendChild(n)); this.innerHTML = `${dot}<div class="timeline-el-main">${head}</div>`; this.querySelector('.timeline-el-main')!.appendChild(body); } }
-export class CalendarElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const month = attr(this,'month','2026 年 6 月'); const selected = intAttr(this,'selected',15); const dows = ['一','二','三','四','五','六','日']; const cells = Array.from({length:35},(_,i)=>{ const day = i - 1; const valid = day >= 1 && day <= 30; return `<span class="rp-cal-cell${valid && day===selected ? ' selected' : ''}${valid ? '' : ' muted'}">${valid ? day : ''}</span>`; }).join(''); this.innerHTML = `<div class="rp-cal-head"><span>${escapeHtml(month)}</span></div><div class="rp-cal-grid">${dows.map(d=>`<span class="rp-cal-dow">${d}</span>`).join('')}${cells}</div>`; } }
-export class KanbanElement extends HTMLElement { connectedCallback() { injectStyle(); } }
-export class KanbanColumnElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const children = Array.from(this.childNodes); const title = attr(this,'title','列'); const count = attr(this,'count'); const head = document.createElement('div'); head.className = 'kanban-el-head'; head.innerHTML = `<span>${escapeHtml(title)}</span>${count ? `<span class="kanban-el-count">${escapeHtml(count)}</span>` : ''}`; const body = document.createElement('div'); body.className = 'kanban-el-body'; children.forEach(n=>body.appendChild(n)); this.append(head, body); } }
-export class KanbanCardElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const label = attr(this,'label','卡片'); const tag = attr(this,'tag'); this.innerHTML = `<span class="kanban-card-title">${escapeHtml(label)}</span>${tag ? `<span class="kanban-card-tag">${escapeHtml(tag)}</span>` : ''}`; } }
-export class CodeBlockElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const lines = intAttr(this,'lines',5); const lang = attr(this,'lang','ts'); const body = Array.from({length:lines},(_,i)=>`<span class="rp-code-line"><span class="rp-code-ln">${i+1}</span><span class="rp-code-bar" style="width:${40 + ((i*37)%50)}%"></span></span>`).join(''); this.innerHTML = `<div class="rp-code-head">${escapeHtml(lang)}</div><div class="rp-code-body">${body}</div>`; } }
-export class DiffElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const rows = intAttr(this,'rows',4); const body = Array.from({length:rows},(_,i)=>{ const kind = i%3===0 ? 'add' : i%3===1 ? 'del' : 'ctx'; const sign = kind==='add'?'+':kind==='del'?'-':' '; return `<span class="diff-el-line ${kind}"><span class="diff-el-sign">${sign}</span><span class="rp-code-bar" style="width:${45+((i*29)%45)}%"></span></span>`; }).join(''); this.innerHTML = body; } }
-export class ImageGridElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const count = intAttr(this,'count',6); const cols = intAttr(this,'columns',3); this.style.setProperty('--grid-cols', String(cols)); this.innerHTML = Array.from({length:count},()=>`<span class="rp-grid-cell">${icon('image',20)}</span>`).join(''); } }
-export class KeyValueElement extends HTMLElement { connectedCallback() { injectStyle(); } }
-export class KvRowElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; this.innerHTML = `<span class="rp-kv-key">${escapeHtml(attr(this,'label','键'))}</span><span class="rp-kv-val">${escapeHtml(attr(this,'value','值'))}</span>`; } }
-export class AccordionElement extends HTMLElement { connectedCallback() { injectStyle(); } }
-export class AccordionItemElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const children = Array.from(this.childNodes); const label = attr(this,'label','分节'); const expanded = this.hasAttribute('expanded'); const head = document.createElement('div'); head.className = 'accordion-el-head'; head.innerHTML = `${icon(expanded ? 'chevron-down' : 'chevron-right',14)}<span>${escapeHtml(label)}</span>`; this.appendChild(head); if (expanded) { const body = document.createElement('div'); body.className = 'accordion-el-body'; children.forEach(n=>body.appendChild(n)); this.appendChild(body); } } }
-export class BannerElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const type = attr(this,'type','info'); const ic = type==='error'?'circle-alert':type==='warning'?'alert-triangle':type==='success'?'circle-check':'info'; this.innerHTML = `${icon(ic)}<span class="banner-el-text"><strong>${escapeHtml(attr(this,'title','通知'))}</strong>${attr(this,'message') ? ` ${escapeHtml(attr(this,'message'))}` : ''}</span>${this.hasAttribute('has-action') ? '<button-el label="查看" variant="link"></button-el>' : ''}${this.hasAttribute('closable') ? icon('x',14) : ''}`; } }
-export class SkeletonElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const shape = attr(this,'shape','line'); if (shape==='avatar') this.innerHTML = '<span class="rp-skel rp-skel-avatar"></span>'; else if (shape==='card') this.innerHTML = '<span class="rp-skel rp-skel-block"></span><span class="skeleton-el-line" style="width:70%"></span><span class="skeleton-el-line" style="width:50%"></span>'; else if (shape==='list') this.innerHTML = Array.from({length:3},()=>'<span class="rp-skel-row"><span class="rp-skel rp-skel-avatar sm"></span><span class="skeleton-el-line" style="width:60%"></span></span>').join(''); else this.innerHTML = '<span class="skeleton-el-line"></span>'; } }
-export class CountdownElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; this.innerHTML = `${icon('clock',13)}<span>${escapeHtml(attr(this,'value','02:45:18'))}</span>`; } }
-export class ResultElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const status = attr(this,'status','success'); const ic = status==='error'?'circle-x':status==='empty'?'empty':'circle-check'; this.innerHTML = `<span class="result-el-icon ${status}">${icon(ic,40)}</span><span class="result-el-title">${escapeHtml(attr(this,'title','操作成功'))}</span><span class="result-el-desc">${escapeHtml(attr(this,'description',''))}</span>${this.hasAttribute('has-action') ? '<button-el label="返回" variant="primary"></button-el>' : ''}`; } }
-export class PermissionGateElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const children = Array.from(this.childNodes); const wrap = document.createElement('div'); wrap.className = 'rp-gate-content'; children.forEach(n=>wrap.appendChild(n)); const overlay = document.createElement('div'); overlay.className = 'rp-gate-overlay'; overlay.innerHTML = `${icon('lock',16)}<span>${escapeHtml(attr(this,'reason','无权限'))}</span>`; this.append(wrap, overlay); } }
-export class QuotaBarElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const used = intAttr(this,'used',70); const limit = intAttr(this,'limit',100); const pct = limit ? Math.min(100,(used/limit)*100) : 0; const danger = pct >= 90; this.innerHTML = `<div class="rp-quota-head"><span>${escapeHtml(attr(this,'label','用量'))}</span><span class="rp-quota-num${danger ? ' danger' : ''}">${used} / ${limit}</span></div><span class="rp-quota-track"><span class="rp-quota-fill${danger ? ' danger' : ''}" style="width:${pct}%"></span></span>`; } }
-export class ApiKeyElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const value = attr(this,'value','sk_live_••••••••••••3f9a'); this.innerHTML = `<span class="rp-apikey-val">${escapeHtml(value)}</span><span class="rp-apikey-copy">${icon('copy',14)}</span>`; } }
-export class AuditRowElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; this.innerHTML = `<span class="rp-audit-actor">${escapeHtml(attr(this,'actor','用户'))}</span><span class="rp-audit-action">${escapeHtml(attr(this,'action','执行了操作'))}</span><span class="rp-audit-time">${escapeHtml(attr(this,'time','刚刚'))}</span>`; } }
-export class WorkflowNodeElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const state = attr(this,'state','default'); const ic = state==='done'?'circle-check':state==='active'?'circle':state==='error'?'circle-x':'circle'; this.innerHTML = `<span class="rp-wf-icon ${state}">${icon(ic,16)}</span><span class="rp-wf-label">${escapeHtml(attr(this,'label','节点'))}</span>`; } }
+export class ChipElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const label = attr(this, "label", this.textContent?.trim() || "Chip");
+    const ic = attr(this, "icon");
+    this.innerHTML = `${ic ? icon(ic, 12) : ""}<span>${escapeHtml(label)}</span>${this.hasAttribute("closable") ? icon("x", 11) : ""}`;
+  }
+}
+export class TreeElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+  }
+}
+export class TreeItemElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const level = intAttr(this, "level", 0);
+    const label = attr(this, "label", "Node");
+    const ic = attr(this, "icon");
+    const expandable =
+      this.hasAttribute("expanded") || this.hasAttribute("collapsed");
+    const expanded = this.hasAttribute("expanded");
+    const caret = expandable
+      ? icon(expanded ? "chevron-down" : "chevron-right", 12)
+      : '<span class="tree-el-spacer"></span>';
+    this.style.setProperty("--tree-level", String(level));
+    this.innerHTML = `<span class="tree-el-row${attr(this, "state") === "selected" ? " selected" : ""}">${caret}${icon(ic || (expandable ? "folder" : "file"), 14)}<span class="tree-el-label">${escapeHtml(label)}</span></span>`;
+  }
+}
+export class TimelineElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+  }
+}
+export class TimelineItemElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const children = Array.from(this.childNodes);
+    const label = attr(this, "label");
+    const time = attr(this, "time");
+    const state = attr(this, "state", "default");
+    const dot = `<span class="timeline-el-dot ${state}"></span>`;
+    const head = `<div class="timeline-el-head"><span class="timeline-el-label">${escapeHtml(label)}</span>${time ? `<span class="timeline-el-time">${escapeHtml(time)}</span>` : ""}</div>`;
+    const body = document.createElement("div");
+    body.className = "timeline-el-content";
+    children.forEach((n) => body.appendChild(n));
+    this.innerHTML = `${dot}<div class="timeline-el-main">${head}</div>`;
+    this.querySelector(".timeline-el-main")!.appendChild(body);
+  }
+}
+export class CalendarElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const month = attr(this, "month", "2026 年 6 月");
+    const selected = intAttr(this, "selected", 15);
+    const dows = ["一", "二", "三", "四", "五", "六", "日"];
+    const cells = Array.from({ length: 35 }, (_, i) => {
+      const day = i - 1;
+      const valid = day >= 1 && day <= 30;
+      return `<span class="rp-cal-cell${valid && day === selected ? " selected" : ""}${valid ? "" : " muted"}">${valid ? day : ""}</span>`;
+    }).join("");
+    this.innerHTML = `<div class="rp-cal-head"><span>${escapeHtml(month)}</span></div><div class="rp-cal-grid">${dows.map((d) => `<span class="rp-cal-dow">${d}</span>`).join("")}${cells}</div>`;
+  }
+}
+export class KanbanElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+  }
+}
+export class KanbanColumnElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const children = Array.from(this.childNodes);
+    const title = attr(this, "title", "列");
+    const count = attr(this, "count");
+    const head = document.createElement("div");
+    head.className = "kanban-el-head";
+    head.innerHTML = `<span>${escapeHtml(title)}</span>${count ? `<span class="kanban-el-count">${escapeHtml(count)}</span>` : ""}`;
+    const body = document.createElement("div");
+    body.className = "kanban-el-body";
+    children.forEach((n) => body.appendChild(n));
+    this.append(head, body);
+  }
+}
+export class KanbanCardElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const label = attr(this, "label", "卡片");
+    const tag = attr(this, "tag");
+    this.innerHTML = `<span class="kanban-card-title">${escapeHtml(label)}</span>${tag ? `<span class="kanban-card-tag">${escapeHtml(tag)}</span>` : ""}`;
+  }
+}
+export class CodeBlockElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const lines = intAttr(this, "lines", 5);
+    const lang = attr(this, "lang", "ts");
+    const body = Array.from(
+      { length: lines },
+      (_, i) =>
+        `<span class="rp-code-line"><span class="rp-code-ln">${i + 1}</span><span class="rp-code-bar" style="width:${40 + ((i * 37) % 50)}%"></span></span>`,
+    ).join("");
+    this.innerHTML = `<div class="rp-code-head">${escapeHtml(lang)}</div><div class="rp-code-body">${body}</div>`;
+  }
+}
+export class DiffElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const rows = intAttr(this, "rows", 4);
+    const body = Array.from({ length: rows }, (_, i) => {
+      const kind = i % 3 === 0 ? "add" : i % 3 === 1 ? "del" : "ctx";
+      const sign = kind === "add" ? "+" : kind === "del" ? "-" : " ";
+      return `<span class="diff-el-line ${kind}"><span class="diff-el-sign">${sign}</span><span class="rp-code-bar" style="width:${45 + ((i * 29) % 45)}%"></span></span>`;
+    }).join("");
+    this.innerHTML = body;
+  }
+}
+export class ImageGridElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const count = intAttr(this, "count", 6);
+    const cols = intAttr(this, "columns", 3);
+    this.style.setProperty("--grid-cols", String(cols));
+    this.innerHTML = Array.from(
+      { length: count },
+      () => `<span class="rp-grid-cell">${icon("image", 20)}</span>`,
+    ).join("");
+  }
+}
+export class KeyValueElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+  }
+}
+export class KvRowElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    this.innerHTML = `<span class="rp-kv-key">${escapeHtml(attr(this, "label", "键"))}</span><span class="rp-kv-val">${escapeHtml(attr(this, "value", "值"))}</span>`;
+  }
+}
+export class AccordionElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+  }
+}
+export class AccordionItemElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const children = Array.from(this.childNodes);
+    const label = attr(this, "label", "分节");
+    const expanded = this.hasAttribute("expanded");
+    const head = document.createElement("div");
+    head.className = "accordion-el-head";
+    head.innerHTML = `${icon(expanded ? "chevron-down" : "chevron-right", 14)}<span>${escapeHtml(label)}</span>`;
+    this.appendChild(head);
+    if (expanded) {
+      const body = document.createElement("div");
+      body.className = "accordion-el-body";
+      children.forEach((n) => body.appendChild(n));
+      this.appendChild(body);
+    }
+  }
+}
+export class BannerElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const type = attr(this, "type", "info");
+    const ic =
+      type === "error"
+        ? "circle-alert"
+        : type === "warning"
+          ? "alert-triangle"
+          : type === "success"
+            ? "circle-check"
+            : "info";
+    this.innerHTML = `${icon(ic)}<span class="banner-el-text"><strong>${escapeHtml(attr(this, "title", "通知"))}</strong>${attr(this, "message") ? ` ${escapeHtml(attr(this, "message"))}` : ""}</span>${this.hasAttribute("has-action") ? '<button-el label="查看" variant="link"></button-el>' : ""}${this.hasAttribute("closable") ? icon("x", 14) : ""}`;
+  }
+}
+export class SkeletonElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const shape = attr(this, "shape", "line");
+    if (shape === "avatar")
+      this.innerHTML = '<span class="rp-skel rp-skel-avatar"></span>';
+    else if (shape === "card")
+      this.innerHTML =
+        '<span class="rp-skel rp-skel-block"></span><span class="skeleton-el-line" style="width:70%"></span><span class="skeleton-el-line" style="width:50%"></span>';
+    else if (shape === "list")
+      this.innerHTML = Array.from(
+        { length: 3 },
+        () =>
+          '<span class="rp-skel-row"><span class="rp-skel rp-skel-avatar sm"></span><span class="skeleton-el-line" style="width:60%"></span></span>',
+      ).join("");
+    else this.innerHTML = '<span class="skeleton-el-line"></span>';
+  }
+}
+export class CountdownElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    this.innerHTML = `${icon("clock", 13)}<span>${escapeHtml(attr(this, "value", "02:45:18"))}</span>`;
+  }
+}
+export class ResultElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const status = attr(this, "status", "success");
+    const ic =
+      status === "error"
+        ? "circle-x"
+        : status === "empty"
+          ? "empty"
+          : "circle-check";
+    this.innerHTML = `<span class="result-el-icon ${status}">${icon(ic, 40)}</span><span class="result-el-title">${escapeHtml(attr(this, "title", "操作成功"))}</span><span class="result-el-desc">${escapeHtml(attr(this, "description", ""))}</span>${this.hasAttribute("has-action") ? '<button-el label="返回" variant="primary"></button-el>' : ""}`;
+  }
+}
+export class PermissionGateElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const children = Array.from(this.childNodes);
+    const wrap = document.createElement("div");
+    wrap.className = "rp-gate-content";
+    children.forEach((n) => wrap.appendChild(n));
+    const overlay = document.createElement("div");
+    overlay.className = "rp-gate-overlay";
+    overlay.innerHTML = `${icon("lock", 16)}<span>${escapeHtml(attr(this, "reason", "无权限"))}</span>`;
+    this.append(wrap, overlay);
+  }
+}
+export class QuotaBarElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const used = intAttr(this, "used", 70);
+    const limit = intAttr(this, "limit", 100);
+    const pct = limit ? Math.min(100, (used / limit) * 100) : 0;
+    const danger = pct >= 90;
+    this.innerHTML = `<div class="rp-quota-head"><span>${escapeHtml(attr(this, "label", "用量"))}</span><span class="rp-quota-num${danger ? " danger" : ""}">${used} / ${limit}</span></div><span class="rp-quota-track"><span class="rp-quota-fill${danger ? " danger" : ""}" style="width:${pct}%"></span></span>`;
+  }
+}
+export class ApiKeyElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const value = attr(this, "value", "sk_live_••••••••••••3f9a");
+    this.innerHTML = `<span class="rp-apikey-val">${escapeHtml(value)}</span><span class="rp-apikey-copy">${icon("copy", 14)}</span>`;
+  }
+}
+export class AuditRowElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    this.innerHTML = `<span class="rp-audit-actor">${escapeHtml(attr(this, "actor", "用户"))}</span><span class="rp-audit-action">${escapeHtml(attr(this, "action", "执行了操作"))}</span><span class="rp-audit-time">${escapeHtml(attr(this, "time", "刚刚"))}</span>`;
+  }
+}
+export class WorkflowNodeElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const state = attr(this, "state", "default");
+    const ic =
+      state === "done"
+        ? "circle-check"
+        : state === "active"
+          ? "circle"
+          : state === "error"
+            ? "circle-x"
+            : "circle";
+    this.innerHTML = `<span class="rp-wf-icon ${state}">${icon(ic, 16)}</span><span class="rp-wf-label">${escapeHtml(attr(this, "label", "节点"))}</span>`;
+  }
+}
 
-export class AvatarGroupElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const size = attr(this,'size','32'); this.style.setProperty('--snap-size', `${size}px`); const hasChildren = this.querySelector(':scope > avatar-el'); let html = ''; if (!hasChildren) { const items = intAttr(this,'items',3); const initials = ['A','B','C','D','E','F']; html = Array.from({length: items}, (_,i) => `<avatar-el initials="${initials[i%6]}" size="${size}"></avatar-el>`).join(''); } const overflow = intAttr(this,'overflow',0); if (overflow > 0) html += `<span class="rp-avatar-overflow">+${overflow}</span>`; if (html) this.insertAdjacentHTML('beforeend', html); } }
-export class CommentElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const children = Array.from(this.childNodes); const author = attr(this,'author','用户'); const initials = attr(this,'avatar', author.slice(0,1).toUpperCase() || 'U'); const time = attr(this,'time'); const isMe = attr(this,'state')==='me'; this.innerHTML = `<div class="comment-el-head"><avatar-el size="28" initials="${escapeHtml(initials)}"></avatar-el><span class="comment-el-author">${escapeHtml(author)}</span>${time ? `<span class="comment-el-time">${escapeHtml(time)}</span>` : ''}</div>`; const body = document.createElement('div'); body.className = 'comment-el-body'; children.forEach(n => body.appendChild(n)); this.appendChild(body); if (isMe) this.classList.add('comment-el-me'); } }
-export class FileListElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady || this.children.length) return; this.dataset.rpReady='true'; const n = intAttr(this,'items',0); if (n > 0) { const names = ['方案.pdf','截图.png','数据.xlsx','README.md','合同.docx']; this.innerHTML = Array.from({length: n}, (_,i) => `<file-item name="${names[i%names.length]}" size="${200 + i*120} KB"></file-item>`).join(''); } } }
-export class FileItemElement extends HTMLElement { connectedCallback() { injectStyle(); if (this.dataset.rpReady) return; this.dataset.rpReady='true'; const name = attr(this,'name','document.pdf'); const size = attr(this,'size'); const state = attr(this,'state','uploaded'); const ext = name.split('.').pop()?.toLowerCase() || ''; const ic = ['png','jpg','jpeg','gif','svg','webp'].includes(ext) ? 'image' : 'file'; const glyph = state==='error' ? icon('circle-x',16) : state==='uploading' ? icon('loader',15) : icon(ic,16); const right = state==='uploading' ? `<span class="rp-file-progress"><span class="rp-file-bar" style="width:${escapeHtml(attr(this,'progress','60'))}%"></span></span>` : state==='error' ? `<span class="rp-file-err">失败</span>` : size ? `<span class="rp-file-size">${escapeHtml(size)}</span>` : ''; this.innerHTML = `<span class="rp-file-ic ${state}">${glyph}</span><span class="rp-file-name">${escapeHtml(name)}</span>${right}`; } }
+export class AvatarGroupElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const size = attr(this, "size", "32");
+    this.style.setProperty("--snap-size", `${size}px`);
+    const hasChildren = this.querySelector(":scope > avatar-el");
+    let html = "";
+    if (!hasChildren) {
+      const items = intAttr(this, "items", 3);
+      const initials = ["A", "B", "C", "D", "E", "F"];
+      html = Array.from(
+        { length: items },
+        (_, i) =>
+          `<avatar-el initials="${initials[i % 6]}" size="${size}"></avatar-el>`,
+      ).join("");
+    }
+    const overflow = intAttr(this, "overflow", 0);
+    if (overflow > 0)
+      html += `<span class="rp-avatar-overflow">+${overflow}</span>`;
+    if (html) this.insertAdjacentHTML("beforeend", html);
+  }
+}
+export class CommentElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const children = Array.from(this.childNodes);
+    const author = attr(this, "author", "用户");
+    const initials = attr(
+      this,
+      "avatar",
+      author.slice(0, 1).toUpperCase() || "U",
+    );
+    const time = attr(this, "time");
+    const isMe = attr(this, "state") === "me";
+    this.innerHTML = `<div class="comment-el-head"><avatar-el size="28" initials="${escapeHtml(initials)}"></avatar-el><span class="comment-el-author">${escapeHtml(author)}</span>${time ? `<span class="comment-el-time">${escapeHtml(time)}</span>` : ""}</div>`;
+    const body = document.createElement("div");
+    body.className = "comment-el-body";
+    children.forEach((n) => body.appendChild(n));
+    this.appendChild(body);
+    if (isMe) this.classList.add("comment-el-me");
+  }
+}
+export class FileListElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady || this.children.length) return;
+    this.dataset.rpReady = "true";
+    const n = intAttr(this, "items", 0);
+    if (n > 0) {
+      const names = [
+        "方案.pdf",
+        "截图.png",
+        "数据.xlsx",
+        "README.md",
+        "合同.docx",
+      ];
+      this.innerHTML = Array.from(
+        { length: n },
+        (_, i) =>
+          `<file-item name="${names[i % names.length]}" size="${200 + i * 120} KB"></file-item>`,
+      ).join("");
+    }
+  }
+}
+export class FileItemElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const name = attr(this, "name", "document.pdf");
+    const size = attr(this, "size");
+    const state = attr(this, "state", "uploaded");
+    const ext = name.split(".").pop()?.toLowerCase() || "";
+    const ic = ["png", "jpg", "jpeg", "gif", "svg", "webp"].includes(ext)
+      ? "image"
+      : "file";
+    const glyph =
+      state === "error"
+        ? icon("circle-x", 16)
+        : state === "uploading"
+          ? icon("loader", 15)
+          : icon(ic, 16);
+    const right =
+      state === "uploading"
+        ? `<span class="rp-file-progress"><span class="rp-file-bar" style="width:${escapeHtml(attr(this, "progress", "60"))}%"></span></span>`
+        : state === "error"
+          ? `<span class="rp-file-err">失败</span>`
+          : size
+            ? `<span class="rp-file-size">${escapeHtml(size)}</span>`
+            : "";
+    this.innerHTML = `<span class="rp-file-ic ${state}">${glyph}</span><span class="rp-file-name">${escapeHtml(name)}</span>${right}`;
+  }
+}
 
+export class ImageElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const src = attr(this, "src", "");
+    const w = attr(this, "width", "320");
+    const h = attr(this, "height", "200");
+    this.style.setProperty("--snap-width", `${w}px`);
+    this.style.setProperty("--snap-height", `${h}px`);
+    const label = attr(this, "label", "");
+    const mountainSvg =
+      '<svg viewBox="0 0 200 120" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 100 L60 40 L90 70 L130 30 L170 80 L190 100 Z"/><path d="M10 100 L50 60 L80 85 L120 50 L160 90 L190 100 Z" opacity=".5"/><circle cx="150" cy="35" r="8" opacity=".3"/></svg>';
+    if (src) {
+      this.innerHTML = `<img class="rp-img-photo" src="${escapeHtml(src)}" alt="${escapeHtml(label)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid';"/><span class="rp-img-fallback" style="display:none;">${mountainSvg}${label ? `<span class="rp-img-fallback-label">${escapeHtml(label)}</span>` : ""}</span>`;
+    } else {
+      this.innerHTML = `<span class="rp-img-fallback">${mountainSvg}${label ? `<span class="rp-img-fallback-label">${escapeHtml(label)}</span>` : ""}</span>`;
+    }
+  }
+}
+
+export class SpinnerElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const size = attr(this, "size", "32");
+    const variant = attr(this, "variant", "ios");
+    this.style.setProperty("--snap-size", `${size}px`);
+    if (variant === "dots") {
+      const dotSize = Math.max(4, Math.floor(Number(size) / 5));
+      this.innerHTML = Array.from(
+        { length: 3 },
+        () =>
+          `<span class="rp-spinner-dot" style="width:${dotSize}px;height:${dotSize}px;"></span>`,
+      ).join("");
+    } else if (variant === "ring") {
+      this.innerHTML = '<span class="rp-spinner-ring"></span>';
+    } else {
+      const lines = 12;
+      let html = '<span class="rp-spinner-ios">';
+      for (let i = 0; i < lines; i++) {
+        const opacity = 0.15 + (i / lines) * 0.85;
+        html += `<span class="rp-spinner-ios-line" style="transform:rotate(${i * (360 / lines)}deg);opacity:${opacity};"></span>`;
+      }
+      html += "</span>";
+      this.innerHTML = html;
+    }
+  }
+}
+
+export class MarqueeElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const text = this.textContent?.trim() || attr(this, "text", "滚动文字内容");
+    this.innerHTML = `<span class="rp-marquee-track"><span class="rp-marquee-text">${escapeHtml(text)}</span></span><span class="rp-marquee-fade"></span>`;
+  }
+}
+
+export class QrcodeElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const size = attr(this, "size", "120");
+    this.style.setProperty("--snap-size", `${size}px`);
+    const pattern = [
+      1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1,
+      0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1,
+      1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+    ];
+    this.innerHTML = `<span class="rp-qr-placeholder">${pattern.map((c) => `<span class="rp-qr-cell${c ? "" : " off"}"></span>`).join("")}</span>`;
+  }
+}

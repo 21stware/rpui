@@ -40,6 +40,10 @@ export class CanvasController {
   private panOrigX = 0;
   private panOrigY = 0;
   private panEnabled = true;
+  private spacePressed = false;
+  private keyDownHandler: ((e: KeyboardEvent) => void) | null = null;
+  private keyUpHandler: ((e: KeyboardEvent) => void) | null = null;
+  private pinClickHandler: ((e: PointerEvent) => void) | null = null;
 
   /**
    * @param host The element containing rendered RPUI content (e.g. a div with <page-el>)
@@ -134,7 +138,15 @@ export class CanvasController {
     });
 
     this.pointerDownHandler = (e: PointerEvent) => {
-      if (!this.panEnabled) return;
+      // Cmd/Ctrl+click on pin: don't start pan, let pin handler work
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.target instanceof Element &&
+        e.target.closest(".rp-pin")
+      )
+        return;
+      // Space+drag always pans, even when pan is disabled (pick mode)
+      if (!this.panEnabled && !this.spacePressed) return;
       this.panning = true;
       this.panStartX = e.clientX;
       this.panStartY = e.clientY;
@@ -161,6 +173,42 @@ export class CanvasController {
     this.canvas.addEventListener("pointerdown", this.pointerDownHandler);
     this.canvas.addEventListener("pointermove", this.pointerMoveHandler);
     this.canvas.addEventListener("pointerup", this.pointerUpHandler);
+
+    // Space+drag pan support
+    this.keyDownHandler = (e: KeyboardEvent) => {
+      if (e.code === "Space" && !this.spacePressed) {
+        const tag = (e.target as HTMLElement)?.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA") return;
+        this.spacePressed = true;
+        this.canvas.style.cursor = "grab";
+        e.preventDefault();
+      }
+    };
+    this.keyUpHandler = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        this.spacePressed = false;
+        this.canvas.style.cursor = this.panEnabled ? "grab" : "crosshair";
+      }
+    };
+    window.addEventListener("keydown", this.keyDownHandler);
+    window.addEventListener("keyup", this.keyUpHandler);
+
+    // Cmd/Ctrl+click on pins: pan to and highlight the corresponding annotation
+    this.pinClickHandler = (e: PointerEvent) => {
+      if (!(e.metaKey || e.ctrlKey)) return;
+      const pin =
+        e.target instanceof Element ? e.target.closest(".rp-pin") : null;
+      if (!pin) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const sectionId = pin.textContent?.trim();
+      if (!sectionId) return;
+      const target = this.host.querySelector(
+        `[data-rp-section="${CSS.escape(sectionId)}"]`,
+      );
+      if (target) this.focusAnnotation(target);
+    };
+    this.host.addEventListener("pointerdown", this.pinClickHandler, true);
   }
 
   /** Set zoom scale, optionally anchored to a screen point. */
@@ -279,6 +327,12 @@ export class CanvasController {
       this.canvas.removeEventListener("pointermove", this.pointerMoveHandler);
     if (this.pointerUpHandler)
       this.canvas.removeEventListener("pointerup", this.pointerUpHandler);
+    if (this.keyDownHandler)
+      window.removeEventListener("keydown", this.keyDownHandler);
+    if (this.keyUpHandler)
+      window.removeEventListener("keyup", this.keyUpHandler);
+    if (this.pinClickHandler)
+      this.host.removeEventListener("pointerdown", this.pinClickHandler, true);
     this.ro?.disconnect();
 
     // Restore host to original parent

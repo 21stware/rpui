@@ -9,12 +9,17 @@ import {
 import { RpMainView } from "./canvas/main-view";
 import { RpPage } from "./canvas/page";
 import {
+  ColElement,
   DividerElement,
   GenericElement,
+  IconElement,
   LayoutElement,
   LogoElement,
   NavbarElement,
   PanelElement,
+  RowElement,
+  SectionElement,
+  SeparatorElement,
   SidebarElement,
   SpacerElement,
   SplitPaneElement,
@@ -22,6 +27,7 @@ import {
 } from "./primitives/layout";
 import {
   AutocompleteElement,
+  BankCardInputElement,
   ButtonElement,
   CheckboxElement,
   ChoiceGroupElement,
@@ -54,6 +60,7 @@ import {
   AnchorElement,
   CommandPaletteElement,
   ContextMenuElement,
+  HeaderNotificationElement,
   KbdElement,
   ListElement,
   ListItemElement,
@@ -86,6 +93,7 @@ import {
   EmptyElement,
   FileItemElement,
   FileListElement,
+  ImageElement,
   ImageGridElement,
   KanbanCardElement,
   KanbanColumnElement,
@@ -93,12 +101,15 @@ import {
   KeyValueElement,
   KvRowElement,
   LoadingElement,
+  MarqueeElement,
   ModalElement,
   OverlayElement,
   PermissionGateElement,
+  QrcodeElement,
   QuotaBarElement,
   ResultElement,
   SkeletonElement,
+  SpinnerElement,
   StatCardElement,
   TableElement,
   TableListRowElement,
@@ -158,6 +169,7 @@ import {
   CarouselItemElement,
   ComboboxElement,
   DataTableElement,
+  DropdownMenuElement,
   HoverCardElement,
   InputGroupElement,
   MenubarElement,
@@ -192,7 +204,12 @@ export function registerAll() {
     ["logo", LogoElement],
     ["split-pane", SplitPaneElement],
     ["divider", DividerElement],
+    ["separator", SeparatorElement],
+    ["icon", IconElement],
     ["spacer", SpacerElement],
+    ["row", RowElement],
+    ["col", ColElement],
+    ["section", SectionElement],
     // controls
     ["search", FieldElement],
     ["input", FieldElement],
@@ -221,6 +238,7 @@ export function registerAll() {
     ["pin-input", PinInputElement],
     ["color-swatch", ColorSwatchElement],
     ["autocomplete", AutocompleteElement],
+    ["bank-card-input", BankCardInputElement],
     ["radio-card", RadioCardElement],
     // navigation
     ["badge", BadgeElement],
@@ -271,6 +289,8 @@ export function registerAll() {
     ["code-block", CodeBlockElement],
     ["diff", DiffElement],
     ["image-grid", ImageGridElement],
+    ["image", ImageElement],
+    ["spinner", SpinnerElement],
     ["key-value", KeyValueElement],
     ["kv-row", KvRowElement],
     ["accordion", AccordionElement],
@@ -344,6 +364,11 @@ export function registerAll() {
     ["aspect-ratio", AspectRatioElement],
     ["field", ShadcnFieldElement],
     ["sonner", SonnerElement],
+    ["dropdown-menu", DropdownMenuElement],
+    // supplementary
+    ["header-notification", HeaderNotificationElement],
+    ["marquee", MarqueeElement],
+    ["qrcode", QrcodeElement],
   ];
   // Guard against vocabulary drift: every primitive must be in the shared map.
   // (A miss would silently register under the wrong tag via identity fallback.)

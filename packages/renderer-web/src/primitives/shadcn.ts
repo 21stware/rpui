@@ -90,6 +90,19 @@ sonner-el, sonner-el { display:flex; align-items:flex-start; gap:10px; width:100
 .rp-sonner-title { font-size:14px; font-weight:650; color:var(--rp-c-gray-900); line-height:1.4; }
 .rp-sonner-desc { font-size:13px; color:var(--rp-c-gray-500); line-height:1.4; }
 .rp-sonner-close { flex:0 0 auto; display:grid; place-items:center; width:20px; height:20px; margin-top:1px; border:0; background:transparent; padding:0; border-radius:6px; color:var(--rp-c-gray-400); font:inherit; }
+
+/* dropdown-menu — trigger button with expanded menu panel */
+dropdown-menu, dropdown-menu { display:inline-block; position:relative; width:fit-content; }
+.rp-dd-trigger { display:inline-flex; align-items:center; gap:8px; min-height:36px; padding:0 12px; border:1px solid var(--rp-border-strong); border-radius:8px; background:var(--rp-c-white); color:var(--rp-c-gray-700); font-size:13px; font-weight:500; cursor:default; }
+.rp-dd-trigger svg { color:var(--rp-c-gray-400); }
+.rp-dd-panel { display:none; position:absolute; top:calc(100% + 4px); left:0; z-index:10; min-width:200px; padding:5px; border:1px solid var(--rp-border); border-radius:10px; background:var(--rp-c-white); box-shadow:0 10px 24px var(--rp-a-slate-08); }
+dropdown-menu[open] .rp-dd-panel { display:flex; flex-direction:column; gap:1px; }
+.rp-dd-item { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:6px; font-size:13px; color:var(--rp-c-gray-700); }
+.rp-dd-item.danger { color:var(--rp-danger); }
+.rp-dd-item.disabled { opacity:.45; }
+.rp-dd-sep { height:1px; background:var(--rp-border); margin:4px 0; }
+.rp-dd-label { flex:1; }
+.rp-dd-shortcut { color:var(--rp-c-gray-400); font-size:12px; }
 `;
 
 /* Carousel — horizontal scrolling content with prev/next controls */
@@ -408,5 +421,44 @@ export class SonnerElement extends HTMLElement {
             ? "triangle-alert"
             : "info";
     this.innerHTML = `<div class="rp-sonner-icon">${icon(ic, 18)}</div><div class="rp-sonner-main"><span class="rp-sonner-title">${escapeHtml(title)}</span>${description ? `<span class="rp-sonner-desc">${escapeHtml(description)}</span>` : ""}</div><button class="rp-sonner-close">${icon("x", 14)}</button>`;
+  }
+}
+
+export class DropdownMenuElement extends HTMLElement {
+  connectedCallback() {
+    injectStyle();
+    if (this.dataset.rpReady) return;
+    this.dataset.rpReady = "true";
+    const label = attr(this, "label", "Open");
+    const open = this.hasAttribute("open");
+    const itemsAttr = attr(this, "items", "");
+    const items = itemsAttr
+      ? itemsAttr
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
+    let itemsHtml = "";
+    if (items.length) {
+      itemsHtml = items
+        .map((it) => {
+          if (it === "|") return '<span class="rp-dd-sep"></span>';
+          const danger = /删除|移除|destroy|delete|remove/i.test(it);
+          const colonIdx = it.indexOf(":");
+          let label = it;
+          let shortcut = "";
+          if (colonIdx > 0) {
+            label = it.slice(0, colonIdx).trim();
+            shortcut = it.slice(colonIdx + 1).trim();
+          }
+          return `<div class="rp-dd-item${danger ? " danger" : ""}"><span class="rp-dd-label">${escapeHtml(label)}</span>${shortcut ? `<span class="rp-dd-shortcut">${escapeHtml(shortcut)}</span>` : ""}</div>`;
+        })
+        .join("");
+    } else {
+      const children = Array.from(this.children);
+      itemsHtml = children.map((n) => (n as HTMLElement).outerHTML).join("");
+    }
+    this.innerHTML = `<div class="rp-dd-trigger"><span>${escapeHtml(label)}</span>${icon("chevron-down", 14)}</div><div class="rp-dd-panel">${itemsHtml}</div>`;
+    if (open) this.setAttribute("open", "");
   }
 }
